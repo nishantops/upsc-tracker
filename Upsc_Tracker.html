@@ -9,7 +9,7 @@
     <!-- Supabase Official Cloud JS Client Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cabinet+Grotesk:wght@700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&family=Cabinet+Grotesk:wght=700;800;900&display=swap');
         
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
@@ -47,23 +47,6 @@
 </head>
 <body class="text-slate-800 antialiased min-h-screen flex flex-col custom-scrollbar">
 
-    <!-- KEYS CONFIGURATION DRAWER HUD -->
-    <div id="credentials-drawer" class="bg-slate-900 text-white border-b border-slate-800 px-4 py-3 shadow-inner">
-        <div class="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-4">
-            <div class="text-xs font-bold font-mono tracking-wide text-amber-400 flex items-center gap-2">
-                <span class="inline-block w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
-                DATABASE SETUP INTERFACE:
-            </div>
-            <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-5/6">
-                <input type="text" id="input-url" placeholder="Paste Supabase Project URL here..." class="bg-slate-950 text-xs text-slate-200 border border-slate-800 rounded-lg p-2 flex-1 focus:outline-none focus:border-indigo-500">
-                <input type="text" id="input-key" placeholder="Paste your long full Publishable Key here..." class="bg-slate-950 text-xs text-slate-200 border border-slate-800 rounded-lg p-2 flex-1 focus:outline-none focus:border-indigo-500">
-                <button onclick="connectToDatabaseEngine()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-2 rounded-lg transition-all active:scale-95 whitespace-nowrap cursor-pointer">
-                    Link Database
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- MASTER GLOBAL HUD NAVBAR -->
     <header class="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-slate-200/80 px-4 lg:px-8 py-4 shadow-xs">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
@@ -74,8 +57,8 @@
                         Nishant Kumar <span class="text-xs bg-indigo-100 text-indigo-700 font-bold px-2.5 py-1 rounded-full uppercase font-mono">Mission 2027</span>
                     </h1>
                     <p class="text-xs text-slate-500 font-semibold uppercase tracking-widest flex items-center gap-1.5">
-                        <span id="sync-status-indicator" class="inline-block w-2.5 h-2.5 rounded-full bg-rose-500"></span> 
-                        <span id="sync-status-text">OFFLINE MATRIX DISCONNECTED</span>
+                        <span id="sync-status-indicator" class="inline-block w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span> 
+                        <span id="sync-status-text">CONNECTING TO SUPABASE CLOUD...</span>
                     </p>
                 </div>
             </div>
@@ -85,9 +68,6 @@
                     <span class="px-2.5 py-1 text-slate-500">System Time:</span>
                     <span id="live-date-hud" class="px-2.5 py-1 bg-white rounded-lg text-slate-900 shadow-xs">---</span>
                 </div>
-                <button onclick="clearAndResetSystem()" class="cursor-pointer text-xs font-bold bg-white hover:bg-rose-50 text-slate-600 hover:text-rose-600 border border-slate-200 hover:border-rose-200 px-4 py-2.5 rounded-xl transition-all">
-                    Reset Cloud States
-                </button>
             </div>
         </div>
     </header>
@@ -111,7 +91,7 @@
                     </div>
                     <div class="text-[11px] text-slate-500 flex justify-between items-center font-mono">
                         <span>SYNCED UNITS: <strong id="global-count-checked" class="text-slate-900 font-bold">0</strong> / <span id="global-count-total">0</span></span>
-                        <span id="tracker-status-text" class="text-indigo-600 font-bold uppercase tracking-wider">Awaiting Link...</span>
+                        <span id="tracker-status-text" class="text-indigo-600 font-bold uppercase tracking-wider">LOADING DATA...</span>
                     </div>
                 </div>
             </div>
@@ -200,19 +180,19 @@
 
                 <!-- GS Core Papers -->
                 <div class="neo-card rounded-3xl p-6">
-                    <h2 class="heading-font text-xl font-black text-slate-900 border-b border-slate-100 pb-3">Paper II: General Studies I (GS-1 Blueprint Matrix)</h2>
+                    <h2 class="heading-font text-xl font-black text-slate-900 border-b border-slate-100 pb-3">Paper II: General Studies I (GS-1)</h2>
                     <div class="space-y-6 mt-6" id="box-mains-gs1"></div>
                 </div>
                 <div class="neo-card rounded-3xl p-6">
-                    <h2 class="heading-font text-xl font-black text-slate-900 border-b border-slate-100 pb-3">Paper III: General Studies II (GS-2 Blueprint Matrix)</h2>
+                    <h2 class="heading-font text-xl font-black text-slate-900 border-b border-slate-100 pb-3">Paper III: General Studies II (GS-2)</h2>
                     <div class="space-y-6 mt-6" id="box-mains-gs2"></div>
                 </div>
                 <div class="neo-card rounded-3xl p-6">
-                    <h2 class="heading-font text-xl font-black text-slate-900 border-b border-slate-100 pb-3">Paper IV: General Studies III (GS-3 Blueprint Matrix)</h2>
+                    <h2 class="heading-font text-xl font-black text-slate-900 border-b border-slate-100 pb-3">Paper IV: General Studies III (GS-3)</h2>
                     <div class="space-y-6 mt-6" id="box-mains-gs3"></div>
                 </div>
                 <div class="neo-card rounded-3xl p-6">
-                    <h2 class="heading-font text-xl font-black text-slate-900 border-b border-slate-100 pb-3">Paper V: General Studies IV (GS-4 Ethics &amp; Case Analytics)</h2>
+                    <h2 class="heading-font text-xl font-black text-slate-900 border-b border-slate-100 pb-3">Paper V: General Studies IV (GS-4 Ethics)</h2>
                     <div class="space-y-6 mt-6" id="box-mains-gs4"></div>
                 </div>
             </div>
@@ -231,17 +211,16 @@
         </div>
     </main>
 
-    <footer class="bg-slate-900 text-slate-400 text-center py-6 border-t border-slate-800 text-xs font-mono mt-12">
-        <div class="max-w-7xl mx-auto px-4">
-            <p>Nishant Kumar Command Module Engine • Live Automated Agnostic Sync Framework</p>
-        </div>
-    </footer>
-
     <!-- SERVERLESS CORE DATA ROUTER ENGINE SCRIPT -->
     <script>
-        let supabase = null;
+        // ====== DIRECT HARDCODED SYNC PATHS FROM SCREEN PARSERS ======
+        const SUPABASE_URL = "https://wdbwnutkomemrciybezz.supabase.co"; 
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndkYndudXRrb21lbXJjaXliZXp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIzMTU4NTgsImV4cCI6MjA1NzkwMzg1OH0.8y6xYpM3PbyL2-zS3g7yT6fT8uS_w8H9H6M_9w6E5mI";
+        // ============================================================
 
-        // Core Fixed Reference Curriculum Architecture Data Arrays
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Reference Curriculum Architecture arrays
         const corePrelimsGS = ["Current events of national and international importance.","History of India: Ancient, medieval structural socio-economic histories.","Indian National Movement: Freedom struggle phases.","Physical Geography of India and global domains.","Social and Economic Geography of the World.","Indian Polity: Constitution, systems, design.","Panchayati Raj, public policy, rights issues.","Economic Development: Planning, sustainable frameworks.","Social Sector Initiatives: Poverty, inclusion markers.","General Issues on Environmental Ecology & Bio-diversity.","Climate Change vectors, global commitments tracker.","General Science: Foundational physics, chemistry, biology."];
         const corePrelimsCSAT = ["Comprehension structural text analysis.","Interpersonal modules with focus on communication.","Logical reasoning and high analytical testing.","Decision-making mechanics & strategic problem solving.","General mental ability matrix validations.","Basic Numeracy: Numbers & scales of magnitude (Class X floor).","Data Interpretation: Charts, graphs, tables sufficiency (Class X floor)."];
         const coreLangA = ["Comprehension of designated Indian text reading passages.","Precis Writing structural summarizations.","Usage and Vocabulary expression validation.","Short Essay composition writing frameworks.","Translation rules: English to Indian language & reverse."];
@@ -255,11 +234,11 @@
             gs4: { "Ethical Human Interface Foundations": ["Ethics interface essence: Action boundaries, private vs. public rules.","Imparting values frameworks: Structural inputs of educational nodes.","Attitude Formulations: Psychological content mapping, persuasion waves.","Civil Service values: Impartiality benchmarks, crisis management loops.","Philosophical inputs: Lessons from moral administrators & philosophers."], "Civil Service Values & Probity": ["Administrative integrity profiles: Resolving ethical dilemmas.","Global funding ethics, corporate social governance compliance codes.","Probity parameters: RTI tracking, Code of Conduct matching, Charters.","Anti-corruption mechanics: Public fund audit architectures."], "Applied Public Case Studies": ["Resolution models for administrative crisis matrices, balancing values."] }
         };
 
-        const coreAnthro1 = ["1.1 Meaning, Scope and Development of Anthropology.","1.2 Relationship tracking with Social Sciences, Life Sciences, Earth fields.","1.3 Core branches definition: Socio-cultural, Biological, Archaeological, Linguistic.","1.4 Human Evolution mechanics: Organic evolution theories, Synthetic code.","1.5 Primates Taxonomy: Behavioral characteristics, living apes comparison.","1.6 Phylogenetic status analysis: Australopithecines, Homo erectus, Neanderthal.","1.7 Biological metrics: Cell structures, DNA replication loops, protein systems.","1.8 Prehistoric Archaeology Chronologies: Dating systems, Paleolithic to Iron maps.","2.1 Culture concept: Civilization parameters, Relativism models.","2.2 Society frameworks: Social configurations, institutional layers.","2.3 Marriage systems: Endo/exogamy rules, incest taboos, payments structures.","2.4 Family setups: Household typologies, corporate units functions, urban shifts.","2.5 Kinship lines: Descent groups systems, terminology frameworks.","3. Economic Anthropology: Formalist vs. Substantivist configuration debates.","4. Political Architectures: Power/legitimacy; simple justice execution rules.","5. Religion parameters: Theories, animism, magic vs. science functional borders.","6. Anthropological Thought: Classic Evolutionism, Particularism, Structuralism.","7. Language & Communication: Verbal/non-verbal communication parameters.","8. Research Methodologies: Fieldwork tracking methods, Genealogical tools.","9.1 Human Genetics: Twin study methods, pedigree models, DNA setups.","9.2 Mendelian patterns in human disease tracking: ABO, Rh, HLA configurations.","9.3 Chromosomal aberrations anomalies: Down syndrome configuration, Turner setups.","9.4 Race & Racism concepts: Polytypic human variations sorting, marker tracking.","9.5 Ecological Adaptations: Bio-cultural responses mapping heat, cold stresses.","9.6 Epidemiological tracking: Infectious vectors footprints vs. chronic patterns.","10. Human Growth & Development stages: Pre-natal/natal markers, somatotyping.","11. Demography theories: Biological/social frameworks, fertility variables.","12. Applied Anthropology applications: Ergonomics, forensic metrics, DNA profiling."];
+        const coreAnthro1 = ["1.1 Meaning, Scope and Development of Anthropology.","1.2 Relationship tracking with Social Sciences, Life Sciences, Earth fields.","1.3 Core branches definition: Socio-cultural, Biological, Archaeological, Linguistic.","1.4 Human Evolution mechanics: Organic evolution theories, Synthetic code.","1.5 Primates Taxonomy: Behavioral characteristics, living apes comparison.","1.6 Phylogenetic status analysis: Australopithecines, Homo erectus, Neanderthal.","1.7 Biological metrics: Cell structures, DNA replication loops, protein systems.","1.8 Prehistoric Archaeology Chronologies: Dating systems, Paleolithic to Iron maps.","2.1 Culture concept: Civilization parameters, Relativism models.","2.2 Society frameworks: Social configurations, institutional layers.","2.3 Marriage systems: Endo/exogamy rules, incest taboos, payments structures.","2.4 Family setups: Household typologies, corporate units functions, urban shifts.","2.5 Kinship lines: Descent groups systems, terminology frameworks.","3. Economic Anthropology: Formalist vs. Substantivist configuration debates.","4. Political Architectures: Power/legitimacy; simple justice execution rules.","5. Religion parameters: Theories, animism, magic vs. science functional borders.","6. Anthropological Thought: Classical Evolutionism, Particularism, Structuralism.","7. Language & Communication: Verbal/non-verbal communication parameters.","8. Research Methodologies: Fieldwork tracking methods, Genealogical tools.","9.1 Human Genetics: Twin study methods, pedigree models, DNA setups.","9.2 Mendelian patterns in human disease tracking: ABO, Rh, HLA configurations.","9.3 Chromosomal aberrations anomalies: Down syndrome configuration, Turner setups.","9.4 Race & Racism concepts: Polytypic human variations sorting, marker tracking.","9.5 Ecological Adaptations: Bio-cultural responses mapping heat, cold stresses.","9.6 Epidemiological tracking: Infectious vectors footprints vs. chronic patterns.","10. Human Growth & Development stages: Pre-natal/natal markers, somatotyping.","11. Demography theories: Biological/social frameworks, fertility variables.","12. Applied Anthropology applications: Ergonomics, forensic metrics, DNA profiling."];
         const coreAnthro2 = ["1.1 Indian Culture Evolution: Prehistoric to Chalcolithic grids, IVC, shifts.","1.2 Paleoanthropological nodes in India: Ramapithecus, Narmada Man logs.","1.3 Ethno-archaeological parallels mapping: Hunter-gatherer survivals matching.","2. Demographic Profile of India: Spatial layout of ethnic markers, language sets.","3.1 Traditional Social Systems: Varnashrama tracking, Purushartha targets.","3.2 Caste system layers: Theories of origin, mobility indexes, Jajmani setups.","3.3 Sacred Complex models and Nature-Man-Spirit Complex frameworks.","3.4 Impact of World Religions on Indian society: Buddhism, Islam, Christianity.","4. Indian Anthropological Growth: Scholar-administrator foundational records.","5.1 Indian Village setups: Inter-caste dependency tracking, globalization impacts.","5.2 Minorities sorting: Linguistic and religious minority groups tracking.","5.3 Structural Change processes: Sanskritization parameters, Modernization trends.","6.1 Tribal Situation in India: Biogenetic variation clustering, configurations.","6.2 Tribal Hardships: Land alienation vectors tracking, multi-dimensional debt, LWE.","6.3 Forest Policy actions: Historical forest codes tracking vs. tribal rights.","7.1 Exploitation protections: Constitutional safeguards for SC and ST.","7.2 Social Change vectors: Modern democratic institutional footprints.","7.3 PVTGs (Particularly Vulnerable Tribal Groups): Structural parameters tracking.","8.1 Religious shifts: Syncretic adjustments, tribal conversions dynamics tracking.","8.2 Tribe and Nation-State integration metrics, regional autonomy friction points.","9.1 Tribal Administration Architectures: Fifth and Sixth Schedule tracking, PESA.","9.2 Anthropology applications inside structural grass-roots rural planning.","9.3 Resolving frictions: Anthropological analytical tracks exploring conflicts."];
 
-        // INITIAL DOM BOOTSTRAPPING
-        document.addEventListener("DOMContentLoaded", () => {
+        // RENDER PIPELINES
+        document.addEventListener("DOMContentLoaded", async () => {
             renderListDOM('box-prelims-gs', corePrelimsGS);
             renderListDOM('box-prelims-csat', corePrelimsCSAT);
             renderListDOM('box-mains-lang-a', coreLangA);
@@ -274,47 +253,9 @@
             renderListDOM('box-anthro-p1', coreAnthro1);
             renderListDOM('box-anthro-p2', coreAnthro2);
 
-            // Auto-load credentials from local browser memory if saved previously
-            if (localStorage.getItem('nk_saved_url')) document.getElementById('input-url').value = localStorage.getItem('nk_saved_url');
-            if (localStorage.getItem('nk_saved_key')) document.getElementById('input-key').value = localStorage.getItem('nk_saved_key');
-            
-            if (localStorage.getItem('nk_saved_url') && localStorage.getItem('nk_saved_key')) {
-                connectToDatabaseEngine();
-            }
-
+            await syncLatestCloudState();
             trackLiveClockTimelines();
-            calculateMetricsHUD();
         });
-
-        // SAFE FULL STACK LIVE HOOK INTERFACE
-        async function connectToDatabaseEngine() {
-            const url = document.getElementById('input-url').value.trim();
-            const key = document.getElementById('input-key').value.trim();
-
-            if (!url || !key) {
-                alert("Please fill out both database authentication parameters above first!");
-                return;
-            }
-
-            try {
-                // Initialize active client directly on interface actions
-                supabase = window.supabase.createClient(url, key);
-                
-                localStorage.setItem('nk_saved_url', url);
-                localStorage.setItem('nk_saved_key', key);
-
-                document.getElementById("sync-status-text").innerText = "CONNECTING CLOUD REGIME...";
-                document.getElementById("sync-status-indicator").className = "inline-block w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse";
-                
-                await syncLatestCloudState();
-                
-                // Collapse credentials bar to make UI clean and beautiful
-                document.getElementById('credentials-drawer').style.display = 'none';
-            } catch (err) {
-                alert("Database binding crashed. Double-check your URL and publishable key parameters.");
-                console.error(err);
-            }
-        }
 
         function renderListDOM(domId, dataArr) {
             const el = document.getElementById(domId);
@@ -354,31 +295,26 @@
             container.innerHTML = html;
         }
 
+        // BACKEND MUTATIONS
         async function commitCloudCheckedUpdate(elementUuid) {
-            if (!supabase) {
-                alert("Database offline. Please paste your parameters in the top bar to initialize cloud synchronization.");
-                document.getElementById(elementUuid).checked = false;
-                return;
-            }
+            document.getElementById("sync-status-text").innerText = "SAVING INSTANT STATE TO DATABASE...";
             const isChecked = document.getElementById(elementUuid).checked;
-            document.getElementById("sync-status-text").innerText = "SAVING TO CLOUD NODE...";
 
             const { error } = await supabase
                 .from('nishant_upsc_tracker')
                 .upsert({ id: elementUuid, is_checked: isChecked, updated_at: new Date().toISOString() });
 
             if (error) {
-                document.getElementById("sync-status-text").innerText = "SYNC LINK CONFLICT";
+                document.getElementById("sync-status-text").innerText = "STATE SYNC ERROR";
                 document.getElementById("sync-status-indicator").className = "inline-block w-2.5 h-2.5 rounded-full bg-rose-500";
             } else {
-                document.getElementById("sync-status-text").innerText = "CLOUD DATABASE SYNCED";
+                document.getElementById("sync-status-text").innerText = "CLOUD COMMAND LOCKED & SYNCED";
                 document.getElementById("sync-status-indicator").className = "inline-block w-2.5 h-2.5 rounded-full bg-emerald-500";
             }
             calculateMetricsHUD();
         }
 
         async function syncLatestCloudState() {
-            if (!supabase) return;
             const { data, error } = await supabase.from('nishant_upsc_tracker').select('*');
 
             if (!error && data) {
@@ -386,11 +322,8 @@
                     const box = document.getElementById(row.id);
                     if (box) box.checked = row.is_checked;
                 });
-                document.getElementById("sync-status-text").innerText = "CLOUD DATABASE SYNCED";
+                document.getElementById("sync-status-text").innerText = "CLOUD DATABASE SYNCED & AGNOSTIC";
                 document.getElementById("sync-status-indicator").className = "inline-block w-2.5 h-2.5 rounded-full bg-emerald-500";
-            } else {
-                document.getElementById("sync-status-text").innerText = "BOUND RUNWAY FAULT";
-                document.getElementById("sync-status-indicator").className = "inline-block w-2.5 h-2.5 rounded-full bg-rose-500";
             }
             calculateMetricsHUD();
         }
@@ -411,9 +344,8 @@
             document.getElementById("global-progress-bar").style.width = percentage + "%";
 
             const label = document.getElementById("tracker-status-text");
-            if (!supabase) label.innerText = "AWAITING DATABASE ACCOUNT BINDING...";
-            else if (percentage == 0) label.innerText = "STANDBY SYNC TRACK";
-            else if (percentage < 35) label.innerText = "FOUNDATION RUNWAY SPEED";
+            if (percentage == 0) label.innerText = "STANDBY INTEGRATION METRIC";
+            else if (percentage < 35) label.innerText = "FOUNDATION ACQUISITION RUNWAY";
             else if (percentage < 75) label.innerText = "CRITICAL MASS ACCELERATION";
             else label.innerText = "OFFICIAL RANK SELECTION THRESHOLD";
         }
@@ -449,11 +381,8 @@
         }
 
         async function clearAndResetSystem() {
-            if(confirm("Confirm structural cloud wipe command? This resets your server rows to clean state benchmarks.")) {
-                if (supabase) {
-                    await supabase.from('nishant_upsc_tracker').delete().neq('id', 'null-lock');
-                }
-                localStorage.clear();
+            if(confirm("Confirm reset? This drops your custom database rows back to unchecked status parameters.")) {
+                await supabase.from('nishant_upsc_tracker').delete().neq('id', 'null-lock');
                 location.reload();
             }
         }
