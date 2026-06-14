@@ -19,9 +19,9 @@ const ENV = Object.freeze({
     // Session
     AUTO_LOGOUT_MS: 15 * 60 * 1000, // 15 minutes
 
-    // AI (Gemini Pro via Google One AI Premium)
+    // AI (Gemini 2.5 Flash - best free tier: 500 RPD, 15 RPM)
     GEMINI_API_KEY: atob("QVEuQWI4Uk42SXJYaGVFVFRXc0M0Y2ZHdzNEdm5CZGlrUThpaERBWmJKQ0NxLUtMVGNKaXc="),
-    GEMINI_MODEL: "gemini-1.5-pro",
+    GEMINI_MODEL: "gemini-2.5-flash",
 
     // Exam Dates
     PRELIMS_DATE: "May 23, 2027 09:00:00",
