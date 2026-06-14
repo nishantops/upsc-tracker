@@ -5,6 +5,9 @@
 // =========================================================================
 
 const ENV = Object.freeze({
+    // App Version (increment to bust cache for all users)
+    APP_VERSION: "2.1.0",
+
     // Supabase
     SUPABASE_URL: "https://wdbwnutkomemrciybezz.supabase.co",
     SUPABASE_ANON_KEY: "sb_publishable_HYqlB7gJZmJ-Ni8ZywKJ_w_bNZWlGGy",
@@ -16,8 +19,9 @@ const ENV = Object.freeze({
     // Session
     AUTO_LOGOUT_MS: 15 * 60 * 1000, // 15 minutes
 
-    // AI (Gemini) - encoded at rest, decoded at runtime
+    // AI (Gemini Pro via Google One AI Premium)
     GEMINI_API_KEY: atob("QVEuQWI4Uk42SXJYaGVFVFRXc0M0Y2ZHdzNEdm5CZGlrUThpaERBWmJKQ0NxLUtMVGNKaXc="),
+    GEMINI_MODEL: "gemini-1.5-pro",
 
     // Exam Dates
     PRELIMS_DATE: "May 23, 2027 09:00:00",

@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
     <title>Nishant Kumar • UPSC CSE Command Center 2027</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -684,6 +686,23 @@
 
     <script>
         // =========================================================================
+        // CACHE MANAGEMENT — auto-reload on version change
+        // =========================================================================
+        (() => {
+            const STORED_VER = localStorage.getItem('upsc_app_version');
+            const CURRENT_VER = ENV.APP_VERSION;
+            if (STORED_VER && STORED_VER !== CURRENT_VER) {
+                // New version deployed — clear stale caches
+                localStorage.removeItem('upsc_app_version');
+                if ('caches' in window) caches.keys().then(ks => ks.forEach(k => caches.delete(k)));
+                localStorage.setItem('upsc_app_version', CURRENT_VER);
+                location.reload(true);
+                return;
+            }
+            if (!STORED_VER) localStorage.setItem('upsc_app_version', CURRENT_VER);
+        })();
+
+        // =========================================================================
         // CONFIGURATION (from env.js)
         // =========================================================================
         const SUPABASE_URL = ENV.SUPABASE_URL;
@@ -1125,18 +1144,17 @@
             const { data: { session } } = await dbClient.auth.getSession();
             if (session) {
                 currentUserId = session.user.id;
-                // Check auto-logout for non-superusers
-                if (!isSuperuser(session.user.email)) {
-                    const { data } = await dbClient.from('upsc_user_sessions').select('last_active').eq('user_id', session.user.id).single();
-                    if (data && data.last_active) {
-                        if (Date.now() - new Date(data.last_active).getTime() > AUTO_LOGOUT_MS) {
-                            await dbClient.auth.signOut();
-                            return;
-                        }
-                    }
-                }
+                // Show app immediately — check auto-logout lazily after render
                 await recordSession(session.user.email || session.user.phone);
                 showApp();
+                // Lazy auto-logout check (non-blocking)
+                if (!isSuperuser(session.user.email)) {
+                    dbClient.from('upsc_user_sessions').select('last_active').eq('user_id', session.user.id).single().then(({ data }) => {
+                        if (data && data.last_active && Date.now() - new Date(data.last_active).getTime() > AUTO_LOGOUT_MS) {
+                            handleLogout(true);
+                        }
+                    });
+                }
             }
         });
 
