@@ -9326,228 +9326,988 @@ const pyqMainsGS4Data = [
 ];
 const pyqEssayData = [
   {
-    name: "India & Society",
-    questions: [
-      { year: "2023", question: "A society that has more justice is a society that needs less charity" },
-      { year: "2022", question: "Poets are the unacknowledged legislators of the world" },
-      { year: "2021", question: "There are better practices to \"best practices\". (\"" },
-      { year: "2020", question: "There can be no social justice without economic prosperity but economic prosperity without social justice is meaningless" },
-      { year: "2020", question: "Culture is what we are, civilization is what we have" },
-      { year: "2019", question: "Neglect of primary health care and education in India are reasons for its backwardness" },
-      { year: "2019", question: "Biased media is a real threat to Indian democracy" },
-      { year: "2018", question: "Poverty anywhere is a threat to prosperity everywhere" },
-      { year: "2017", question: "Impact of the new economic measures on fiscal ties between the union and states in India" },
-      { year: "2017", question: "We may brave human laws but cannot resist natural laws" },
-      { year: "2016", question: "Water disputes between States in federal India" },
-      { year: "2016", question: "Cooperative federalism : Myth or reality" },
-      { year: "2015", question: "Dreams which should not let India sleep" },
-      { year: "2014", question: "Is sting operation an invasion on privacy?" },
-      { year: "2013", question: "Is the Colonial mentality hindering India's Success?" },
-      { year: "2012", question: "In the context of Gandhiji's views on the matter, explore, on an evolutionary scale, the terms 'Swadhinata', 'Swaraj' and 'Dharmarajya'. Critically comment on their contemporary relevance to Indian democracy" },
-      { year: "2011", question: "Creation of smaller states and the consequent administrative, economic and developmental implication" },
-      { year: "2011", question: "Does Indian cinema shape our popular culture or merely reflect it?" },
-      { year: "2010", question: "From traditional Indian philanthropy to the gates-buffet model-a natural progression or a paradigm shift?" },
-      { year: "2009", question: "The focus of health care is increasingly getting skewed towards the 'haves' of our society" },
-      { year: "2008", question: "Role of media in good governance" },
-      { year: "2007", question: "Evaluation of panchayati raj system in India from the point of view of eradication of power to people" },
-      { year: "2007", question: "How has satellite television brought about cultural change in Indian mindsets?" },
-      { year: "2005", question: "Justice must reach the poor" },
-      { year: "2005", question: "Food security for sustainable national development" },
-      { year: "2004", question: "Water resources should be under the control of the central government" },
-      { year: "2004", question: "Judicial activism and Indian democracy" },
-      { year: "2003", question: "How far has democracy in India delivered the goods?" },
-      { year: "2003", question: "How should a civil servant conduct himself?" },
-      { year: "2002", question: "Responsibility of media in a democracy" },
-      { year: "2001", question: "What have we gained from our democratic set-up?" },
-      { year: "2000", question: "Why should we be proud of being Indians?" },
-      { year: "2000", question: "The country's need for a better disaster management system" },
-      { year: "2000", question: "Indian culture today: a myth or a reality?" },
-      { year: "1999", question: "Reservation, politics and empowerment" },
-      { year: "1998", question: "The language problem in India: its past, present and prospects" },
-      { year: "1998", question: "The misinterpretation and misuse of freedom in India" },
-      { year: "1998", question: "The composite culture of India" },
-      { year: "1997", question: "What we have not learnt during fifty years of independence" },
-      { year: "1997", question: "Judicial activism" },
-      { year: "1996", question: "The VIP cult is a bane of Indian democracy" },
-      { year: "1996", question: "Need for transparency in public administration" },
-      { year: "1996", question: "New cults and godmen: a threat to traditional religion" },
-      { year: "1995", question: "Whither Indian democracy?" },
-      { year: "1995", question: "Politics without ethics is a disaster" },
-      { year: "1994", question: "Politics, Bureaucracy and Business - Fatal Triangle" },
-      { year: "1994", question: "The Indian society at the crossroads" },
-      { year: "1993", question: "My vision of India in 2001 A.D. (2001" },
+    "name": "India & Society",
+    "questions": [
+      {
+        "year": "2023",
+        "question": "A society that has more justice is a society that needs less charity",
+        "number": "1"
+      },
+      {
+        "year": "2022",
+        "question": "Poets are the unacknowledged legislators of the world",
+        "number": "2"
+      },
+      {
+        "year": "2021",
+        "question": "There are better practices to \"best practices\". (\"",
+        "number": "3"
+      },
+      {
+        "year": "2020",
+        "question": "There can be no social justice without economic prosperity but economic prosperity without social justice is meaningless",
+        "number": "4"
+      },
+      {
+        "year": "2020",
+        "question": "Culture is what we are, civilization is what we have",
+        "number": "5"
+      },
+      {
+        "year": "2019",
+        "question": "Neglect of primary health care and education in India are reasons for its backwardness",
+        "number": "6"
+      },
+      {
+        "year": "2019",
+        "question": "Biased media is a real threat to Indian democracy",
+        "number": "7"
+      },
+      {
+        "year": "2018",
+        "question": "Poverty anywhere is a threat to prosperity everywhere",
+        "number": "8"
+      },
+      {
+        "year": "2017",
+        "question": "Impact of the new economic measures on fiscal ties between the union and states in India",
+        "number": "9"
+      },
+      {
+        "year": "2017",
+        "question": "We may brave human laws but cannot resist natural laws",
+        "number": "10"
+      },
+      {
+        "year": "2016",
+        "question": "Water disputes between States in federal India",
+        "number": "11"
+      },
+      {
+        "year": "2016",
+        "question": "Cooperative federalism : Myth or reality",
+        "number": "12"
+      },
+      {
+        "year": "2015",
+        "question": "Dreams which should not let India sleep",
+        "number": "13"
+      },
+      {
+        "year": "2014",
+        "question": "Is sting operation an invasion on privacy?",
+        "number": "14"
+      },
+      {
+        "year": "2013",
+        "question": "Is the Colonial mentality hindering India's Success?",
+        "number": "15"
+      },
+      {
+        "year": "2012",
+        "question": "In the context of Gandhiji's views on the matter, explore, on an evolutionary scale, the terms 'Swadhinata', 'Swaraj' and 'Dharmarajya'. Critically comment on their contemporary relevance to Indian democracy",
+        "number": "16"
+      },
+      {
+        "year": "2011",
+        "question": "Creation of smaller states and the consequent administrative, economic and developmental implication",
+        "number": "17"
+      },
+      {
+        "year": "2011",
+        "question": "Does Indian cinema shape our popular culture or merely reflect it?",
+        "number": "18"
+      },
+      {
+        "year": "2010",
+        "question": "From traditional Indian philanthropy to the gates-buffet model-a natural progression or a paradigm shift?",
+        "number": "19"
+      },
+      {
+        "year": "2009",
+        "question": "The focus of health care is increasingly getting skewed towards the 'haves' of our society",
+        "number": "20"
+      },
+      {
+        "year": "2008",
+        "question": "Role of media in good governance",
+        "number": "21"
+      },
+      {
+        "year": "2007",
+        "question": "Evaluation of panchayati raj system in India from the point of view of eradication of power to people",
+        "number": "22"
+      },
+      {
+        "year": "2007",
+        "question": "How has satellite television brought about cultural change in Indian mindsets?",
+        "number": "23"
+      },
+      {
+        "year": "2005",
+        "question": "Justice must reach the poor",
+        "number": "24"
+      },
+      {
+        "year": "2005",
+        "question": "Food security for sustainable national development",
+        "number": "25"
+      },
+      {
+        "year": "2004",
+        "question": "Water resources should be under the control of the central government",
+        "number": "26"
+      },
+      {
+        "year": "2004",
+        "question": "Judicial activism and Indian democracy",
+        "number": "27"
+      },
+      {
+        "year": "2003",
+        "question": "How far has democracy in India delivered the goods?",
+        "number": "28"
+      },
+      {
+        "year": "2003",
+        "question": "How should a civil servant conduct himself?",
+        "number": "29"
+      },
+      {
+        "year": "2002",
+        "question": "Responsibility of media in a democracy",
+        "number": "30"
+      },
+      {
+        "year": "2001",
+        "question": "What have we gained from our democratic set-up?",
+        "number": "31"
+      },
+      {
+        "year": "2000",
+        "question": "Why should we be proud of being Indians?",
+        "number": "32"
+      },
+      {
+        "year": "2000",
+        "question": "The country's need for a better disaster management system",
+        "number": "33"
+      },
+      {
+        "year": "2000",
+        "question": "Indian culture today: a myth or a reality?",
+        "number": "34"
+      },
+      {
+        "year": "1999",
+        "question": "Reservation, politics and empowerment",
+        "number": "35"
+      },
+      {
+        "year": "1998",
+        "question": "The language problem in India: its past, present and prospects",
+        "number": "36"
+      },
+      {
+        "year": "1998",
+        "question": "The misinterpretation and misuse of freedom in India",
+        "number": "37"
+      },
+      {
+        "year": "1998",
+        "question": "The composite culture of India",
+        "number": "38"
+      },
+      {
+        "year": "1997",
+        "question": "What we have not learnt during fifty years of independence",
+        "number": "39"
+      },
+      {
+        "year": "1997",
+        "question": "Judicial activism",
+        "number": "40"
+      },
+      {
+        "year": "1996",
+        "question": "The VIP cult is a bane of Indian democracy",
+        "number": "41"
+      },
+      {
+        "year": "1996",
+        "question": "Need for transparency in public administration",
+        "number": "42"
+      },
+      {
+        "year": "1996",
+        "question": "New cults and godmen: a threat to traditional religion",
+        "number": "43"
+      },
+      {
+        "year": "1995",
+        "question": "Whither Indian democracy?",
+        "number": "44"
+      },
+      {
+        "year": "1995",
+        "question": "Politics without ethics is a disaster",
+        "number": "45"
+      },
+      {
+        "year": "1994",
+        "question": "Politics, Bureaucracy and Business - Fatal Triangle",
+        "number": "46"
+      },
+      {
+        "year": "1994",
+        "question": "The Indian society at the crossroads",
+        "number": "47"
+      },
+      {
+        "year": "1993",
+        "question": "My vision of India in 2001 A.D. (2001",
+        "number": "48"
+      }
     ]
   },
   {
-    name: "Economy",
-    questions: [
-      { year: "2022", question: "Forests are the best case studies for economic excellence" },
-      { year: "2018", question: "Alternative technologies for a climate change resilient India" },
-      { year: "2017", question: "Farming has lost the ability to be a source of subsistence for majority of farmers in India" },
-      { year: "2016", question: "Digital economy: A leveller or a source of economic inequality" },
-      { year: "2016", question: "Innovation is the key determinant of economic growth and social welfare" },
-      { year: "2016", question: "Near jobless growth in India: An anomaly or an outcome of economic reforms" },
-      { year: "2015", question: "Crisis faced in India - moral or economic" },
-      { year: "2015", question: "Can capitalism bring inclusive growth?" },
-      { year: "2014", question: "Was it the policy paralysis or the paralysis of implementation which slowed the growth of our country?" },
-      { year: "2014", question: "Tourism: Can this be the next big thing for India?" },
-      { year: "2013", question: "GDP (Gross Domestic Product) along with GDH (Gross Domestic Happiness) would be the right indices for judging the wellbeing of a country" },
-      { year: "2012", question: "Is the criticism that the 'Public-Private-Partnership' (PPP) model for development is more of a 10 Economy and Development unacademy.com | Download the Unacademy app Give your feedback here: Link bane than a boon in the Indian context, justified?" },
-      { year: "2010", question: "Should a moratorium be imposed on all fresh mining in tribal areas of the country?" },
-      { year: "2009", question: "Are our traditional handicrafts doomed to a slow death?" },
-      { year: "2008", question: "Urbanisation and its hazards" },
-      { year: "2008", question: "Special economic zone: boon or bane" },
-      { year: "2006", question: "Protection of ecology and environment is essential for sustained economic development" },
-      { year: "2006", question: "Globalization would finish small-scale industries in India" },
-      { year: "1999", question: "Resource management in the Indian context" },
-      { year: "1997", question: "Urbanization is a blessing in disguise" },
-      { year: "1994", question: "Multinational corporations - saviours or saboteurs" },
-      { year: "1993", question: "Economic growth without distributive justice is bound to breed violence" },
-      { year: "1993", question: "Ecological considerations need not hamper development" },
+    "name": "Economy",
+    "questions": [
+      {
+        "year": "2022",
+        "question": "Forests are the best case studies for economic excellence",
+        "number": "1"
+      },
+      {
+        "year": "2018",
+        "question": "Alternative technologies for a climate change resilient India",
+        "number": "2"
+      },
+      {
+        "year": "2017",
+        "question": "Farming has lost the ability to be a source of subsistence for majority of farmers in India",
+        "number": "3"
+      },
+      {
+        "year": "2016",
+        "question": "Digital economy: A leveller or a source of economic inequality",
+        "number": "4"
+      },
+      {
+        "year": "2016",
+        "question": "Innovation is the key determinant of economic growth and social welfare",
+        "number": "5"
+      },
+      {
+        "year": "2016",
+        "question": "Near jobless growth in India: An anomaly or an outcome of economic reforms",
+        "number": "6"
+      },
+      {
+        "year": "2015",
+        "question": "Crisis faced in India - moral or economic",
+        "number": "7"
+      },
+      {
+        "year": "2015",
+        "question": "Can capitalism bring inclusive growth?",
+        "number": "8"
+      },
+      {
+        "year": "2014",
+        "question": "Was it the policy paralysis or the paralysis of implementation which slowed the growth of our country?",
+        "number": "9"
+      },
+      {
+        "year": "2014",
+        "question": "Tourism: Can this be the next big thing for India?",
+        "number": "10"
+      },
+      {
+        "year": "2013",
+        "question": "GDP (Gross Domestic Product) along with GDH (Gross Domestic Happiness) would be the right indices for judging the wellbeing of a country",
+        "number": "11"
+      },
+      {
+        "year": "2012",
+        "question": "Is the criticism that the 'Public-Private-Partnership' (PPP) model for development is more of a 10 Economy and Development unacademy.com | Download the Unacademy app Give your feedback here: Link bane than a boon in the Indian context, justified?",
+        "number": "12"
+      },
+      {
+        "year": "2010",
+        "question": "Should a moratorium be imposed on all fresh mining in tribal areas of the country?",
+        "number": "13"
+      },
+      {
+        "year": "2009",
+        "question": "Are our traditional handicrafts doomed to a slow death?",
+        "number": "14"
+      },
+      {
+        "year": "2008",
+        "question": "Urbanisation and its hazards",
+        "number": "15"
+      },
+      {
+        "year": "2008",
+        "question": "Special economic zone: boon or bane",
+        "number": "16"
+      },
+      {
+        "year": "2006",
+        "question": "Protection of ecology and environment is essential for sustained economic development",
+        "number": "17"
+      },
+      {
+        "year": "2006",
+        "question": "Globalization would finish small-scale industries in India",
+        "number": "18"
+      },
+      {
+        "year": "1999",
+        "question": "Resource management in the Indian context",
+        "number": "19"
+      },
+      {
+        "year": "1997",
+        "question": "Urbanization is a blessing in disguise",
+        "number": "20"
+      },
+      {
+        "year": "1994",
+        "question": "Multinational corporations - saviours or saboteurs",
+        "number": "21"
+      },
+      {
+        "year": "1993",
+        "question": "Economic growth without distributive justice is bound to breed violence",
+        "number": "22"
+      },
+      {
+        "year": "1993",
+        "question": "Ecological considerations need not hamper development",
+        "number": "23"
+      }
     ]
   },
   {
-    name: "Education",
-    questions: [
-      { year: "2019", question: "Neglect of primary health care and education in India are reasons for its backwardness" },
-      { year: "2017", question: "Destiny of a nation is shaped in its classrooms" },
-      { year: "2015", question: "Education without values, as useful as it is, seems rather to make a man more clever devil" },
-      { year: "2014", question: "Are the standardized tests good measure of academic ability or progress?" },
-      { year: "2014", question: "Is the growing level of competition good for the youth?" },
-      { year: "2008", question: "Is an egalitarian society possible by educating the masses?" },
-      { year: "2007", question: "Independent thinking should be encouraged right form the childhood" },
-      { year: "2006", question: "\"Education for all\" campaign in India: myth or reality" },
-      { year: "2005", question: "What is real education?" },
-      { year: "2002", question: "Privatization of higher education in India" },
-      { year: "2001", question: "Irrelevance of the classroom" },
-      { year: "1996", question: "Literacy is growing very fast, but there is no corresponding growth in education" },
-      { year: "1995", question: "Restructuring of Indian education system" },
+    "name": "Education",
+    "questions": [
+      {
+        "year": "2019",
+        "question": "Neglect of primary health care and education in India are reasons for its backwardness",
+        "number": "1"
+      },
+      {
+        "year": "2017",
+        "question": "Destiny of a nation is shaped in its classrooms",
+        "number": "2"
+      },
+      {
+        "year": "2015",
+        "question": "Education without values, as useful as it is, seems rather to make a man more clever devil",
+        "number": "3"
+      },
+      {
+        "year": "2014",
+        "question": "Are the standardized tests good measure of academic ability or progress?",
+        "number": "4"
+      },
+      {
+        "year": "2014",
+        "question": "Is the growing level of competition good for the youth?",
+        "number": "5"
+      },
+      {
+        "year": "2008",
+        "question": "Is an egalitarian society possible by educating the masses?",
+        "number": "6"
+      },
+      {
+        "year": "2007",
+        "question": "Independent thinking should be encouraged right form the childhood",
+        "number": "7"
+      },
+      {
+        "year": "2006",
+        "question": "\"Education for all\" campaign in India: myth or reality",
+        "number": "8"
+      },
+      {
+        "year": "2005",
+        "question": "What is real education?",
+        "number": "9"
+      },
+      {
+        "year": "2002",
+        "question": "Privatization of higher education in India",
+        "number": "10"
+      },
+      {
+        "year": "2001",
+        "question": "Irrelevance of the classroom",
+        "number": "11"
+      },
+      {
+        "year": "1996",
+        "question": "Literacy is growing very fast, but there is no corresponding growth in education",
+        "number": "12"
+      },
+      {
+        "year": "1995",
+        "question": "Restructuring of Indian education system",
+        "number": "13"
+      }
     ]
   },
   {
-    name: "Philosophy & Ethics",
-    questions: [
-      { year: "2023", question: "Mathematics is the music of reason" },
-      { year: "2023", question: "Visionary decision-making happens at the intersection of intuition and logic" },
-      { year: "2023", question: "Not all who wander are lost" },
-      { year: "2023", question: "Inspiration for creativity springs from the effort to look for the magical in the mundane" },
-      { year: "2023", question: "Girls are weighed down by restrictions, boys with demands - two equally harmful disciplines" },
-      { year: "2023", question: "Education is what remains after one has forgotten what one has learned in - school" },
-      { year: "2022", question: "A smile is the chosen vehicle for all ambiguities" },
-      { year: "2022", question: "Just because you have a choice, it does not mean that any of them has to be right" },
-      { year: "2022", question: "The time to repair the roof is when the sun is shining" },
-      { year: "2022", question: "You cannot step twice in the same river" },
-      { year: "2022", question: "A ship in harbour is safe, but that is not what ship is for" },
-      { year: "2021", question: "Philosophy of wantlessness is a Utopian, while materialism is a chimera" },
-      { year: "2021", question: "Your perception of me is a reflection of you; my reaction to you is an awareness of me" },
-      { year: "2021", question: "The real is rational and the rational is real" },
-      { year: "2020", question: "Simplicity is the ultimate sophistication" },
-      { year: "2020", question: "Ships don't sink because of water around them ships sink because of water that gets into them" },
-      { year: "2020", question: "Life is a long journey between being human and being humane" },
-      { year: "2020", question: "Mindful manifesto is the catalyst to a tranquil self" },
-      { year: "2019", question: "Values are not what humanity is, but what humanity ought to be" },
-      { year: "2019", question: "Best for an individual is not necessarily best for the society" },
-      { year: "2019", question: "Courage to accept and dedication to improve are two keys to success" },
-      { year: "2019", question: "Wisdom finds truth" },
-      { year: "2018", question: "A people that values its privileges above its principles loses both" },
-      { year: "2018", question: "Customary morality cannot be a guide to modem file" },
-      { year: "2018", question: "'The past' is a permanent dimension of human consciousness and values. ('" },
-      { year: "2018", question: "A good life is one inspired by love and guided by knowledge" },
-      { year: "2018", question: "Reality does not conform to the ideal, but confirms it" },
-      { year: "2017", question: "Joy is the simplest form of gratitude" },
-      { year: "2016", question: "Need brings greed, if greed increases it spoils breed" },
-      { year: "2015", question: "Character of an institution is reflected in its leader" },
-      { year: "2015", question: "Lending hands to someone is better than giving a dole" },
-      { year: "2015", question: "Quick but steady wins the race" },
-      { year: "2014", question: "With greater power comes greater responsibility" },
-      { year: "2014", question: "Words are sharper than the two-edged sword" },
-      { year: "2014", question: "Fifty Golds in Olympics: Can this be a reality for India?" },
-      { year: "2013", question: "Be the change you want to see in others (Gandhi)" },
-      { year: "2008", question: "Discipline means success, anarchy means ruin" },
-      { year: "2007", question: "Attitude makes, habit makes character and character makes a man" },
-      { year: "2003", question: "There is nothing either good or bad but thinking makes it so" },
-      { year: "2002", question: "Search for truth can only be a spiritual problem" },
-      { year: "2002", question: "The paths of glory lead but to the grave" },
-      { year: "2001", question: "The pursuit of excellence" },
-      { year: "1999", question: "Youth culture today" },
-      { year: "1996", question: "Truth is lived, not taught" },
-      { year: "1995", question: "Disinterested intellectual curiosity is the lifeblood of civilisation" },
-      { year: "1995", question: "When money speaks, the truth is silent" },
-      { year: "1994", question: "Youth is a blunder, manhood a struggle, old age a regret" },
-      { year: "1994", question: "Useless life is an early death" },
-      { year: "1993", question: "He would reigns within himself and folds his passions and desires and fears is more than a king" },
-      { year: "1993", question: "Compassion is the basic of all morality of the world" },
+    "name": "Philosophy & Ethics",
+    "questions": [
+      {
+        "year": "2023",
+        "question": "Mathematics is the music of reason",
+        "number": "1"
+      },
+      {
+        "year": "2023",
+        "question": "Visionary decision-making happens at the intersection of intuition and logic",
+        "number": "2"
+      },
+      {
+        "year": "2023",
+        "question": "Not all who wander are lost",
+        "number": "3"
+      },
+      {
+        "year": "2023",
+        "question": "Inspiration for creativity springs from the effort to look for the magical in the mundane",
+        "number": "4"
+      },
+      {
+        "year": "2023",
+        "question": "Girls are weighed down by restrictions, boys with demands - two equally harmful disciplines",
+        "number": "5"
+      },
+      {
+        "year": "2023",
+        "question": "Education is what remains after one has forgotten what one has learned in - school",
+        "number": "6"
+      },
+      {
+        "year": "2022",
+        "question": "A smile is the chosen vehicle for all ambiguities",
+        "number": "7"
+      },
+      {
+        "year": "2022",
+        "question": "Just because you have a choice, it does not mean that any of them has to be right",
+        "number": "8"
+      },
+      {
+        "year": "2022",
+        "question": "The time to repair the roof is when the sun is shining",
+        "number": "9"
+      },
+      {
+        "year": "2022",
+        "question": "You cannot step twice in the same river",
+        "number": "10"
+      },
+      {
+        "year": "2022",
+        "question": "A ship in harbour is safe, but that is not what ship is for",
+        "number": "11"
+      },
+      {
+        "year": "2021",
+        "question": "Philosophy of wantlessness is a Utopian, while materialism is a chimera",
+        "number": "12"
+      },
+      {
+        "year": "2021",
+        "question": "Your perception of me is a reflection of you; my reaction to you is an awareness of me",
+        "number": "13"
+      },
+      {
+        "year": "2021",
+        "question": "The real is rational and the rational is real",
+        "number": "14"
+      },
+      {
+        "year": "2020",
+        "question": "Simplicity is the ultimate sophistication",
+        "number": "15"
+      },
+      {
+        "year": "2020",
+        "question": "Ships don't sink because of water around them ships sink because of water that gets into them",
+        "number": "16"
+      },
+      {
+        "year": "2020",
+        "question": "Life is a long journey between being human and being humane",
+        "number": "17"
+      },
+      {
+        "year": "2020",
+        "question": "Mindful manifesto is the catalyst to a tranquil self",
+        "number": "18"
+      },
+      {
+        "year": "2019",
+        "question": "Values are not what humanity is, but what humanity ought to be",
+        "number": "19"
+      },
+      {
+        "year": "2019",
+        "question": "Best for an individual is not necessarily best for the society",
+        "number": "20"
+      },
+      {
+        "year": "2019",
+        "question": "Courage to accept and dedication to improve are two keys to success",
+        "number": "21"
+      },
+      {
+        "year": "2019",
+        "question": "Wisdom finds truth",
+        "number": "22"
+      },
+      {
+        "year": "2018",
+        "question": "A people that values its privileges above its principles loses both",
+        "number": "23"
+      },
+      {
+        "year": "2018",
+        "question": "Customary morality cannot be a guide to modem file",
+        "number": "24"
+      },
+      {
+        "year": "2018",
+        "question": "'The past' is a permanent dimension of human consciousness and values. ('",
+        "number": "25"
+      },
+      {
+        "year": "2018",
+        "question": "A good life is one inspired by love and guided by knowledge",
+        "number": "26"
+      },
+      {
+        "year": "2018",
+        "question": "Reality does not conform to the ideal, but confirms it",
+        "number": "27"
+      },
+      {
+        "year": "2017",
+        "question": "Joy is the simplest form of gratitude",
+        "number": "28"
+      },
+      {
+        "year": "2016",
+        "question": "Need brings greed, if greed increases it spoils breed",
+        "number": "29"
+      },
+      {
+        "year": "2015",
+        "question": "Character of an institution is reflected in its leader",
+        "number": "30"
+      },
+      {
+        "year": "2015",
+        "question": "Lending hands to someone is better than giving a dole",
+        "number": "31"
+      },
+      {
+        "year": "2015",
+        "question": "Quick but steady wins the race",
+        "number": "32"
+      },
+      {
+        "year": "2014",
+        "question": "With greater power comes greater responsibility",
+        "number": "33"
+      },
+      {
+        "year": "2014",
+        "question": "Words are sharper than the two-edged sword",
+        "number": "34"
+      },
+      {
+        "year": "2014",
+        "question": "Fifty Golds in Olympics: Can this be a reality for India?",
+        "number": "35"
+      },
+      {
+        "year": "2013",
+        "question": "Be the change you want to see in others (Gandhi)",
+        "number": "36"
+      },
+      {
+        "year": "2008",
+        "question": "Discipline means success, anarchy means ruin",
+        "number": "37"
+      },
+      {
+        "year": "2007",
+        "question": "Attitude makes, habit makes character and character makes a man",
+        "number": "38"
+      },
+      {
+        "year": "2003",
+        "question": "There is nothing either good or bad but thinking makes it so",
+        "number": "39"
+      },
+      {
+        "year": "2002",
+        "question": "Search for truth can only be a spiritual problem",
+        "number": "40"
+      },
+      {
+        "year": "2002",
+        "question": "The paths of glory lead but to the grave",
+        "number": "41"
+      },
+      {
+        "year": "2001",
+        "question": "The pursuit of excellence",
+        "number": "42"
+      },
+      {
+        "year": "1999",
+        "question": "Youth culture today",
+        "number": "43"
+      },
+      {
+        "year": "1996",
+        "question": "Truth is lived, not taught",
+        "number": "44"
+      },
+      {
+        "year": "1995",
+        "question": "Disinterested intellectual curiosity is the lifeblood of civilisation",
+        "number": "45"
+      },
+      {
+        "year": "1995",
+        "question": "When money speaks, the truth is silent",
+        "number": "46"
+      },
+      {
+        "year": "1994",
+        "question": "Youth is a blunder, manhood a struggle, old age a regret",
+        "number": "47"
+      },
+      {
+        "year": "1994",
+        "question": "Useless life is an early death",
+        "number": "48"
+      },
+      {
+        "year": "1993",
+        "question": "He would reigns within himself and folds his passions and desires and fears is more than a king",
+        "number": "49"
+      },
+      {
+        "year": "1993",
+        "question": "Compassion is the basic of all morality of the world",
+        "number": "50"
+      }
     ]
   },
   {
-    name: "Women Empowerment",
-    questions: [
-      { year: "2021", question: "Hand that rocks the cradle rules the world" },
-      { year: "2020", question: "Patriarchy is the least noticed yet the most significant structure of social inequality" },
-      { year: "2017", question: "Fulfilment of 'new woman' in India is a myth" },
-      { year: "2016", question: "If development is not engendered, it is endangered" },
-      { year: "2006", question: "Women's reservation bill would usher in empowerment for women in India" },
-      { year: "2005", question: "If women ruled the world" },
-      { year: "2005", question: "The hand that rocks the cradle" },
-      { year: "2004", question: "Whither women's emancipation?" },
-      { year: "2001", question: "Empowerment alone cannot help our women" },
-      { year: "1999", question: "Women empowerment: challenges and prospects" },
-      { year: "1998", question: "Woman is god's best creation" },
-      { year: "1997", question: "Greater political power alone will not improve women's plight" },
-      { year: "1995", question: "The new emerging women power: the ground realities" },
-      { year: "1993", question: "Men have failed: let women take over" },
+    "name": "Women Empowerment",
+    "questions": [
+      {
+        "year": "2021",
+        "question": "Hand that rocks the cradle rules the world",
+        "number": "1"
+      },
+      {
+        "year": "2020",
+        "question": "Patriarchy is the least noticed yet the most significant structure of social inequality",
+        "number": "2"
+      },
+      {
+        "year": "2017",
+        "question": "Fulfilment of 'new woman' in India is a myth",
+        "number": "3"
+      },
+      {
+        "year": "2016",
+        "question": "If development is not engendered, it is endangered",
+        "number": "4"
+      },
+      {
+        "year": "2006",
+        "question": "Women's reservation bill would usher in empowerment for women in India",
+        "number": "5"
+      },
+      {
+        "year": "2005",
+        "question": "If women ruled the world",
+        "number": "6"
+      },
+      {
+        "year": "2005",
+        "question": "The hand that rocks the cradle",
+        "number": "7"
+      },
+      {
+        "year": "2004",
+        "question": "Whither women's emancipation?",
+        "number": "8"
+      },
+      {
+        "year": "2001",
+        "question": "Empowerment alone cannot help our women",
+        "number": "9"
+      },
+      {
+        "year": "1999",
+        "question": "Women empowerment: challenges and prospects",
+        "number": "10"
+      },
+      {
+        "year": "1998",
+        "question": "Woman is god's best creation",
+        "number": "11"
+      },
+      {
+        "year": "1997",
+        "question": "Greater political power alone will not improve women's plight",
+        "number": "12"
+      },
+      {
+        "year": "1995",
+        "question": "The new emerging women power: the ground realities",
+        "number": "13"
+      },
+      {
+        "year": "1993",
+        "question": "Men have failed: let women take over",
+        "number": "14"
+      }
     ]
   },
   {
-    name: "International & Security",
-    questions: [
-      { year: "2021", question: "History repeats itself, first as tragedy, second as farce" },
-      { year: "2020", question: "Technology as the silent factor in international relations" },
-      { year: "2019", question: "South Asian societies are woven not around the state, but around their plural cultures and plural identities" },
-      { year: "2018", question: "Management of Indian border dispute is a complex task" },
-      { year: "2017", question: "Has the Non-Alignment Movement (NAM) lost its relevance in a multipolar world?" },
-      { year: "2010", question: "Preparedness of our society for India's global leadership role" },
-      { year: "2009", question: "'Globalization' vs. 'Nationalism'. ('" },
-      { year: "2009", question: "Are we a 'soft' state?" },
-      { year: "2009", question: "Good fences make good neighbours" },
-      { year: "2008", question: "National identity and patriotism" },
-      { year: "2007", question: "Is autonomy the best answer to combat balkanization?" },
-      { year: "2006", question: "Importance of Indo-US nuclear agreement" },
-      { year: "2005", question: "Terrorism and world peace" },
-      { year: "2004", question: "Globalizations and its impact on Indian culture" },
-      { year: "2004", question: "India's role in promoting ASEAN co-operation" },
-      { year: "2003", question: "The masks of new imperialism" },
-      { year: "2003", question: "As civilization advances culture declines" },
-      { year: "2001", question: "My vision of an ideal world order" },
-      { year: "2000", question: "The implications of globalization for India" },
-      { year: "1998", question: "India's contribution to world wisdom" },
-      { year: "1998", question: "The world of the twenty-first century" },
-      { year: "1997", question: "True religion cannot be misused" },
-      { year: "1996", question: "Restructuring of UNO reflect present realities" },
-      { year: "1994", question: "Modernisation and Westernisation are not identical concepts" },
-      { year: "1993", question: "The global order: Political and Economic" },
+    "name": "International & Security",
+    "questions": [
+      {
+        "year": "2021",
+        "question": "History repeats itself, first as tragedy, second as farce",
+        "number": "1"
+      },
+      {
+        "year": "2020",
+        "question": "Technology as the silent factor in international relations",
+        "number": "2"
+      },
+      {
+        "year": "2019",
+        "question": "South Asian societies are woven not around the state, but around their plural cultures and plural identities",
+        "number": "3"
+      },
+      {
+        "year": "2018",
+        "question": "Management of Indian border dispute is a complex task",
+        "number": "4"
+      },
+      {
+        "year": "2017",
+        "question": "Has the Non-Alignment Movement (NAM) lost its relevance in a multipolar world?",
+        "number": "5"
+      },
+      {
+        "year": "2010",
+        "question": "Preparedness of our society for India's global leadership role",
+        "number": "6"
+      },
+      {
+        "year": "2009",
+        "question": "'Globalization' vs. 'Nationalism'. ('",
+        "number": "7"
+      },
+      {
+        "year": "2009",
+        "question": "Are we a 'soft' state?",
+        "number": "8"
+      },
+      {
+        "year": "2009",
+        "question": "Good fences make good neighbours",
+        "number": "9"
+      },
+      {
+        "year": "2008",
+        "question": "National identity and patriotism",
+        "number": "10"
+      },
+      {
+        "year": "2007",
+        "question": "Is autonomy the best answer to combat balkanization?",
+        "number": "11"
+      },
+      {
+        "year": "2006",
+        "question": "Importance of Indo-US nuclear agreement",
+        "number": "12"
+      },
+      {
+        "year": "2005",
+        "question": "Terrorism and world peace",
+        "number": "13"
+      },
+      {
+        "year": "2004",
+        "question": "Globalizations and its impact on Indian culture",
+        "number": "14"
+      },
+      {
+        "year": "2004",
+        "question": "India's role in promoting ASEAN co-operation",
+        "number": "15"
+      },
+      {
+        "year": "2003",
+        "question": "The masks of new imperialism",
+        "number": "16"
+      },
+      {
+        "year": "2003",
+        "question": "As civilization advances culture declines",
+        "number": "17"
+      },
+      {
+        "year": "2001",
+        "question": "My vision of an ideal world order",
+        "number": "18"
+      },
+      {
+        "year": "2000",
+        "question": "The implications of globalization for India",
+        "number": "19"
+      },
+      {
+        "year": "1998",
+        "question": "India's contribution to world wisdom",
+        "number": "20"
+      },
+      {
+        "year": "1998",
+        "question": "The world of the twenty-first century",
+        "number": "21"
+      },
+      {
+        "year": "1997",
+        "question": "True religion cannot be misused",
+        "number": "22"
+      },
+      {
+        "year": "1996",
+        "question": "Restructuring of UNO reflect present realities",
+        "number": "23"
+      },
+      {
+        "year": "1994",
+        "question": "Modernisation and Westernisation are not identical concepts",
+        "number": "24"
+      },
+      {
+        "year": "1993",
+        "question": "The global order: Political and Economic",
+        "number": "25"
+      }
     ]
   },
   {
-    name: "Science & Technology",
-    questions: [
-      { year: "2021", question: "What is research, but a blind date with knowledge?" },
-      { year: "2021", question: "The process of self-discovery has now been technologically outsourced" },
-      { year: "2020", question: "Technology as the silent factor in international relations" },
-      { year: "2019", question: "Rise of Artificial Intelligence: the threat of jobless future or better job opportunities through reskilling and upskilling" },
-      { year: "2017", question: "'Social media' is inherently a selfish medium. ('" },
-      { year: "2016", question: "Cyberspace and Internet : Blessing or curse to the human civilization in the long run" },
-      { year: "2015", question: "Technology cannot replace manpower" },
-      { year: "2013", question: "Science and technology is the panacea for the growth and security of the nation" },
-      { year: "2012", question: "Science and Mysticism : Are they compatible?" },
-      { year: "2006", question: "Increasing computerization would lead to the creation of a dehumanized society" },
-      { year: "2003", question: "Spirituality and scientific temper" },
-      { year: "2002", question: "Modern technological education and human values" },
-      { year: "2001", question: "The march of science and the erosion of human values" },
-      { year: "2000", question: "The cyberworld: its charms and challenges" },
-      { year: "1999", question: "Value-based science and education" },
-      { year: "1997", question: "The modern doctor and his patients" },
-      { year: "1993", question: "Computer: the harbinger of silent revolution" },
+    "name": "Science & Technology",
+    "questions": [
+      {
+        "year": "2021",
+        "question": "What is research, but a blind date with knowledge?",
+        "number": "1"
+      },
+      {
+        "year": "2021",
+        "question": "The process of self-discovery has now been technologically outsourced",
+        "number": "2"
+      },
+      {
+        "year": "2020",
+        "question": "Technology as the silent factor in international relations",
+        "number": "3"
+      },
+      {
+        "year": "2019",
+        "question": "Rise of Artificial Intelligence: the threat of jobless future or better job opportunities through reskilling and upskilling",
+        "number": "4"
+      },
+      {
+        "year": "2017",
+        "question": "'Social media' is inherently a selfish medium. ('",
+        "number": "5"
+      },
+      {
+        "year": "2016",
+        "question": "Cyberspace and Internet : Blessing or curse to the human civilization in the long run",
+        "number": "6"
+      },
+      {
+        "year": "2015",
+        "question": "Technology cannot replace manpower",
+        "number": "7"
+      },
+      {
+        "year": "2013",
+        "question": "Science and technology is the panacea for the growth and security of the nation",
+        "number": "8"
+      },
+      {
+        "year": "2012",
+        "question": "Science and Mysticism : Are they compatible?",
+        "number": "9"
+      },
+      {
+        "year": "2006",
+        "question": "Increasing computerization would lead to the creation of a dehumanized society",
+        "number": "10"
+      },
+      {
+        "year": "2003",
+        "question": "Spirituality and scientific temper",
+        "number": "11"
+      },
+      {
+        "year": "2002",
+        "question": "Modern technological education and human values",
+        "number": "12"
+      },
+      {
+        "year": "2001",
+        "question": "The march of science and the erosion of human values",
+        "number": "13"
+      },
+      {
+        "year": "2000",
+        "question": "The cyberworld: its charms and challenges",
+        "number": "14"
+      },
+      {
+        "year": "1999",
+        "question": "Value-based science and education",
+        "number": "15"
+      },
+      {
+        "year": "1997",
+        "question": "The modern doctor and his patients",
+        "number": "16"
+      },
+      {
+        "year": "1993",
+        "question": "Computer: the harbinger of silent revolution",
+        "number": "17"
+      }
     ]
-  },
+  }
 ];
