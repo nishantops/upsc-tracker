@@ -21,9 +21,38 @@
         .pie-chart-frame { width: 48px; height: 48px; border-radius: 50%; transition: all 0.5s ease-out; border: 2px solid rgba(255,255,255,0.8); }
         .hidden { display: none !important; }
         .locked-note { opacity: 0.6; pointer-events: none; background-color: #f1f5f9 !important; }
+        #auth-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%); }
+        #auth-screen .auth-card { background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border-radius: 2rem; padding: 3rem; width: 100%; max-width: 400px; box-shadow: 0 25px 60px -12px rgba(0,0,0,0.4); }
+        #auth-screen input { width: 100%; padding: 0.75rem 1rem; border: 1px solid #e2e8f0; border-radius: 0.75rem; font-size: 0.875rem; margin-top: 0.5rem; outline: none; transition: border-color 0.2s; }
+        #auth-screen input:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+        #auth-error { color: #e11d48; font-size: 0.75rem; margin-top: 0.75rem; font-weight: 600; display: none; }
     </style>
 </head>
 <body class="text-slate-800 antialiased min-h-screen flex flex-col custom-scrollbar">
+
+    <!-- AUTH LOGIN SCREEN -->
+    <div id="auth-screen">
+        <div class="auth-card">
+            <div class="text-center mb-8">
+                <div class="h-16 w-16 mx-auto rounded-2xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center font-black text-white text-2xl tracking-tighter shadow-xl mb-4">NK</div>
+                <h2 style="font-family:'Cabinet Grotesk',sans-serif; font-size:1.5rem; font-weight:900; color:#1e293b;">UPSC Command Center</h2>
+                <p style="font-size:0.75rem; color:#64748b; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; margin-top:0.25rem;">Authenticate to Access</p>
+            </div>
+            <div>
+                <label style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:#475569;">Email</label>
+                <input type="email" id="auth-email" placeholder="your@email.com" autocomplete="email">
+            </div>
+            <div style="margin-top:1rem;">
+                <label style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:#475569;">Password</label>
+                <input type="password" id="auth-password" placeholder="••••••••" autocomplete="current-password">
+            </div>
+            <div id="auth-error"></div>
+            <button id="auth-login-btn" onclick="handleLogin()" style="margin-top:1.5rem; width:100%; padding:0.875rem; background:linear-gradient(135deg,#4f46e5,#7c3aed); color:white; border:none; border-radius:0.75rem; font-size:0.875rem; font-weight:800; cursor:pointer; text-transform:uppercase; letter-spacing:0.05em; box-shadow:0 4px 15px -3px rgba(79,70,229,0.4); transition: opacity 0.2s;">Sign In</button>
+        </div>
+    </div>
+
+    <!-- MAIN APP (hidden until authenticated) -->
+    <div id="app-container" class="hidden">
 
     <header class="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-slate-200/80 px-4 lg:px-8 py-4 shadow-xs">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
@@ -45,6 +74,7 @@
                     <span class="px-2.5 py-1 text-slate-500">System Time:</span>
                     <span id="live-date-hud" class="px-2.5 py-1 bg-white rounded-lg text-slate-900 shadow-xs">---</span>
                 </div>
+                <button onclick="handleLogout()" class="cursor-pointer bg-rose-50 hover:bg-rose-100 text-rose-600 text-[10px] font-bold px-3 py-1.5 rounded-lg transition-all border border-rose-200" title="Sign Out">⏻ LOGOUT</button>
             </div>
         </div>
     </header>
@@ -467,15 +497,61 @@
 
         let dbClient = null;
 
-        document.addEventListener('DOMContentLoaded', () => {
-            if (SUPABASE_ANON_KEY.includes("YOUR_KEY_HERE") || SUPABASE_ANON_KEY.startsWith("eyJhbGci")) {
-                document.getElementById("sync-status-text").innerText = "CRITICAL: MISSING API KEY";
-                document.getElementById("sync-status-indicator").className = "inline-block w-2.5 h-2.5 rounded-full bg-rose-500";
+        // ===== AUTH FUNCTIONS =====
+        async function handleLogin() {
+            const email = document.getElementById('auth-email').value.trim();
+            const password = document.getElementById('auth-password').value;
+            const errEl = document.getElementById('auth-error');
+            const btn = document.getElementById('auth-login-btn');
+            
+            if (!email || !password) { errEl.style.display = 'block'; errEl.textContent = 'Email and password required.'; return; }
+            
+            btn.style.opacity = '0.5'; btn.textContent = 'AUTHENTICATING...';
+            errEl.style.display = 'none';
+            
+            try {
+                if (!window.supabase) { throw new Error('Supabase script blocked'); }
+                dbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                const { data, error } = await dbClient.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+                showApp();
+            } catch(e) {
+                btn.style.opacity = '1'; btn.textContent = 'SIGN IN';
+                errEl.style.display = 'block'; 
+                errEl.textContent = e.message || 'Authentication failed.';
+                dbClient = null;
+            }
+        }
+
+        async function handleLogout() {
+            if (dbClient) { await dbClient.auth.signOut(); }
+            dbClient = null;
+            document.getElementById('app-container').classList.add('hidden');
+            document.getElementById('auth-screen').style.display = 'flex';
+            document.getElementById('auth-password').value = '';
+        }
+
+        function showApp() {
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('app-container').classList.remove('hidden');
+            document.getElementById("sync-status-text").innerText = "CONNECTING CLOUD...";
+            syncLatestCloudState();
+        }
+
+        // Allow Enter key to submit login
+        document.getElementById('auth-password').addEventListener('keydown', (e) => { if (e.key === 'Enter') handleLogin(); });
+        document.getElementById('auth-email').addEventListener('keydown', (e) => { if (e.key === 'Enter') document.getElementById('auth-password').focus(); });
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!window.supabase) {
+                document.getElementById('auth-error').style.display = 'block';
+                document.getElementById('auth-error').textContent = 'Supabase script blocked. Check network.';
                 return;
             }
-            document.getElementById("sync-status-text").innerText = "CONNECTING CLOUD...";
-            if (window.supabase) { dbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); syncLatestCloudState(); } 
-            else { document.getElementById("sync-status-text").innerText = "OFFLINE: SCRIPT BLOCKED"; document.getElementById("sync-status-indicator").className = "inline-block w-2.5 h-2.5 rounded-full bg-rose-500"; }
+            dbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            // Check for existing session
+            const { data: { session } } = await dbClient.auth.getSession();
+            if (session) { showApp(); }
         });
 
         function toggleNoteLock(id, isChecked) {
@@ -558,7 +634,7 @@
 
             if(!dbClient) return;
             try {
-                const pushPromise = dbClient.from('nishant_upsc_tracker').upsert({ id: elementId, is_checked: isChecked, topic_note: noteText, updated_at: new DatetoISOString() });
+                const pushPromise = dbClient.from('nishant_upsc_tracker').upsert({ id: elementId, is_checked: isChecked, topic_note: noteText, updated_at: new Date().toISOString() });
                 const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 3000));
                 await Promise.race([pushPromise, timeoutPromise]);
                 document.getElementById("sync-status-text").innerText = "CLOUD SYNCED ACROSS DEVICES";
@@ -1211,5 +1287,6 @@
             if (countEl) countEl.textContent = totalFiltered + (year || search ? ' (filtered)' : '');
         }
     </script>
+    </div><!-- END app-container -->
 </body>
 </html>
