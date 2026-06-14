@@ -6,7 +6,7 @@
 
 const ENV = Object.freeze({
     // App Version (increment to bust cache for all users)
-    APP_VERSION: "2.1.0",
+    APP_VERSION: "2.2.0",
 
     // Supabase
     SUPABASE_URL: "https://wdbwnutkomemrciybezz.supabase.co",
