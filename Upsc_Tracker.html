@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nishant Kumar • UPSC CSE Command Center 2027</title>
-    <!-- Tailwind CSS Script Frame -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cabinet+Grotesk:wght@700;800;900&display=swap');
         
@@ -38,14 +38,10 @@
             background: #cbd5e1;
             border-radius: 99px;
         }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
     </style>
 </head>
 <body class="text-slate-800 antialiased min-h-screen flex flex-col custom-scrollbar">
 
-    <!-- MASTER GLOBAL NAVIGATION AND ACTION ACCESS CONSOLE -->
     <header class="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-slate-200/80 px-4 lg:px-8 py-4 shadow-xs">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center space-x-4 w-full md:w-auto">
@@ -55,37 +51,31 @@
                         Nishant Kumar <span class="text-xs bg-indigo-100 text-indigo-700 font-bold px-2.5 py-1 rounded-full uppercase font-mono">Mission 2027</span>
                     </h1>
                     <p class="text-xs text-slate-500 font-semibold uppercase tracking-widest flex items-center gap-1.5">
-                        <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> 
-                        <span>RAW MATRIX PIPELINE EXECUTION</span>
+                        <span id="sync-status-indicator" class="inline-block w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span> 
+                        <span id="sync-status-text">CONNECTING CLOUD REGIME...</span>
                     </p>
                 </div>
             </div>
             
             <div class="flex flex-wrap items-center justify-between md:justify-end gap-3 w-full md:w-auto font-mono text-xs font-bold">
-                <button onclick="displayTokenExchangeModal()" class="cursor-pointer bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2.5 rounded-xl transition-all shadow-md shadow-indigo-600/10">
-                    🔄 Sync / Share Token
-                </button>
                 <div class="bg-slate-100 rounded-xl p-1 flex border border-slate-200">
                     <span class="px-2.5 py-1 text-slate-500">System Time:</span>
                     <span id="live-date-hud" class="px-2.5 py-1 bg-white rounded-lg text-slate-900 shadow-xs">---</span>
                 </div>
-                <button onclick="wipeCompleteLocalProgress()" class="cursor-pointer text-slate-400 hover:text-rose-600 border border-slate-200 hover:border-rose-200 px-3 py-2.5 rounded-xl transition-all">
-                    Reset Track
+                <button onclick="clearAndResetSystem()" class="cursor-pointer text-xs font-bold bg-white hover:bg-rose-50 text-slate-600 hover:text-rose-600 border border-slate-200 hover:border-rose-200 px-4 py-2.5 rounded-xl transition-all">
+                    Reset Cloud States
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- LIVE SUB-DATA DASHBOARD MATRIX CONTAINER -->
     <main class="max-w-7xl mx-auto px-4 lg:px-8 py-8 flex-1 w-full space-y-8">
-        
-        <!-- DASHBOARD ANALYTICS AND HOURLY COUNTDOWNS -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="neo-card rounded-3xl p-6 border-l-4 border-indigo-600 flex flex-col justify-between relative overflow-hidden">
                 <div>
                     <div class="flex justify-between items-center mb-1">
-                        <h3 class="text-xs font-bold tracking-widest text-slate-400 uppercase font-mono">Macro Absorption Index</h3>
-                        <span id="global-perc-badge" class="bg-indigo-50 text-indigo-700 text-[10px] font-black px-2.5 py-0.5 rounded-md font-mono">0% READY</span>
+                        <h3 class="text-xs font-bold tracking-widest text-slate-400 uppercase font-mono">Global Syllabus Absorption</h3>
+                        <span id="global-perc-badge" class="bg-indigo-50 text-indigo-700 text-[10px] font-black px-2.5 py-0.5 rounded-md font-mono">0% SYNCED</span>
                     </div>
                     <div class="heading-font text-5xl font-black text-slate-900 tracking-tight my-1" id="global-perc-text">0.0%</div>
                 </div>
@@ -94,393 +84,80 @@
                         <div id="global-progress-bar" class="bg-indigo-600 h-full w-0 transition-all duration-500 shadow-[0_0_12px_rgba(79,70,229,0.3)]"></div>
                     </div>
                     <div class="text-[11px] text-slate-500 flex justify-between items-center font-mono">
-                        <span>COMPLETED UNITS: <strong id="global-count-checked" class="text-slate-900 font-bold">0</strong> / <span id="global-count-total">0</span></span>
-                        <span id="tracker-status-text" class="text-indigo-600 font-bold uppercase tracking-wider">STANDBY ENGINE</span>
+                        <span>SYNCED UNITS: <strong id="global-count-checked" class="text-slate-900 font-bold">0</strong> / <span id="global-count-total">0</span></span>
+                        <span id="tracker-status-text" class="text-indigo-600 font-bold uppercase tracking-wider">LOADING DATA...</span>
                     </div>
                 </div>
             </div>
 
-            <!-- LIVE AUTOMATED TICKER: PRELIMS -->
             <div class="neo-card rounded-3xl p-6 flex flex-col justify-between border-l-4 border-amber-500">
                 <div>
                     <span class="text-[10px] uppercase font-bold text-slate-400 tracking-widest font-mono block mb-1">Live Cross-Device Delta</span>
                     <div class="heading-font text-xl font-black text-slate-900">UPSC CSE Prelims 2027</div>
-                    <p class="text-xs text-slate-500 mt-0.5">Target Horizon: May 23, 2027 (Sunday)</p>
+                    <p class="text-xs text-slate-500 mt-0.5">Target Horizon: May 23, 2027</p>
                 </div>
                 <div class="mt-6 pt-3 border-t border-slate-100 flex items-baseline justify-between">
                     <div class="text-4xl font-mono font-black text-amber-600 tracking-tight" id="prelims-countdown-live">--- Days</div>
-                    <span class="text-[10px] text-slate-400 font-mono uppercase font-bold">Dynamic Ticker</span>
                 </div>
             </div>
 
-            <!-- LIVE AUTOMATED TICKER: MAINS -->
             <div class="neo-card rounded-3xl p-6 flex flex-col justify-between border-l-4 border-rose-500">
                 <div>
                     <span class="text-[10px] uppercase font-bold text-slate-400 tracking-widest font-mono block mb-1">Live Cross-Device Delta</span>
                     <div class="heading-font text-xl font-black text-slate-900">UPSC CSE Mains Phase 2027</div>
-                    <p class="text-xs text-slate-500 mt-0.5">Estimated Inception: August 20, 2027 (Friday)</p>
+                    <p class="text-xs text-slate-500 mt-0.5">Estimated Inception: August 20, 2027</p>
                 </div>
                 <div class="mt-6 pt-3 border-t border-slate-100 flex items-baseline justify-between">
                     <div class="text-4xl font-mono font-black text-rose-600 tracking-tight" id="mains-countdown-live">--- Days</div>
-                    <span class="text-[10px] text-slate-400 font-mono uppercase font-bold">Exact Tracker</span>
                 </div>
             </div>
         </div>
 
-        <!-- STAGE DECK SELECTOR TABS -->
         <div class="neo-card rounded-2xl p-2 flex flex-row gap-1 overflow-x-auto whitespace-nowrap scrollbar-none shadow-sm">
-            <button onclick="activateTab('deck-prelims')" id="btn-deck-prelims" class="cursor-pointer flex-1 text-center py-3.5 px-6 rounded-xl font-black text-xs uppercase tracking-wider transition-all bg-indigo-600 text-white shadow-md shadow-indigo-600/10 heading-font">Stage I: Prelims Blueprint</button>
+            <button onclick="activateTab('deck-prelims')" id="btn-deck-prelims" class="cursor-pointer flex-1 text-center py-3.5 px-6 rounded-xl font-black text-xs uppercase tracking-wider transition-all bg-indigo-600 text-white heading-font">Stage I: Prelims Blueprint</button>
             <button onclick="activateTab('deck-mains')" id="btn-deck-mains" class="cursor-pointer flex-1 text-center py-3.5 px-6 rounded-xl font-black text-xs uppercase tracking-wider transition-all text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 heading-font">Stage II: Core Mains &amp; Languages</button>
             <button onclick="activateTab('deck-anthro')" id="btn-deck-anthro" class="cursor-pointer flex-1 text-center py-3.5 px-6 rounded-xl font-black text-xs uppercase tracking-wider transition-all text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 heading-font">Stage III: Anthropology Optional</button>
         </div>
 
-        <!-- MATRIX SECTIONS FRAMEWORKS -->
         <div class="space-y-6">
             <div id="deck-prelims" class="tab-pane-view block space-y-8">
-                <div class="neo-card rounded-3xl p-6">
-                    <h2 class="heading-font text-2xl font-black text-slate-900 border-b border-slate-100 pb-3 flex justify-between items-center">
-                        <span>General Studies (Paper I) Matrix</span>
-                        <span class="text-xs font-mono font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-md">200 Marks</span>
-                    </h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-6" id="box-prelims-gs"></div>
-                </div>
-                <div class="neo-card rounded-3xl p-6">
-                    <h2 class="heading-font text-2xl font-black text-slate-900 border-b border-slate-100 pb-3 flex justify-between items-center">
-                        <span>Civil Services Aptitude Test (CSAT - Paper II)</span>
-                        <span class="text-xs font-mono font-bold text-rose-600 bg-rose-50 px-3 py-1 rounded-md">33% Threshold Mandate</span>
-                    </h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-6" id="box-prelims-csat"></div>
-                </div>
+                <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">General Studies (Paper I) Matrix</h2><div class="space-y-3" id="box-prelims-gs"></div></div>
+                <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Civil Services Aptitude Test (CSAT - Paper II)</h2><div class="space-y-3" id="box-prelims-csat"></div></div>
             </div>
 
             <div id="deck-mains" class="tab-pane-view hidden space-y-8">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="neo-card rounded-3xl p-6 border-t-4 border-amber-500">
-                        <h3 class="heading-font text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex justify-between items-center">
-                            <span>Paper A: Compulsory Indian Language</span>
-                            <span class="text-xs font-mono text-slate-400">300 MKS</span>
-                        </h3>
-                        <div class="space-y-2 mt-4" id="box-mains-lang-a"></div>
-                    </div>
-                    <div class="neo-card rounded-3xl p-6 border-t-4 border-amber-500">
-                        <h3 class="heading-font text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex justify-between items-center">
-                            <span>Paper B: Compulsory English Language</span>
-                            <span class="text-xs font-mono text-slate-400">300 MKS</span>
-                        </h3>
-                        <div class="space-y-2 mt-4" id="box-mains-lang-b"></div>
-                    </div>
-                </div>
-                <div class="neo-card rounded-3xl p-6 border-l-4 border-purple-600">
-                    <h2 class="heading-font text-xl font-black text-slate-900 border-b border-slate-100 pb-3">Paper I: Essay Compilation Framework (250 Marks)</h2>
-                    <div class="grid grid-cols-1 gap-3 mt-4" id="box-mains-essay"></div>
-                </div>
-                <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black text-slate-900 border-b border-slate-100 pb-3">Paper II: General Studies I (GS-1 Blueprint)</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-6" id="box-mains-gs1"></div></div>
-                <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black text-slate-900 border-b border-slate-100 pb-3">Paper III: General Studies II (GS-2 Blueprint)</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-6" id="box-mains-gs2"></div></div>
-                <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black text-slate-900 border-b border-slate-100 pb-3">Paper IV: General Studies III (GS-3 Blueprint)</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-6" id="box-mains-gs3"></div></div>
-                <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black text-slate-900 border-b border-slate-100 pb-3">Paper V: General Studies IV (GS-4 Ethics)</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-6" id="box-mains-gs4"></div></div>
+                <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Paper A: Compulsory Indian Language</h2><div class="space-y-3" id="box-mains-lang-a"></div></div>
+                <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Paper B: Compulsory English Language</h2><div class="space-y-3" id="box-mains-lang-b"></div></div>
+                <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Paper I: Essay Framework</h2><div class="space-y-3" id="box-mains-essay"></div></div>
+                <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Paper II: General Studies I (GS-1 Blueprint)</h2><div class="space-y-3" id="box-mains-gs1"></div></div>
+                <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Paper III: General Studies II (GS-2 Blueprint)</h2><div class="space-y-3" id="box-mains-gs2"></div></div>
+                <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Paper IV: General Studies III (GS-3 Blueprint)</h2><div class="space-y-3" id="box-mains-gs3"></div></div>
+                <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Paper V: General Studies IV (GS-4 Ethics)</h2><div class="space-y-3" id="box-mains-gs4"></div></div>
             </div>
 
             <div id="deck-anthro" class="tab-pane-view hidden space-y-8">
-                <div class="neo-card rounded-3xl p-6 border-l-4 border-indigo-600"><h2 class="heading-font text-xl font-black text-slate-900 border-b border-slate-100 pb-3">Paper VI: Anthropology Optional - Paper I</h2><div class="grid grid-cols-1 gap-3 mt-6" id="box-anthro-p1"></div></div>
-                <div class="neo-card rounded-3xl p-6 border-l-4 border-indigo-600"><h2 class="heading-font text-xl font-black text-slate-900 border-b border-slate-100 pb-3">Paper VII: Anthropology Optional - Paper II</h2><div class="grid grid-cols-1 gap-3 mt-6" id="box-anthro-p2"></div></div>
+                <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Paper VI: Anthropology Optional (Paper I)</h2><div class="space-y-3" id="box-anthro-p1"></div></div>
+                <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Paper VII: Anthropology Optional (Paper II)</h2><div class="space-y-3" id="box-anthro-p2"></div></div>
             </div>
         </div>
     </main>
 
-    <!-- TOKEN EXCHANGE DIALOG COMPONENT PANEL -->
-    <div id="token-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-lg rounded-3xl p-6 shadow-2xl border border-slate-200">
-            <h3 class="text-xl font-black text-slate-900 heading-font mb-2">🔄 Cross-Device Data Sync Portal</h3>
-            <p class="text-xs text-slate-500 mb-4 leading-relaxed">Copy your master data token string out to keep your PC, iPhone, and Android device updated instantaneously without databases.</p>
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 font-mono">Your Current Export Token</label>
-                    <input type="text" id="export-token-box" readonly onclick="this.select()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-mono font-bold text-indigo-600 text-center cursor-pointer" title="Click to select all">
-                </div>
-                <div class="border-t border-slate-100 pt-3">
-                    <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 font-mono">Import Foreign Device Token</label>
-                    <input type="text" id="import-token-box" placeholder="Paste data token text line directly here..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-mono placeholder-slate-400 focus:outline-none focus:border-indigo-500">
-                </div>
-            </div>
-            <div class="mt-6 flex justify-end gap-2 text-xs font-bold font-mono">
-                <button onclick="closeTokenModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-3 rounded-xl cursor-pointer">Close</button>
-                <button onclick="executeImportTokenData()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-3 rounded-xl shadow-md cursor-pointer">Inject Progress Token</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MAIN INTERACTIVE TRACKING SCRIPT EXECUTION ENGINE -->
     <script>
-        const corePrelimsGS = ["Current events of national and international importance.","History of India: Ancient, medieval structural socio-economic histories.","Indian National Movement: Freedom struggle phases.","Physical Geography of India and global domains.","Social and Economic Geography of the World.","Indian Polity: Constitution, systems, design.","Panchayati Raj, public policy, rights issues.","Economic Development: Planning, sustainable frameworks.","Social Sector Initiatives: Poverty, inclusion markers.","General Issues on Environmental Ecology & Bio-diversity.","Climate Change vectors, global commitments tracker.","General Science: Foundational physics, chemistry, biology."];
-        const corePrelimsCSAT = ["Comprehension structural text analysis.","Interpersonal modules with focus on communication.","Logical reasoning and high analytical testing.","Decision-making mechanics & strategic problem solving.","General mental ability matrix validations.","Basic Numeracy: Numbers & scales of magnitude (Class X floor).","Data Interpretation: Charts, graphs, tables sufficiency (Class X floor)."];
-        const coreLangA = ["Comprehension of designated Indian text reading passages.","Precis Writing structural summarizations.","Usage and Vocabulary expression validation.","Short Essay composition writing frameworks.","Translation rules: English to Indian language & reverse."];
-        const coreLangB = ["Comprehension of standard English text passages.","Precis Writing analytical structural distillation metrics.","Usage and Vocabulary contextual word evaluations.","Short Essays layout drafting on multi-thematic areas."];
-        const coreEssay = ["Section A Philosophical Themes: Abstract epistemologies, moral ideologies.","Section B Socio-Political Themes: Economic models, governance systems, global diplomacy layouts."];
+        const SUPABASE_URL = "https://wdbwnutkomemrciybezz.supabase.co"; 
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndkYndudXRrb21lbXJjaXliZXp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIzMTU4NTgsImV4cCI6MjA1NzkwMzg1OH0.8y6xYpM3PbyL2-zS3g7yT6fT8uS_w8H9H6M_9w6E5mI";
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Core Text Datasets matching flat rows exactly
+        const dataP1 = ["Current events of national and international importance.","History of India: Ancient, medieval structural socio-economic histories.","Indian National Movement: Freedom struggle phases.","Physical Geography of India and global domains.","Social and Economic Geography of the World.","Indian Polity: Constitution, systems, design.","Panchayati Raj, public policy, rights issues.","Economic Development: Planning, sustainable frameworks.","Social Sector Initiatives: Poverty, inclusion markers.","General Issues on Environmental Ecology & Bio-diversity.","Climate Change vectors, global commitments tracker.","General Science: Foundational physics, chemistry, biology."];
+        const dataP2 = ["Comprehension structural text analysis.","Interpersonal modules with focus on communication.","Logical reasoning and high analytical testing.","Decision-making mechanics & strategic problem solving.","General mental ability matrix validations.","Basic Numeracy: Numbers & scales of magnitude (Class X floor).","Data Interpretation: Charts, graphs, tables sufficiency (Class X floor)."];
+        const dataLA = ["Comprehension of designated Indian text reading passages.","Precis Writing structural summarizations.","Usage and Vocabulary expression validation.","Short Essay composition writing frameworks.","Translation rules: English to Indian language & reverse."];
+        const dataLB = ["Comprehension of standard English text passages.","Precis Writing analytical structural distillation metrics.","Usage and Vocabulary contextual word evaluations.","Short Essays layout drafting on multi-thematic areas."];
+        const dataES = ["Section A Philosophical Themes: Abstract epistemologies, moral ideologies.","Section B Socio-Political Themes: Economic models, governance systems, global diplomacy layouts."];
         
-        const coreMainsGS1 = [
-            "Art forms features from ancient to contemporary epochs.",
-            "Evolution history of Indian literature, classical works.",
-            "Architectural evolution patterns: Rock-cut monuments, temples.",
-            "Modern Indian History events from mid-18th century.",
-            "The Freedom Struggle stages, foundational leadership inputs.",
-            "Post-independence consolidation baseline, princely state mergers.",
-            "World History: Industrial Revolutions, World Wars, tracking colonization flows.",
-            "Political Philosophies structures: Capitalism, Socialism, Communism.",
-            "Salient features of Indian society, diversity configurations.",
-            "Women's role tracking, legal organizations, operational barriers.",
-            "Demographics, resource stresses, poverty markers, urban challenges.",
-            "Cultural globalization impacts on localized community structures.",
-            "Socio-political fissures: Secularism issues, communalism vectors.",
-            "Salient core features of global structural physical geography.",
-            "Global natural resource spatial mapping (sub-continent focus).",
-            "Location choice dynamics for primary, secondary, tertiary industries.",
-            "Geophysical disasters mapping: Earthquakes, Tsunamis, Cyclones.",
-            "Critical eco-zone changes, polar ice sheets melting indices."
-        ];
+        const dataGS1 = ["Art forms features from ancient to contemporary epochs.","Evolution history of Indian literature, classical works.","Architectural evolution patterns: Rock-cut monuments, temples.","Modern Indian History events from mid-18th century.","The Freedom Struggle stages, foundational leadership inputs.","Post-independence consolidation baseline, princely state mergers.","World History: Industrial Revolutions, World Wars, tracking colonization flows.","Political Philosophies structures: Capitalism, Socialism, Communism.","Salient features of Indian society, diversity configurations.","Women's role tracking, legal organizations, operational barriers.","Demographics, resource stresses, poverty markers, urban challenges.","Cultural globalization impacts on localized community structures.","Socio-political fissures: Secularism issues, communalism vectors.","Salient core features of global structural physical geography.","Global natural resource spatial mapping (sub-continent focus).","Location choice dynamics for primary, secondary, tertiary industries.","Geophysical disasters mapping: Earthquakes, Tsunamis, Cyclones.","Critical eco-zone changes, polar ice sheets melting indices."];
+        const dataGS2 = ["Indian Constitution framework, features, Basic Structure doctrine.","Federal Infrastructure: Devolution funds, local Panchayat bottlenecks.","Separation of Powers: Executive-Judiciary boundary frictions.","Comparative Government Schemas: Direct matching with global frameworks.","Legislative houses internal rules, privileges, operational bottlenecks.","Executive & Judiciary Organs: Structure, statutory Ministries, pressure groups tracking.","Electoral Machinery: Representation of the People’s Act code.","Independent Bodies: Appointments metrics, statutory responsibilities.","Governance architectures: Public accountability matrices, auditing.","E-Governance frameworks: Delivery interfaces, data optimizations.","Citizens' charters enforcement, public service guarantees.","Civil Services role inside a functional constitutional democracy.","Welfare targeting frameworks: Schema evaluations, resource optimization.","Development Sector footprint: NGO, SHG performance criteria.","Marginalized protections: Constitutional safety lines for SC, ST, OBC.","Social Infrastructure parameters: Management metrics of Health data.","Global Hunger Indexes parameters, multi-dimensional poverty mapping.","India and neighbor networks: Strategic interactions, boundary agreements.","Global and Regional Groupings: G20, BRICS, SCO, Quad matrices.","Policies of developed nations impacting trade flows, diaspora nodes.","Multilateral Intergovernmental Agencies: UN Security Council tracking."];
+        const dataGS3 = ["Indian Economy planning tracks, employment metrics, capital profiles.","Inclusive Growth indicators, micro-financial structural layouts.","Fiscal Architectures: FRBM targets tracking, GST layout mechanisms.","Industrial adjustments: Deregulatory impacts, processing codes.","Logistics infrastructure layout: National Grids, shipping corridors.","Investment vehicles: PPP build variations, Hybrid annuity layouts.","State cropping indices, micro-irrigation layout systems.","Supply chain tracking: APMC updates, direct farm e-markets.","Subsidy economics: MSP fiscal impacts, fertilizer leakage tracking.","Public Distribution System (PDS): Inventory, leakage patches.","Animal husbandry economics, live-stock processing frameworks.","Food Processing Value Chains: Upstream collection, downstream retail.","Land Reform implementations: Historical state footprints, digitized codes.","Frontier technology tracks: Quantum computing, AI governance codes.","Indigenization of critical tech: Space launch systems, payload models.","Intellectual Property Rights: Patent compliance codes, TRIPS lines.","Conservation indices: Carbon sinks, pollution remediation benchmarks.","Environmental Impact Assessment (EIA): Regulatory framework checks.","Disaster Management matrices: Sendai framework compliance matching.","Development deficits correlation map vs. spread of extreme radicalism.","Hostile border management: Countering asymmetric warfare proxies.","Cyber Warfare structures: Critical info grids defense, encryption rules.","Money-laundering vectors: FIU-IND tracking networks, block algorithms.","Organized crime linkages tracking vs. transnational drug cartels.","Paramilitary forces commands: Operational lines for specialized forces."];
+        const dataGS4 = ["Ethics interface essence: Action boundaries, private vs. public rules.","Imparting values frameworks: Structural inputs of educational nodes.","Attitude Formulations: Psychological content mapping, persuasion waves.","Civil Service values: Impartiality benchmarks, crisis management loops.","Philosophical inputs: Lessons from moral administrators & philosophers.","Administrative integrity profiles: Resolving ethical dilemmas.","Global funding ethics, corporate social governance compliance codes.","Probity parameters: RTI tracking, Code of Conduct matching, Charters.","Anti-corruption mechanics: Public fund audit architectures.","Applied Public Case Studies: Resolution models for administrative crisis matrices."];
 
-        const coreMainsGS2 = [
-            "Indian Constitution framework, features, Basic Structure doctrine.",
-            "Federal Infrastructure: Devolution funds, local Panchayat bottlenecks.",
-            "Separation of Powers: Executive-Judiciary boundary frictions.",
-            "Comparative Government Schemas: Direct matching with global frameworks.",
-            "Legislative houses internal rules, privileges, operational bottlenecks.",
-            "Executive & Judiciary Organs: Structure, statutory Ministries, pressure groups tracking.",
-            "Electoral Machinery: Representation of the People’s Act code.",
-            "Independent Bodies: Appointments metrics, statutory responsibilities.",
-            "Governance architectures: Public accountability matrices, auditing.",
-            "E-Governance frameworks: Delivery interfaces, data optimizations.",
-            "Citizens' charters enforcement, public service guarantees.",
-            "Civil Services role inside a functional constitutional democracy.",
-            "Welfare targeting frameworks: Schema evaluations, resource optimization.",
-            "Development Sector footprint: NGO, SHG performance criteria.",
-            "Marginalized protections: Constitutional safety lines for SC, ST, OBC.",
-            "Social Infrastructure parameters: Management metrics of Health data.",
-            "Global Hunger Indexes parameters, multi-dimensional poverty mapping.",
-            "India and neighbor networks: Strategic interactions, boundary agreements.",
-            "Global and Regional Groupings: G20, BRICS, SCO, Quad matrices.",
-            "Policies of developed nations impacting trade flows, diaspora nodes.",
-            "Multilateral Intergovernmental Agencies: UN Security Council tracking."
-        ];
-
-        const coreMainsGS3 = [
-            "Indian Economy planning tracks, employment metrics, capital profiles.",
-            "Inclusive Growth indicators, micro-financial structural layouts.",
-            "Fiscal Architectures: FRBM targets tracking, GST layout mechanisms.",
-            "Industrial adjustments: Deregulatory impacts, processing codes.",
-            "Logistics infrastructure layout: National Grids, shipping corridors.",
-            "Investment vehicles: PPP build variations, Hybrid annuity layouts.",
-            "State cropping indices, micro-irrigation layout systems.",
-            "Supply chain tracking: APMC updates, direct farm e-markets.",
-            "Subsidy economics: MSP fiscal impacts, fertilizer leakage tracking.",
-            "Public Distribution System (PDS): Inventory, leakage patches.","Animal husbandry economics, live-stock processing frameworks.",
-            "Food Processing Value Chains: Upstream collection, downstream retail.",
-            "Land Reform implementations: Historical state footprints, digitized codes.",
-            "Frontier technology tracks: Quantum computing, AI governance codes.",
-            "Indigenization of critical tech: Space launch systems, payload models.",
-            "Intellectual Property Rights: Patent compliance codes, TRIPS lines.",
-            "Conservation indices: Carbon sinks, pollution remediation benchmarks.",
-            "Environmental Impact Assessment (EIA): Regulatory framework checks.",
-            "Disaster Management matrices: Sendai framework compliance matching.",
-            "Development deficits correlation map vs. spread of extreme radicalism.",
-            "Hostile border management: Countering asymmetric warfare proxies.",
-            "Cyber Warfare structures: Critical info grids defense, encryption rules.",
-            "Money-laundering vectors: FIU-IND tracking networks, block algorithms.",
-            "Organized crime linkages tracking vs. transnational drug cartels.",
-            "Paramilitary forces commands: Operational lines for specialized forces."
-        ];
-
-        const coreMainsGS4 = [
-            "Ethics interface essence: Action boundaries, private vs. public rules.",
-            "Imparting values frameworks: Structural inputs of educational nodes.",
-            "Attitude Formulations: Psychological content mapping, persuasion waves.",
-            "Civil Service values: Impartiality benchmarks, crisis management loops.",
-            "Philosophical inputs: Lessons from moral administrators & philosophers.",
-            "Administrative integrity profiles: Resolving ethical dilemmas.",
-            "Global funding ethics, corporate social governance compliance codes.",
-            "Probity parameters: RTI tracking, Code of Conduct matching, Charters.",
-            "Anti-corruption mechanics: Public fund audit architectures.",
-            "Applied Public Case Studies: Resolution models for administrative crisis matrices."
-        ];
-
-        const coreAnthro1 = ["1.1 Meaning, Scope and Development of Anthropology.","1.2 Relationship tracking with Social Sciences, Life Sciences, Earth fields.","1.3 Core branches definition: Socio-cultural, Biological, Archaeological, Linguistic.","1.4 Human Evolution mechanics: Organic evolution theories, Synthetic code.","1.5 Primates Taxonomy: Behavioral characteristics, living apes comparison.","1.6 Phylogenetic status analysis: Australopithecines, Homo erectus, Neanderthal.","1.7 Biological metrics: Cell structures, DNA replication loops, protein systems.","1.8 Prehistoric Archaeology Chronologies: Dating systems, Paleolithic to Iron maps.","2.1 Culture concept: Civilization parameters, Relativism models.","2.2 Society frameworks: Social configurations, institutional layers.","2.3 Marriage systems: Endo/exogamy rules, incest taboos, payments structures.","2.4 Family setups: Household typologies, corporate units functions, urban shifts.","2.5 Kinship lines: Descent groups systems, terminology frameworks.","3. Economic Anthropology: Formalist vs. Substantivist configuration debates.","4. Political Architectures: Power/legitimacy; simple justice execution rules.","5. Religion parameters: Theories, animism, magic vs. science functional borders.","6. Anthropological Thought: Classical Evolutionism, Particularism, Structuralism.","7. Language & Communication: Verbal/non-verbal communication parameters.","8. Research Methodologies: Fieldwork tracking methods, Genealogical tools.","9.1 Human Genetics: Twin study methods, pedigree models, DNA setups.","9.2 Mendelian patterns in human disease tracking: ABO, Rh, HLA configurations.","9.3 Chromosomal aberrations anomalies: Down syndrome configuration, Turner setups.","9.4 Race & Racism concepts: Polytypic human variations sorting, marker tracking.","9.5 Ecological Adaptations: Bio-cultural responses mapping heat, cold stresses.","9.6 Epidemiological tracking: Infectious vectors footprints vs. chronic patterns.","10. Human Growth & Development stages: Pre-natal/natal markers, somatotyping.","11. Demography theories: Biological/social frameworks, fertility variables.","12. Applied Anthropology applications: Ergonomics, forensic metrics, DNA profiling."];
-        const coreAnthro2 = ["1.1 Indian Culture Evolution: Prehistoric to Chalcolithic grids, IVC, shifts.","1.2 Paleoanthropological nodes in India: Ramapithecus, Narmada Man logs.","1.3 Ethno-archaeological parallels mapping: Hunter-gatherer survivals matching.","2. Demographic Profile of India: Spatial layout of ethnic markers, language sets.","3.1 Traditional Social Systems: Varnashrama tracking, Purushartha targets.","3.2 Caste system layers: Theories of origin, mobility indexes, Jajmani setups.","3.3 Sacred Complex models and Nature-Man-Spirit Complex frameworks.","3.4 Impact of World Religions on Indian society: Buddhism, Islam, Christianity.","4. Indian Anthropological Growth: Scholar-administrator foundational records.","5.1 Indian Village setups: Inter-caste dependency tracking, globalization impacts.","5.2 Minorities sorting: Linguistic and religious minority groups tracking.","5.3 Structural Change processes: Sanskritization parameters, Modernization trends.","6.1 Tribal Situation in India: Biogenetic variation clustering, configurations.","6.2 Tribal Hardships: Land alienation vectors tracking, multi-dimensional debt, LWE.","6.3 Forest Policy actions: Historical forest codes tracking vs. tribal rights.","7.1 Exploitation protections: Constitutional safeguards for SC and ST.","7.2 Social Change vectors: Modern democratic institutional footprints.","7.3 PVTGs (Particularly Vulnerable Tribal Groups): Structural parameters tracking.","8.1 Religious shifts: Syncretic adjustments, tribal conversions dynamics tracking.","8.2 Tribe and Nation-State integration metrics, regional autonomy friction points.","9.1 Tribal Administration Architectures: Fifth and Sixth Schedule tracking, PESA.","9.2 Anthropology applications inside structural grass-roots rural planning.","9.3 Resolving frictions: Anthropological analytical tracks exploring conflicts."];
-
-        document.addEventListener("DOMContentLoaded", () => {
-            renderInterfaceLists();
-            calculateTargetTimelines();
-            readTrackingProgress();
-        });
-
-        function renderInterfaceLists() {
-            buildListDOM('box-prelims-gs', corePrelimsGS, 'p1');
-            buildListDOM('box-prelims-csat', corePrelimsCSAT, 'p2');
-            buildListDOM('box-mains-lang-a', coreLangA, 'la');
-            buildListDOM('box-mains-lang-b', coreLangB, 'lb');
-            buildListDOM('box-mains-essay', coreEssay, 'es');
-            
-            buildListDOM('box-mains-gs1', coreMainsGS1, 'gs1');
-            buildListDOM('box-mains-gs2', coreMainsGS2, 'gs2');
-            buildListDOM('box-mains-gs3', coreMainsGS3, 'gs3');
-            buildListDOM('box-mains-gs4', coreMainsGS4, 'gs4');
-
-            buildListDOM('box-anthro-p1', coreAnthro1, 'a1');
-            buildListDOM('box-anthro-p2', coreAnthro2, 'a2');
-        }
-
-        function buildListDOM(domId, dataArr, prefix) {
-            const container = document.getElementById(domId);
-            container.innerHTML = dataArr.map((text, idx) => {
-                const uniqueId = `t-${prefix}-${idx}`;
-                return `
-                    <div class="task-row flex items-start justify-between p-3.5 bg-white border border-slate-200/80 hover:border-indigo-500/20 rounded-2xl transition duration-200 group relative shadow-2xs">
-                        <label for="${uniqueId}" class="flex items-start cursor-pointer w-full text-xs sm:text-sm font-semibold pr-8 select-none">
-                            <input type="checkbox" id="${uniqueId}" onchange="commitCheckedEvent('${uniqueId}')" class="mt-0.5 mr-3.5 h-5 w-5 rounded-md border-slate-300 text-indigo-600 focus:ring-indigo-500/20 cursor-pointer">
-                            <span class="text-slate-700 group-has-[:checked]:text-slate-400 group-has-[:checked]:line-through break-words transition-all">${text}</span>
-                        </label>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function commitCheckedEvent(id) {
-            const cb = document.getElementById(id);
-            if (cb.checked) {
-                localStorage.setItem(`nk_up_${id}`, 'true');
-            } else {
-                localStorage.removeItem(`nk_up_${id}`);
-            }
-            calculateProgressHUD();
-        }
-
-        function readTrackingProgress() {
-            const boxes = document.querySelectorAll('input[type="checkbox"]');
-            boxes.forEach(b => {
-                if (localStorage.getItem(`nk_up_${b.id}`) === 'true') {
-                    b.checked = true;
-                } else {
-                    b.checked = false;
-                }
-            });
-            calculateProgressHUD();
-        }
-
-        function calculateProgressHUD() {
-            const boxes = document.querySelectorAll('input[type="checkbox"]');
-            let total = boxes.length;
-            let checked = 0;
-            
-            boxes.forEach(b => { if(b.checked) checked++; });
-
-            document.getElementById("global-count-total").innerText = total;
-            document.getElementById("global-count-checked").innerText = checked;
-
-            const percentage = total > 0 ? ((checked / total) * 100).toFixed(1) : 0;
-            document.getElementById("global-perc-text").innerText = percentage + "%";
-            document.getElementById("global-perc-badge").innerText = Math.floor(percentage) + "% COMPLETE";
-            document.getElementById("global-progress-bar").style.width = percentage + "%";
-
-            const label = document.getElementById("tracker-status-text");
-            if (percentage == 0) label.innerText = "MATRIX CORE ACTIVE";
-            else if (percentage < 35) label.innerText = "FOUNDATION ACQUISITION WINDOW";
-            else if (percentage < 75) label.innerText = "CRITICAL MASS ACCELERATION";
-            else label.innerText = "PEAK LEVEL SELECTION METRIC";
-        }
-
-        function displayTokenExchangeModal() {
-            const boxes = document.querySelectorAll('input[type="checkbox"]');
-            let stateBits = [];
-            boxes.forEach(b => {
-                stateBits.push(b.checked ? '1' : '0');
-            });
-            
-            const binaryString = stateBits.join('');
-            const encodedToken = btoa(binaryString);
-            
-            document.getElementById("export-token-box").value = encodedToken;
-            document.getElementById("import-token-box").value = "";
-            document.getElementById("token-modal").classList.remove('hidden');
-        }
-
-        function closeTokenModal() {
-            document.getElementById("token-modal").classList.add('hidden');
-        }
-
-        function executeImportTokenData() {
-            const rawTokenText = document.getElementById("import-token-box").value.trim();
-            if (!rawTokenText) {
-                alert("Please paste a valid transfer token array sequence first!");
-                return;
-            }
-
-            try {
-                const decodedBitString = atob(rawTokenText);
-                const bitSegments = decodedBitString.split('');
-                const boxes = document.querySelectorAll('input[type="checkbox"]');
-
-                if (bitSegments.length !== boxes.length) {
-                    alert("Sync Token mismatch error. Ensure you copied the full parameter sequence.");
-                    return;
-                }
-
-                boxes.forEach((b, index) => {
-                    const isChecked = bitSegments[index] === '1';
-                    b.checked = isChecked;
-                    if (isChecked) {
-                        localStorage.setItem(`nk_up_${b.id}`, 'true');
-                    } else {
-                        localStorage.removeItem(`nk_up_${b.id}`);
-                    }
-                });
-
-                calculateProgressHUD();
-                closeTokenModal();
-                alert("Cross-device synchronization verified! Progress state metrics locked in.");
-            } catch (err) {
-                alert("Invalid synchronization signature configuration.");
-            }
-        }
-
-        function trackLiveClockTimelines() {
-            const pDate = new Date("May 23, 2027 09:00:00").getTime();
-            const mDate = new Date("August 20, 2027 09:00:00").getTime();
-
-            function update() {
-                const now = new Date();
-                document.getElementById("live-date-hud").innerText = now.toLocaleDateString('en-IN', {day:'numeric', month:'short', year:'numeric'});
-                
-                const currentMs = now.getTime();
-                document.getElementById("prelims-countdown-live").innerText = pDate > currentMs ? Math.floor((pDate - currentMs) / (1000*60*60*24)) + " Days" : "Passed";
-                document.getElementById("mains-countdown-live").innerText = mDate > currentMs ? Math.floor((mDate - currentMs) / (1000*60*60*24)) + " Days" : "Executed";
-            }
-            update();
-            setInterval(update, 60000);
-        }
-
-        function activateTab(targetPaneId) {
-            document.querySelectorAll('.tab-pane-view').forEach(p => p.classList.add('hidden'));
-            document.getElementById(targetPaneId).classList.remove('hidden');
-            const keys = ['prelims', 'mains', 'anthro'];
-            keys.forEach(k => {
-                const btn = document.getElementById(`btn-deck-${k}`);
-                if(`deck-${k}` === targetPaneId) {
-                    btn.className = "cursor-pointer flex-1 text-center py-3.5 px-6 rounded-xl font-black text-xs uppercase tracking-wider transition-all bg-indigo-600 text-white shadow-md heading-font";
-                } else {
-                    btn.className = "cursor-pointer flex-1 text-center py-3.5 px-6 rounded-xl font-black text-xs uppercase tracking-wider transition-all text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 heading-font";
-                }
-            });
-        }
-
-        function wipeCompleteLocalProgress() {
-            if (confirm("Reset layout tracks back to zero base metrics?")) {
-                const boxes = document.querySelectorAll('input[type="checkbox"]');
-                boxes.forEach(b => {
-                    b.checked = false;
-                    localStorage.removeItem(`nk_up_${b.id}`);
-                });
-                localStorage.clear();
-                calculateProgressHUD();
-            }
-        }
-    </script>
-</body>
-</html>
+        const dataA1 = ["1.1 Meaning, Scope and Development of Anthropology.","1.2 Relationship tracking with Social Sciences, Life Sciences, Earth fields.","1.3 Core branches definition: Socio-cultural, Biological, Archaeological, Linguistic.","1.4 Human Evolution mechanics: Organic evolution theories, Synthetic code.","1.5 Primates Taxonomy: Behavioral characteristics, living apes comparison.","1.6 Phylogenetic status analysis: Australopithecines, Homo erectus, Neanderthal.","1.7 Biological metrics: Cell structures, DNA replication loops, protein systems.","1.8 Prehistoric Archaeology Chronologies: Dating systems, Paleolithic to Iron maps.","2.1 Culture concept: Civilization parameters, Relativism models.","2.2 Society frameworks: Social configurations, institutional layers.","2.3 Marriage systems: Endo/exogamy rules, incest taboos, payments structures.","2.4 Family setups: Household typologies, corporate units functions, urban shifts.","2.5 Kinship lines: Descent groups systems, terminology frameworks.","3. Economic Anthropology: Formalist vs. Substantivist configuration debates.","4. Political Architectures: Power/legitimacy; simple justice execution rules.","5. Religion parameters: Theories, animism, magic vs. science functional borders.","6. Anthropological Thought: Classical Evolutionism, Particularism, Structuralism.","7. Language & Communication: Verbal/non-verbal communication parameters.","8. Research Methodologies: Fieldwork tracking methods, Genealogical tools.","9.1 Human Genetics: Twin study methods, pedigree models, DNA setups.","9.2 Mendelian patterns in human disease tracking: ABO, Rh, HLA configurations.","9.3 Chromosomal aberrations anomalies: Down syndrome configuration, Turner setups.","9.4 Race & Racism concepts: Polytypic human variations sorting, marker tracking.","9.5 Ecological Adaptations: Bio-cultural responses mapping heat, cold stresses.
