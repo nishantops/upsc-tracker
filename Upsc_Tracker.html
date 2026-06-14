@@ -653,13 +653,13 @@
         async function recordSession(userEmail) {
             if (!dbClient || !currentUserId) return;
             try {
-                await dbClient.from('nishant_upsc_tracker').upsert({
-                    id: 'session_active',
+                await dbClient.from('upsc_user_sessions').upsert({
                     user_id: currentUserId,
-                    is_checked: isSuperuser(userEmail),
-                    topic_note: JSON.stringify({ email: userEmail, login_at: new Date().toISOString(), last_active: new Date().toISOString(), is_super: isSuperuser(userEmail) }),
-                    updated_at: new Date().toISOString()
-                }, { onConflict: 'id,user_id' });
+                    email: userEmail,
+                    is_superuser: isSuperuser(userEmail),
+                    login_at: new Date().toISOString(),
+                    last_active: new Date().toISOString()
+                }, { onConflict: 'user_id' });
             } catch(e) { /* non-critical */ }
         }
 
@@ -668,31 +668,25 @@
             try {
                 const { data: { session } } = await dbClient.auth.getSession();
                 if (!session) return;
-                await dbClient.from('nishant_upsc_tracker').upsert({
-                    id: 'session_active',
+                await dbClient.from('upsc_user_sessions').upsert({
                     user_id: currentUserId,
-                    is_checked: isSuperuser(session.user.email),
-                    topic_note: JSON.stringify({ email: session.user.email, login_at: null, last_active: new Date().toISOString(), is_super: isSuperuser(session.user.email) }),
-                    updated_at: new Date().toISOString()
-                }, { onConflict: 'id,user_id' });
+                    email: session.user.email,
+                    is_superuser: isSuperuser(session.user.email),
+                    last_active: new Date().toISOString()
+                }, { onConflict: 'user_id' });
             } catch(e) { /* non-critical */ }
         }
 
         async function checkAutoLogout() {
-            if (!dbClient) return;
+            if (!dbClient || !currentUserId) return;
             try {
                 const { data: { session } } = await dbClient.auth.getSession();
                 if (!session) return;
-                // Superuser never auto-logs out
                 if (isSuperuser(session.user.email)) return;
-                // Check session age
-                const { data } = await dbClient.from('nishant_upsc_tracker').select('topic_note').eq('id', 'session_active').single();
-                if (data && data.topic_note) {
-                    const meta = JSON.parse(data.topic_note);
-                    const lastActive = new Date(meta.last_active).getTime();
-                    if (Date.now() - lastActive > AUTO_LOGOUT_MS) {
+                const { data } = await dbClient.from('upsc_user_sessions').select('last_active').eq('user_id', currentUserId).single();
+                if (data && data.last_active) {
+                    if (Date.now() - new Date(data.last_active).getTime() > AUTO_LOGOUT_MS) {
                         handleLogout();
-                        return;
                     }
                 }
             } catch(e) { /* non-critical */ }
@@ -730,11 +724,8 @@
         async function getUserDisplayName() {
             if (!dbClient || !currentUserId) return null;
             try {
-                const { data } = await dbClient.from('nishant_upsc_tracker').select('topic_note').eq('id', 'user_profile').eq('user_id', currentUserId).single();
-                if (data && data.topic_note) {
-                    const profile = JSON.parse(data.topic_note);
-                    return profile.display_name || null;
-                }
+                const { data } = await dbClient.from('upsc_user_profiles').select('display_name').eq('user_id', currentUserId).single();
+                if (data && data.display_name) return data.display_name;
             } catch(e) {}
             return null;
         }
@@ -742,13 +733,10 @@
         async function saveUserDisplayName(name) {
             if (!dbClient || !currentUserId) return;
             try {
-                await dbClient.from('nishant_upsc_tracker').upsert({
-                    id: 'user_profile',
+                await dbClient.from('upsc_user_profiles').upsert({
                     user_id: currentUserId,
-                    is_checked: false,
-                    topic_note: JSON.stringify({ display_name: name }),
-                    updated_at: new Date().toISOString()
-                }, { onConflict: 'id,user_id' });
+                    display_name: name
+                }, { onConflict: 'user_id' });
             } catch(e) { console.error('Failed to save profile:', e); }
         }
 
@@ -769,15 +757,12 @@
                 currentUserId = session.user.id;
                 // Check auto-logout for non-superusers
                 if (!isSuperuser(session.user.email)) {
-                    const { data } = await dbClient.from('nishant_upsc_tracker').select('topic_note').eq('id', 'session_active').single();
-                    if (data && data.topic_note) {
-                        try {
-                            const meta = JSON.parse(data.topic_note);
-                            if (meta.last_active && (Date.now() - new Date(meta.last_active).getTime() > AUTO_LOGOUT_MS)) {
-                                await dbClient.auth.signOut();
-                                return;
-                            }
-                        } catch(e) {}
+                    const { data } = await dbClient.from('upsc_user_sessions').select('last_active').eq('user_id', session.user.id).single();
+                    if (data && data.last_active) {
+                        if (Date.now() - new Date(data.last_active).getTime() > AUTO_LOGOUT_MS) {
+                            await dbClient.auth.signOut();
+                            return;
+                        }
                     }
                 }
                 await recordSession(session.user.email || session.user.phone);
@@ -796,21 +781,27 @@
         async function syncLatestCloudState() {
             if(!dbClient) return;
             try {
-                const fetchPromise = dbClient.from('nishant_upsc_tracker').select('*');
+                // Fetch plans first
+                const plansPromise = dbClient.from('upsc_custom_plans').select('*').eq('user_id', currentUserId);
+                const progressPromise = dbClient.from('upsc_tracker_progress').select('*').eq('user_id', currentUserId);
                 const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000));
-                const response = await Promise.race([fetchPromise, timeoutPromise]);
 
-                if (response.error) throw response.error;
-                if (response.data) {
-                    response.data.forEach(row => {
-                        if(row.id.startsWith('plan_meta_')) {
-                            const encodedName = row.id.substring(10);
-                            const decodedName = decodeURIComponent(escape(atob(encodedName)));
-                            buildPlanCardDOM(decodedName, encodedName, row.topic_note);
-                        }
+                const [plansRes, progressRes] = await Promise.race([
+                    Promise.all([plansPromise, progressPromise]),
+                    timeoutPromise
+                ]);
+
+                // Build plan cards from plans table
+                if (plansRes.data) {
+                    plansRes.data.forEach(plan => {
+                        buildPlanCardDOM(plan.plan_title, plan.plan_id, plan.plan_type);
+                        // Restore plan note if stored in progress table
                     });
+                }
 
-                    response.data.forEach(row => {
+                // Restore progress (checkboxes, notes, custom topics, plan tasks)
+                if (progressRes.data) {
+                    progressRes.data.forEach(row => {
                         const noteValue = row.topic_note || '';
                         if(row.id.startsWith('custom_')) {
                             const parts = row.id.split('_');
@@ -820,8 +811,7 @@
                                 const decodedText = decodeURIComponent(escape(atob(encodedPayload)));
                                 buildCustomTopicNode(targetBox, decodedText, row.id, row.is_checked, noteValue);
                             } catch(e) {}
-                        } 
-                        else if (row.id.startsWith('plan_meta_')) {}
+                        }
                         else if (row.id.startsWith('plan_card_')) {
                             const noteInput = document.getElementById('note-' + row.id);
                             if (noteInput) noteInput.value = noteValue;
@@ -842,13 +832,13 @@
                             if (noteInput) noteInput.value = noteValue;
                         }
 
-                        if(row.is_checked && row.id && !row.id.startsWith('plan_meta_')) { toggleNoteLock(row.id, true); }
+                        if(row.is_checked && row.id && !row.id.startsWith('plan_card_')) { toggleNoteLock(row.id, true); }
                     });
-
-                    document.getElementById("sync-status-text").innerText = "CLOUD SYNCED ACROSS DEVICES";
-                    document.getElementById("sync-status-indicator").className = "inline-block w-2.5 h-2.5 rounded-full bg-emerald-500";
-                    calculateMetricsHUD(); calculatePlanPies();
                 }
+
+                document.getElementById("sync-status-text").innerText = "CLOUD SYNCED ACROSS DEVICES";
+                document.getElementById("sync-status-indicator").className = "inline-block w-2.5 h-2.5 rounded-full bg-emerald-500";
+                calculateMetricsHUD(); calculatePlanPies();
             } catch(e) {
                 document.getElementById("sync-status-text").innerText = "OFFLINE: DB CONNECTION REJECTED";
                 document.getElementById("sync-status-indicator").className = "inline-block w-2.5 h-2.5 rounded-full bg-rose-500";
@@ -865,7 +855,7 @@
 
             if(!dbClient) return;
             try {
-                const pushPromise = dbClient.from('nishant_upsc_tracker').upsert({ id: elementId, user_id: currentUserId, is_checked: isChecked, topic_note: noteText, updated_at: new Date().toISOString() }, { onConflict: 'id,user_id' });
+                const pushPromise = dbClient.from('upsc_tracker_progress').upsert({ id: elementId, user_id: currentUserId, is_checked: isChecked, topic_note: noteText, updated_at: new Date().toISOString() }, { onConflict: 'id,user_id' });
                 const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 3000));
                 await Promise.race([pushPromise, timeoutPromise]);
                 document.getElementById("sync-status-text").innerText = "CLOUD SYNCED ACROSS DEVICES";
@@ -933,9 +923,20 @@
 
         async function eraseCustomNode(id, btnElement) {
             if(confirm("Permanently erase this from the cloud database?")) {
-                btnElement.closest('.task-row').remove();
+                btnElement.closest('.task-row, [id^=plan_card_wrapper]').remove();
                 calculateMetricsHUD(); calculatePlanPies();
-                if(dbClient) { await dbClient.from('nishant_upsc_tracker').delete().eq('id', id).eq('user_id', currentUserId); }
+                if(dbClient) {
+                    if (id.startsWith('plan_meta_')) {
+                        // Delete from plans table
+                        const planId = id.substring(10);
+                        await dbClient.from('upsc_custom_plans').delete().eq('plan_id', planId).eq('user_id', currentUserId);
+                        // Also delete related plan tasks from progress
+                        await dbClient.from('upsc_tracker_progress').delete().like('id', `plan_task_${planId}_%`).eq('user_id', currentUserId);
+                        await dbClient.from('upsc_tracker_progress').delete().eq('id', `plan_card_${planId}`).eq('user_id', currentUserId);
+                    } else {
+                        await dbClient.from('upsc_tracker_progress').delete().eq('id', id).eq('user_id', currentUserId);
+                    }
+                }
             }
         }
 
@@ -950,7 +951,7 @@
             const encodedName = btoa(unescape(encodeURIComponent(title)));
             buildPlanCardDOM(title, encodedName, type);
 
-            if(dbClient) { await dbClient.from('nishant_upsc_tracker').upsert({ id: `plan_meta_${encodedName}`, user_id: currentUserId, is_checked: false, topic_note: type, updated_at: new Date().toISOString() }, { onConflict: 'id,user_id' }); }
+            if(dbClient) { await dbClient.from('upsc_custom_plans').upsert({ plan_id: encodedName, user_id: currentUserId, plan_title: title, plan_type: type }, { onConflict: 'plan_id,user_id' }); }
             closePlannerModal();
         }
 

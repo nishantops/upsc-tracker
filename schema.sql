@@ -1,13 +1,57 @@
 -- ============================================================================
--- UPSC TRACKER: Complete Multi-User Schema
+-- UPSC TRACKER: Multi-Table Schema v2
 -- Run this ENTIRE script in Supabase Dashboard → SQL Editor → New Query → Run
 -- ============================================================================
 
--- STEP 1: Drop old table (if exists) and create new multi-user table
--- ⚠️ This will DELETE all existing data. If you want to keep it, skip this DROP.
-DROP TABLE IF EXISTS nishant_upsc_tracker;
+-- ⚠️ This will DROP old tables. Skip DROPs if you want to preserve data.
+DROP TABLE IF EXISTS upsc_custom_plans CASCADE;
+DROP TABLE IF EXISTS upsc_tracker_progress CASCADE;
+DROP TABLE IF EXISTS upsc_user_sessions CASCADE;
+DROP TABLE IF EXISTS upsc_user_profiles CASCADE;
+DROP TABLE IF EXISTS nishant_upsc_tracker CASCADE;
 
-CREATE TABLE nishant_upsc_tracker (
+-- ============================================================================
+-- TABLE 1: User Profiles (display name, preferences)
+-- ============================================================================
+CREATE TABLE upsc_user_profiles (
+    user_id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    display_name TEXT NOT NULL DEFAULT 'User',
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE upsc_user_profiles ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users read own profile" ON upsc_user_profiles
+    FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users insert own profile" ON upsc_user_profiles
+    FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users update own profile" ON upsc_user_profiles
+    FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+-- ============================================================================
+-- TABLE 2: User Sessions (login tracking, auto-logout)
+-- ============================================================================
+CREATE TABLE upsc_user_sessions (
+    user_id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    email TEXT,
+    is_superuser BOOLEAN DEFAULT FALSE,
+    login_at TIMESTAMPTZ DEFAULT now(),
+    last_active TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE upsc_user_sessions ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users read own session" ON upsc_user_sessions
+    FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users insert own session" ON upsc_user_sessions
+    FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users update own session" ON upsc_user_sessions
+    FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+-- ============================================================================
+-- TABLE 3: Tracker Progress (checkbox states + notes for all items)
+-- ============================================================================
+CREATE TABLE upsc_tracker_progress (
     id TEXT NOT NULL,
     user_id UUID NOT NULL DEFAULT auth.uid() REFERENCES auth.users(id) ON DELETE CASCADE,
     is_checked BOOLEAN NOT NULL DEFAULT FALSE,
@@ -16,37 +60,42 @@ CREATE TABLE nishant_upsc_tracker (
     PRIMARY KEY (id, user_id)
 );
 
--- STEP 2: Create index for fast user-specific lookups
-CREATE INDEX idx_tracker_user_id ON nishant_upsc_tracker(user_id);
+CREATE INDEX idx_progress_user_id ON upsc_tracker_progress(user_id);
+ALTER TABLE upsc_tracker_progress ENABLE ROW LEVEL SECURITY;
 
--- STEP 3: Enable Row Level Security (RLS)
-ALTER TABLE nishant_upsc_tracker ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users read own progress" ON upsc_tracker_progress
+    FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users insert own progress" ON upsc_tracker_progress
+    FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users update own progress" ON upsc_tracker_progress
+    FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users delete own progress" ON upsc_tracker_progress
+    FOR DELETE USING (auth.uid() = user_id);
 
--- STEP 4: RLS Policy — each user can ONLY see/modify their own rows
--- SELECT: users read only their own data
-CREATE POLICY "Users read own data"
-    ON nishant_upsc_tracker
-    FOR SELECT
-    USING (auth.uid() = user_id);
+-- ============================================================================
+-- TABLE 4: Custom Plans (study plans with metadata)
+-- ============================================================================
+CREATE TABLE upsc_custom_plans (
+    plan_id TEXT NOT NULL,
+    user_id UUID NOT NULL DEFAULT auth.uid() REFERENCES auth.users(id) ON DELETE CASCADE,
+    plan_title TEXT NOT NULL,
+    plan_type TEXT DEFAULT 'monthly',
+    plan_note TEXT DEFAULT '',
+    created_at TIMESTAMPTZ DEFAULT now(),
+    PRIMARY KEY (plan_id, user_id)
+);
 
--- INSERT: users can only insert rows for themselves
-CREATE POLICY "Users insert own data"
-    ON nishant_upsc_tracker
-    FOR INSERT
-    WITH CHECK (auth.uid() = user_id);
+CREATE INDEX idx_plans_user_id ON upsc_custom_plans(user_id);
+ALTER TABLE upsc_custom_plans ENABLE ROW LEVEL SECURITY;
 
--- UPDATE: users can only update their own rows
-CREATE POLICY "Users update own data"
-    ON nishant_upsc_tracker
-    FOR UPDATE
-    USING (auth.uid() = user_id)
-    WITH CHECK (auth.uid() = user_id);
-
--- DELETE: users can only delete their own rows
-CREATE POLICY "Users delete own data"
-    ON nishant_upsc_tracker
-    FOR DELETE
-    USING (auth.uid() = user_id);
+CREATE POLICY "Users read own plans" ON upsc_custom_plans
+    FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users insert own plans" ON upsc_custom_plans
+    FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users update own plans" ON upsc_custom_plans
+    FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users delete own plans" ON upsc_custom_plans
+    FOR DELETE USING (auth.uid() = user_id);
 
 -- ============================================================================
 -- DONE! Each user now gets isolated data.
