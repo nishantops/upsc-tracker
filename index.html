@@ -363,10 +363,62 @@
                         <button onclick="activateSubTab_PYQ('mains', 'panel-pyq-a1', this)" class="sub-tab-pyq-mains inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all text-slate-300 hover:text-white hover:bg-white/10 border border-transparent">Anthro P1</button>
                         <button onclick="activateSubTab_PYQ('mains', 'panel-pyq-a2', this)" class="sub-tab-pyq-mains inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all text-slate-300 hover:text-white hover:bg-white/10 border border-transparent">Anthro P2</button>
                     </div>
-                    <div id="panel-pyq-gs1" class="sub-pane-pyq-mains block neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-violet-500/20 pb-3 mb-4">PYQ: GS-I</h2><div class="space-y-3" id="box-pyq-gs1"></div></div>
-                    <div id="panel-pyq-gs2" class="sub-pane-pyq-mains hidden neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-violet-500/20 pb-3 mb-4">PYQ: GS-II</h2><div class="space-y-3" id="box-pyq-gs2"></div></div>
-                    <div id="panel-pyq-gs3" class="sub-pane-pyq-mains hidden neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-violet-500/20 pb-3 mb-4">PYQ: GS-III</h2><div class="space-y-3" id="box-pyq-gs3"></div></div>
-                    <div id="panel-pyq-gs4" class="sub-pane-pyq-mains hidden neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-violet-500/20 pb-3 mb-4">PYQ: GS-IV</h2><div class="space-y-3" id="box-pyq-gs4"></div></div>
+                    <div id="panel-pyq-gs1" class="sub-pane-pyq-mains block neo-card rounded-3xl p-6">
+                        <div class="flex justify-between items-center border-b border-violet-500/20 pb-3 mb-4">
+                            <h2 class="heading-font text-xl font-black">PYQ: GS-I (Mains)</h2>
+                            <span class="text-[10px] font-mono font-bold text-slate-400">TOTAL: <span id="mains-gs1-total-count" class="text-indigo-400">0</span> Questions</span>
+                        </div>
+                        <div class="mb-4 flex flex-wrap gap-2 items-center">
+                            <input type="text" id="mains-gs1-search" placeholder="Search questions..." oninput="renderMainsGS1PYQ()" class="flex-1 min-w-[200px] bg-slate-900/40 border border-violet-500/20 rounded-lg px-3 py-2 text-xs font-mono text-slate-200 focus:outline-none focus:border-violet-400 placeholder-slate-400">
+                            <select id="mains-gs1-year-filter" onchange="renderMainsGS1PYQ()" class="bg-slate-900/40 border border-violet-500/20 rounded-lg px-3 py-2 text-xs font-mono text-slate-200 focus:outline-none focus:border-violet-400">
+                                <option value="">All Years</option>
+                                <option value="2025">2025</option><option value="2024">2024</option><option value="2023">2023</option><option value="2022">2022</option><option value="2021">2021</option><option value="2020">2020</option><option value="2019">2019</option><option value="2018">2018</option><option value="2017">2017</option><option value="2016">2016</option><option value="2015">2015</option><option value="2014">2014</option><option value="2013">2013</option>
+                            </select>
+                        </div>
+                        <div id="mains-gs1-topics-container" class="space-y-3"></div>
+                    </div>
+                    <div id="panel-pyq-gs2" class="sub-pane-pyq-mains hidden neo-card rounded-3xl p-6">
+                        <div class="flex justify-between items-center border-b border-violet-500/20 pb-3 mb-4">
+                            <h2 class="heading-font text-xl font-black">PYQ: GS-II (Mains)</h2>
+                            <span class="text-[10px] font-mono font-bold text-slate-400">TOTAL: <span id="mains-gs2-total-count" class="text-indigo-400">0</span> Questions</span>
+                        </div>
+                        <div class="mb-4 flex flex-wrap gap-2 items-center">
+                            <input type="text" id="mains-gs2-search" placeholder="Search questions..." oninput="renderMainsGS2PYQ()" class="flex-1 min-w-[200px] bg-slate-900/40 border border-violet-500/20 rounded-lg px-3 py-2 text-xs font-mono text-slate-200 focus:outline-none focus:border-violet-400 placeholder-slate-400">
+                            <select id="mains-gs2-year-filter" onchange="renderMainsGS2PYQ()" class="bg-slate-900/40 border border-violet-500/20 rounded-lg px-3 py-2 text-xs font-mono text-slate-200 focus:outline-none focus:border-violet-400">
+                                <option value="">All Years</option>
+                                <option value="2025">2025</option><option value="2024">2024</option><option value="2023">2023</option><option value="2022">2022</option><option value="2021">2021</option><option value="2020">2020</option><option value="2019">2019</option><option value="2018">2018</option><option value="2017">2017</option><option value="2016">2016</option><option value="2015">2015</option><option value="2014">2014</option><option value="2013">2013</option>
+                            </select>
+                        </div>
+                        <div id="mains-gs2-topics-container" class="space-y-3"></div>
+                    </div>
+                    <div id="panel-pyq-gs3" class="sub-pane-pyq-mains hidden neo-card rounded-3xl p-6">
+                        <div class="flex justify-between items-center border-b border-violet-500/20 pb-3 mb-4">
+                            <h2 class="heading-font text-xl font-black">PYQ: GS-III (Mains)</h2>
+                            <span class="text-[10px] font-mono font-bold text-slate-400">TOTAL: <span id="mains-gs3-total-count" class="text-indigo-400">0</span> Questions</span>
+                        </div>
+                        <div class="mb-4 flex flex-wrap gap-2 items-center">
+                            <input type="text" id="mains-gs3-search" placeholder="Search questions..." oninput="renderMainsGS3PYQ()" class="flex-1 min-w-[200px] bg-slate-900/40 border border-violet-500/20 rounded-lg px-3 py-2 text-xs font-mono text-slate-200 focus:outline-none focus:border-violet-400 placeholder-slate-400">
+                            <select id="mains-gs3-year-filter" onchange="renderMainsGS3PYQ()" class="bg-slate-900/40 border border-violet-500/20 rounded-lg px-3 py-2 text-xs font-mono text-slate-200 focus:outline-none focus:border-violet-400">
+                                <option value="">All Years</option>
+                                <option value="2025">2025</option><option value="2024">2024</option><option value="2023">2023</option><option value="2022">2022</option><option value="2021">2021</option><option value="2020">2020</option><option value="2019">2019</option><option value="2018">2018</option><option value="2017">2017</option><option value="2016">2016</option><option value="2015">2015</option><option value="2014">2014</option><option value="2013">2013</option>
+                            </select>
+                        </div>
+                        <div id="mains-gs3-topics-container" class="space-y-3"></div>
+                    </div>
+                    <div id="panel-pyq-gs4" class="sub-pane-pyq-mains hidden neo-card rounded-3xl p-6">
+                        <div class="flex justify-between items-center border-b border-violet-500/20 pb-3 mb-4">
+                            <h2 class="heading-font text-xl font-black">PYQ: GS-IV (Mains)</h2>
+                            <span class="text-[10px] font-mono font-bold text-slate-400">TOTAL: <span id="mains-gs4-total-count" class="text-indigo-400">0</span> Questions</span>
+                        </div>
+                        <div class="mb-4 flex flex-wrap gap-2 items-center">
+                            <input type="text" id="mains-gs4-search" placeholder="Search questions..." oninput="renderMainsGS4PYQ()" class="flex-1 min-w-[200px] bg-slate-900/40 border border-violet-500/20 rounded-lg px-3 py-2 text-xs font-mono text-slate-200 focus:outline-none focus:border-violet-400 placeholder-slate-400">
+                            <select id="mains-gs4-year-filter" onchange="renderMainsGS4PYQ()" class="bg-slate-900/40 border border-violet-500/20 rounded-lg px-3 py-2 text-xs font-mono text-slate-200 focus:outline-none focus:border-violet-400">
+                                <option value="">All Years</option>
+                                <option value="2025">2025</option><option value="2024">2024</option><option value="2023">2023</option><option value="2022">2022</option><option value="2021">2021</option><option value="2020">2020</option><option value="2019">2019</option><option value="2018">2018</option><option value="2017">2017</option><option value="2016">2016</option><option value="2015">2015</option><option value="2014">2014</option><option value="2013">2013</option>
+                            </select>
+                        </div>
+                        <div id="mains-gs4-topics-container" class="space-y-3"></div>
+                    </div>
                     <div id="panel-pyq-a1" class="sub-pane-pyq-mains hidden neo-card rounded-3xl p-6">
                         <div class="flex justify-between items-center border-b border-violet-500/20 pb-3 mb-4">
                             <h2 class="heading-font text-xl font-black">PYQ: Anthro Paper I</h2>

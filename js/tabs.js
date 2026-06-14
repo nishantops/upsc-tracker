@@ -50,6 +50,7 @@ function activateStageTab_PYQ(id) {
         const btn = document.getElementById(`btn-pyq-stage-${k}`);
         btn.className = k === id ? "cursor-pointer flex-1 text-center py-3.5 px-6 rounded-xl font-black text-xs uppercase tracking-wider transition-all bg-indigo-600 text-white shadow-md heading-font border border-transparent" : "cursor-pointer flex-1 text-center py-3.5 px-6 rounded-xl font-black text-xs uppercase tracking-wider transition-all stage-btn-inactive heading-font";
     });
+    if (id === 'mains') renderMainsGS1PYQ();
 }
 
 function activateStageTab_TS(id) {
@@ -79,6 +80,10 @@ function activateSubTab_PYQ(groupClass, panelId, btnElement) {
     btnElement.className = `sub-tab-pyq-${groupClass} inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all bg-indigo-600 text-white shadow-sm border border-indigo-500`;
     if (panelId === 'panel-pyq-a1') renderAnthroP1PYQ();
     if (panelId === 'panel-pyq-a2') renderAnthroP2PYQ();
+    if (panelId === 'panel-pyq-gs1') renderMainsGS1PYQ();
+    if (panelId === 'panel-pyq-gs2') renderMainsGS2PYQ();
+    if (panelId === 'panel-pyq-gs3') renderMainsGS3PYQ();
+    if (panelId === 'panel-pyq-gs4') renderMainsGS4PYQ();
 }
 
 function activateSubTab_TS(groupClass, panelId, btnElement) {

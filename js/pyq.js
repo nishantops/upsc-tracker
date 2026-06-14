@@ -431,3 +431,21 @@ function toggleAnthroPYQTopic(prefix, tIdx) {
         arrow.style.transform = 'rotate(0deg)';
     }
 }
+
+// ===== GS Mains PYQs =====
+
+function renderMainsGS1PYQ() {
+    renderAnthroPYQGeneric(pyqMainsGS1Data, 'mains-gs1', 'mains-gs1-search', 'mains-gs1-year-filter', 'mains-gs1-total-count');
+}
+
+function renderMainsGS2PYQ() {
+    renderAnthroPYQGeneric(pyqMainsGS2Data, 'mains-gs2', 'mains-gs2-search', 'mains-gs2-year-filter', 'mains-gs2-total-count');
+}
+
+function renderMainsGS3PYQ() {
+    renderAnthroPYQGeneric(pyqMainsGS3Data, 'mains-gs3', 'mains-gs3-search', 'mains-gs3-year-filter', 'mains-gs3-total-count');
+}
+
+function renderMainsGS4PYQ() {
+    renderAnthroPYQGeneric(pyqMainsGS4Data, 'mains-gs4', 'mains-gs4-search', 'mains-gs4-year-filter', 'mains-gs4-total-count');
+}
