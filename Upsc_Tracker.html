@@ -24,6 +24,9 @@
             transition: all 0.5s ease-out; 
             border: 2px solid rgba(255,255,255,0.8);
         }
+        
+        /* Hide element class for tabs */
+        .hidden { display: none !important; }
     </style>
 </head>
 <body class="text-slate-800 antialiased min-h-screen flex flex-col custom-scrollbar">
@@ -58,6 +61,7 @@
 
     <!-- MAIN DASHBOARD METRICS -->
     <main class="max-w-7xl mx-auto px-4 lg:px-8 py-8 flex-1 w-full space-y-8">
+        <!-- TOP STATS -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="neo-card rounded-3xl p-6 border-l-4 border-indigo-600 flex flex-col justify-between relative overflow-hidden">
                 <div>
@@ -104,97 +108,96 @@
         <div class="neo-card rounded-3xl p-6">
             <h3 class="text-xs font-bold tracking-widest text-slate-400 uppercase font-mono mb-4 border-b border-slate-100 pb-2">SECTIONAL SYLLABUS PIE COMPLETION MATRIX</h3>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <div class="bg-white/80 border border-slate-200/60 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-sm transition hover:shadow-md">
-                    <div id="pie-p1" class="pie-chart-frame bg-slate-200"></div>
-                    <div><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase flex items-center gap-1.5">Prelims P1 <span id="lbl-p1" class="px-1.5 py-0.5 rounded text-[9px]">0%</span></div><div class="text-xs sm:text-sm font-black text-slate-800 mt-0.5 leading-tight">GS Paper I</div></div>
-                </div>
-                <div class="bg-white/80 border border-slate-200/60 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-sm transition hover:shadow-md">
-                    <div id="pie-p2" class="pie-chart-frame bg-slate-200"></div>
-                    <div><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase flex items-center gap-1.5">Prelims P2 <span id="lbl-p2" class="px-1.5 py-0.5 rounded text-[9px]">0%</span></div><div class="text-xs sm:text-sm font-black text-slate-800 mt-0.5 leading-tight">CSAT Paper II</div></div>
-                </div>
-                <div class="bg-white/80 border border-slate-200/60 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-sm transition hover:shadow-md">
-                    <div id="pie-gs1" class="pie-chart-frame bg-slate-200"></div>
-                    <div><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase flex items-center gap-1.5">Mains GS1 <span id="lbl-gs1" class="px-1.5 py-0.5 rounded text-[9px]">0%</span></div><div class="text-xs sm:text-sm font-black text-slate-800 mt-0.5 leading-tight">GS-I Blueprint</div></div>
-                </div>
-                <div class="bg-white/80 border border-slate-200/60 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-sm transition hover:shadow-md">
-                    <div id="pie-gs2" class="pie-chart-frame bg-slate-200"></div>
-                    <div><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase flex items-center gap-1.5">Mains GS2 <span id="lbl-gs2" class="px-1.5 py-0.5 rounded text-[9px]">0%</span></div><div class="text-xs sm:text-sm font-black text-slate-800 mt-0.5 leading-tight">GS-II Blueprint</div></div>
-                </div>
-                <div class="bg-white/80 border border-slate-200/60 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-sm transition hover:shadow-md">
-                    <div id="pie-gs3" class="pie-chart-frame bg-slate-200"></div>
-                    <div><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase flex items-center gap-1.5">Mains GS3 <span id="lbl-gs3" class="px-1.5 py-0.5 rounded text-[9px]">0%</span></div><div class="text-xs sm:text-sm font-black text-slate-800 mt-0.5 leading-tight">GS-III Blueprint</div></div>
-                </div>
-                <div class="bg-white/80 border border-slate-200/60 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-sm transition hover:shadow-md">
-                    <div id="pie-gs4" class="pie-chart-frame bg-slate-200"></div>
-                    <div><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase flex items-center gap-1.5">Mains GS4 <span id="lbl-gs4" class="px-1.5 py-0.5 rounded text-[9px]">0%</span></div><div class="text-xs sm:text-sm font-black text-slate-800 mt-0.5 leading-tight">GS-IV Ethics</div></div>
-                </div>
-                <div class="bg-white/80 border border-slate-200/60 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-sm transition hover:shadow-md">
-                    <div id="pie-a1" class="pie-chart-frame bg-slate-200"></div>
-                    <div><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase flex items-center gap-1.5">Anthro P1 <span id="lbl-a1" class="px-1.5 py-0.5 rounded text-[9px]">0%</span></div><div class="text-xs sm:text-sm font-black text-slate-800 mt-0.5 leading-tight">Paper I Focus</div></div>
-                </div>
-                <div class="bg-white/80 border border-slate-200/60 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-sm transition hover:shadow-md">
-                    <div id="pie-a2" class="pie-chart-frame bg-slate-200"></div>
-                    <div><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase flex items-center gap-1.5">Anthro P2 <span id="lbl-a2" class="px-1.5 py-0.5 rounded text-[9px]">0%</span></div><div class="text-xs sm:text-sm font-black text-slate-800 mt-0.5 leading-tight">Paper II Focus</div></div>
-                </div>
+                <div class="bg-white/80 border border-slate-200/60 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-sm transition hover:shadow-md"><div id="pie-p1" class="pie-chart-frame bg-slate-200"></div><div><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase flex items-center gap-1.5">Prelims P1 <span id="lbl-p1" class="px-1.5 py-0.5 rounded text-[9px]">0%</span></div><div class="text-xs sm:text-sm font-black text-slate-800 mt-0.5 leading-tight">GS Paper I</div></div></div>
+                <div class="bg-white/80 border border-slate-200/60 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-sm transition hover:shadow-md"><div id="pie-p2" class="pie-chart-frame bg-slate-200"></div><div><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase flex items-center gap-1.5">Prelims P2 <span id="lbl-p2" class="px-1.5 py-0.5 rounded text-[9px]">0%</span></div><div class="text-xs sm:text-sm font-black text-slate-800 mt-0.5 leading-tight">CSAT Paper II</div></div></div>
+                <div class="bg-white/80 border border-slate-200/60 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-sm transition hover:shadow-md"><div id="pie-gs1" class="pie-chart-frame bg-slate-200"></div><div><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase flex items-center gap-1.5">Mains GS1 <span id="lbl-gs1" class="px-1.5 py-0.5 rounded text-[9px]">0%</span></div><div class="text-xs sm:text-sm font-black text-slate-800 mt-0.5 leading-tight">GS-I Blueprint</div></div></div>
+                <div class="bg-white/80 border border-slate-200/60 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-sm transition hover:shadow-md"><div id="pie-gs2" class="pie-chart-frame bg-slate-200"></div><div><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase flex items-center gap-1.5">Mains GS2 <span id="lbl-gs2" class="px-1.5 py-0.5 rounded text-[9px]">0%</span></div><div class="text-xs sm:text-sm font-black text-slate-800 mt-0.5 leading-tight">GS-II Blueprint</div></div></div>
+                <div class="bg-white/80 border border-slate-200/60 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-sm transition hover:shadow-md"><div id="pie-gs3" class="pie-chart-frame bg-slate-200"></div><div><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase flex items-center gap-1.5">Mains GS3 <span id="lbl-gs3" class="px-1.5 py-0.5 rounded text-[9px]">0%</span></div><div class="text-xs sm:text-sm font-black text-slate-800 mt-0.5 leading-tight">GS-III Blueprint</div></div></div>
+                <div class="bg-white/80 border border-slate-200/60 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-sm transition hover:shadow-md"><div id="pie-gs4" class="pie-chart-frame bg-slate-200"></div><div><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase flex items-center gap-1.5">Mains GS4 <span id="lbl-gs4" class="px-1.5 py-0.5 rounded text-[9px]">0%</span></div><div class="text-xs sm:text-sm font-black text-slate-800 mt-0.5 leading-tight">GS-IV Ethics</div></div></div>
+                <div class="bg-white/80 border border-slate-200/60 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-sm transition hover:shadow-md"><div id="pie-a1" class="pie-chart-frame bg-slate-200"></div><div><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase flex items-center gap-1.5">Anthro P1 <span id="lbl-a1" class="px-1.5 py-0.5 rounded text-[9px]">0%</span></div><div class="text-xs sm:text-sm font-black text-slate-800 mt-0.5 leading-tight">Paper I Focus</div></div></div>
+                <div class="bg-white/80 border border-slate-200/60 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-sm transition hover:shadow-md"><div id="pie-a2" class="pie-chart-frame bg-slate-200"></div><div><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase flex items-center gap-1.5">Anthro P2 <span id="lbl-a2" class="px-1.5 py-0.5 rounded text-[9px]">0%</span></div><div class="text-xs sm:text-sm font-black text-slate-800 mt-0.5 leading-tight">Paper II Focus</div></div></div>
             </div>
         </div>
 
-        <!-- NEW TWO-TIER MASTER TABS CONTROLLER -->
+        <!-- LEVEL 1: MASTER NAVIGATION TABS -->
         <div class="neo-card rounded-2xl p-2 flex flex-row gap-1 overflow-x-auto whitespace-nowrap scrollbar-none shadow-sm">
             <button onclick="activateMasterTab('syllabus')" id="btn-master-syllabus" class="cursor-pointer flex-1 text-center py-4 px-6 rounded-xl font-black text-sm uppercase tracking-wider transition-all bg-slate-900 text-white shadow-md heading-font">1. Syllabus Tracker</button>
             <button onclick="activateMasterTab('pyq')" id="btn-master-pyq" class="cursor-pointer flex-1 text-center py-4 px-6 rounded-xl font-black text-sm uppercase tracking-wider transition-all text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 heading-font">2. PYQ Tracker</button>
             <button onclick="activateMasterTab('testseries')" id="btn-master-testseries" class="cursor-pointer flex-1 text-center py-4 px-6 rounded-xl font-black text-sm uppercase tracking-wider transition-all text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 heading-font">3. Test-Series</button>
         </div>
 
-        <!-- MASTER LEVEL 1: SYLLABUS TRACKER -->
+        <!-- ============================================== -->
+        <!-- MASTER TRACK 1: SYLLABUS HUB -->
+        <!-- ============================================== -->
         <div id="master-syllabus" class="master-pane-view block space-y-6">
             
-            <!-- SUB-TABS FOR SYLLABUS -->
+            <!-- LEVEL 2: SYLLABUS STAGE TABS -->
             <div class="flex flex-row gap-1 overflow-x-auto whitespace-nowrap scrollbar-none">
-                <button onclick="activateTab('deck-prelims')" id="btn-deck-prelims" class="cursor-pointer flex-1 text-center py-3.5 px-6 rounded-xl font-black text-xs uppercase tracking-wider transition-all bg-indigo-600 text-white shadow-md heading-font">Stage I: Prelims Blueprint</button>
-                <button onclick="activateTab('deck-mains')" id="btn-deck-mains" class="cursor-pointer flex-1 text-center py-3.5 px-6 rounded-xl font-black text-xs uppercase tracking-wider transition-all text-slate-500 hover:text-slate-900 hover:bg-white/80 heading-font">Stage II: Core Mains &amp; Languages</button>
-                <button onclick="activateTab('deck-anthro')" id="btn-deck-anthro" class="cursor-pointer flex-1 text-center py-3.5 px-6 rounded-xl font-black text-xs uppercase tracking-wider transition-all text-slate-500 hover:text-slate-900 hover:bg-white/80 heading-font">Stage III: Anthropology Optional</button>
+                <button onclick="activateStageTab('prelims')" id="btn-stage-prelims" class="cursor-pointer flex-1 text-center py-3.5 px-6 rounded-xl font-black text-xs uppercase tracking-wider transition-all bg-indigo-600 text-white shadow-md heading-font">Stage I: Prelims</button>
+                <button onclick="activateStageTab('mains')" id="btn-stage-mains" class="cursor-pointer flex-1 text-center py-3.5 px-6 rounded-xl font-black text-xs uppercase tracking-wider transition-all text-slate-500 hover:text-slate-900 hover:bg-white/80 heading-font">Stage II: Mains</button>
+                <button onclick="activateStageTab('anthro')" id="btn-stage-anthro" class="cursor-pointer flex-1 text-center py-3.5 px-6 rounded-xl font-black text-xs uppercase tracking-wider transition-all text-slate-500 hover:text-slate-900 hover:bg-white/80 heading-font">Stage III: Anthro</button>
             </div>
 
-            <!-- SYLLABUS STAGE I -->
-            <div id="deck-prelims" class="tab-pane-view block space-y-8">
-                <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">General Studies (Paper I) Matrix</h2><div class="space-y-3" id="box-prelims-gs"></div></div>
-                <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Civil Services Aptitude Test (CSAT - Paper II)</h2><div class="space-y-3" id="box-prelims-csat"></div></div>
+            <!-- LEVEL 3: PRELIMS PANELS -->
+            <div id="deck-prelims" class="stage-pane-view block space-y-4">
+                <div class="flex flex-row gap-2 overflow-x-auto whitespace-nowrap scrollbar-none bg-slate-100/50 p-1.5 rounded-xl border border-slate-200/60">
+                    <button onclick="activateSubTab('prelims', 'panel-prelims-gs', this)" class="sub-tab-prelims inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all bg-white text-indigo-700 shadow-sm border border-slate-200">GS Paper I</button>
+                    <button onclick="activateSubTab('prelims', 'panel-prelims-csat', this)" class="sub-tab-prelims inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-200/50 border border-transparent">CSAT Paper II</button>
+                </div>
+                <div id="panel-prelims-gs" class="sub-pane-prelims block neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Prelims: GS Paper I Matrix</h2><div class="space-y-3" id="box-prelims-gs"></div></div>
+                <div id="panel-prelims-csat" class="sub-pane-prelims hidden neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Prelims: CSAT Paper II Matrix</h2><div class="space-y-3" id="box-prelims-csat"></div></div>
             </div>
 
-            <!-- SYLLABUS STAGE II -->
-            <div id="deck-mains" class="tab-pane-view hidden space-y-8">
-                <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Paper A: Compulsory Indian Language</h2><div class="space-y-3" id="box-mains-lang-a"></div></div>
-                <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Paper B: Compulsory English Language</h2><div class="space-y-3" id="box-mains-lang-b"></div></div>
-                <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Paper I: Essay Framework</h2><div class="space-y-3" id="box-mains-essay"></div></div>
-                <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Paper II: General Studies I (GS-1)</h2><div class="space-y-3" id="box-mains-gs1"></div></div>
-                <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Paper III: General Studies II (GS-II)</h2><div class="space-y-3" id="box-mains-gs2"></div></div>
-                <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Paper IV: General Studies III (GS-III)</h2><div class="space-y-3" id="box-mains-gs3"></div></div>
-                <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Paper V: General Studies IV (GS-IV)</h2><div class="space-y-3" id="box-mains-gs4"></div></div>
+            <!-- LEVEL 3: MAINS PANELS -->
+            <div id="deck-mains" class="stage-pane-view hidden space-y-4">
+                <div class="flex flex-row gap-2 overflow-x-auto whitespace-nowrap scrollbar-none bg-slate-100/50 p-1.5 rounded-xl border border-slate-200/60">
+                    <button onclick="activateSubTab('mains', 'panel-mains-gs1', this)" class="sub-tab-mains inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all bg-white text-indigo-700 shadow-sm border border-slate-200">GS-I</button>
+                    <button onclick="activateSubTab('mains', 'panel-mains-gs2', this)" class="sub-tab-mains inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-200/50 border border-transparent">GS-II</button>
+                    <button onclick="activateSubTab('mains', 'panel-mains-gs3', this)" class="sub-tab-mains inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-200/50 border border-transparent">GS-III</button>
+                    <button onclick="activateSubTab('mains', 'panel-mains-gs4', this)" class="sub-tab-mains inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-200/50 border border-transparent">GS-IV</button>
+                    <button onclick="activateSubTab('mains', 'panel-mains-essay', this)" class="sub-tab-mains inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-200/50 border border-transparent">Essay</button>
+                    <button onclick="activateSubTab('mains', 'panel-mains-lang-a', this)" class="sub-tab-mains inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-200/50 border border-transparent">Lang A</button>
+                    <button onclick="activateSubTab('mains', 'panel-mains-lang-b', this)" class="sub-tab-mains inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-200/50 border border-transparent">Lang B</button>
+                </div>
+                <div id="panel-mains-gs1" class="sub-pane-mains block neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Mains: General Studies I Blueprint</h2><div class="space-y-3" id="box-mains-gs1"></div></div>
+                <div id="panel-mains-gs2" class="sub-pane-mains hidden neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Mains: General Studies II Blueprint</h2><div class="space-y-3" id="box-mains-gs2"></div></div>
+                <div id="panel-mains-gs3" class="sub-pane-mains hidden neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Mains: General Studies III Blueprint</h2><div class="space-y-3" id="box-mains-gs3"></div></div>
+                <div id="panel-mains-gs4" class="sub-pane-mains hidden neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Mains: General Studies IV Ethics</h2><div class="space-y-3" id="box-mains-gs4"></div></div>
+                <div id="panel-mains-essay" class="sub-pane-mains hidden neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Mains: Essay Framework</h2><div class="space-y-3" id="box-mains-essay"></div></div>
+                <div id="panel-mains-lang-a" class="sub-pane-mains hidden neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Mains: Compulsory Indian Language</h2><div class="space-y-3" id="box-mains-lang-a"></div></div>
+                <div id="panel-mains-lang-b" class="sub-pane-mains hidden neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Mains: Compulsory English Language</h2><div class="space-y-3" id="box-mains-lang-b"></div></div>
             </div>
 
-            <!-- SYLLABUS STAGE III -->
-            <div id="deck-anthro" class="tab-pane-view hidden space-y-8">
-                <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Paper VI: Anthropology Optional (Paper I)</h2><div class="space-y-3" id="box-anthro-p1"></div></div>
-                <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Paper VII: Anthropology Optional (Paper II)</h2><div class="space-y-3" id="box-anthro-p2"></div></div>
-                <!-- NEW ASSIGNMENT SECTION (STAGE 3 ONLY) -->
-                <div class="neo-card rounded-3xl p-6 border-l-4 border-indigo-500"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4 text-indigo-900">Stage III Exclusive: Assignment Completion</h2><div class="space-y-3" id="box-anthro-assignments"></div></div>
+            <!-- LEVEL 3: ANTHROPOLOGY PANELS -->
+            <div id="deck-anthro" class="stage-pane-view hidden space-y-4">
+                <div class="flex flex-row gap-2 overflow-x-auto whitespace-nowrap scrollbar-none bg-slate-100/50 p-1.5 rounded-xl border border-slate-200/60">
+                    <button onclick="activateSubTab('anthro', 'panel-anthro-p1', this)" class="sub-tab-anthro inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all bg-white text-indigo-700 shadow-sm border border-slate-200">Paper I Focus</button>
+                    <button onclick="activateSubTab('anthro', 'panel-anthro-p2', this)" class="sub-tab-anthro inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-200/50 border border-transparent">Paper II Focus</button>
+                    <button onclick="activateSubTab('anthro', 'panel-anthro-asn', this)" class="sub-tab-anthro inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-200/50 border border-transparent text-indigo-900 bg-indigo-50 border-indigo-200 hover:bg-indigo-100">Assignments</button>
+                </div>
+                <div id="panel-anthro-p1" class="sub-pane-anthro block neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Anthropology Optional: Paper I</h2><div class="space-y-3" id="box-anthro-p1"></div></div>
+                <div id="panel-anthro-p2" class="sub-pane-anthro hidden neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Anthropology Optional: Paper II</h2><div class="space-y-3" id="box-anthro-p2"></div></div>
+                <div id="panel-anthro-asn" class="sub-pane-anthro hidden neo-card rounded-3xl p-6 border-l-4 border-indigo-500"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4 text-indigo-900">Anthropology Custom Assignments</h2><div class="space-y-3" id="box-anthro-asn"></div></div>
             </div>
         </div>
 
-        <!-- MASTER LEVEL 2: PYQ TRACKER -->
+        <!-- ============================================== -->
+        <!-- MASTER TRACK 2: PYQ TRACKER -->
+        <!-- ============================================== -->
         <div id="master-pyq" class="master-pane-view hidden space-y-8">
             <div class="neo-card rounded-3xl p-6">
-                <h2 class="heading-font text-2xl font-black border-b border-slate-100 pb-3 mb-4">Previous Year Questions (PYQ) Execution Matrix</h2>
+                <h2 class="heading-font text-2xl font-black border-b border-slate-100 pb-3 mb-4">PYQ Execution Matrix</h2>
                 <div class="space-y-3" id="box-pyq"></div>
             </div>
         </div>
 
-        <!-- MASTER LEVEL 3: TEST SERIES -->
+        <!-- ============================================== -->
+        <!-- MASTER TRACK 3: TEST SERIES -->
+        <!-- ============================================== -->
         <div id="master-testseries" class="master-pane-view hidden space-y-8">
             <div class="neo-card rounded-3xl p-6">
                 <h2 class="heading-font text-2xl font-black border-b border-slate-100 pb-3 mb-4">Test-Series Execution Matrix</h2>
-                <div class="space-y-3" id="box-testseries"></div>
+                <div class="space-y-3" id="box-ts"></div>
             </div>
         </div>
     </main>
@@ -207,17 +210,16 @@
                 <div>
                     <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5 font-mono">Target Subject Scope</label>
                     <select id="modal-select-panel" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs sm:text-sm font-medium text-slate-700 focus:outline-none focus:border-indigo-500">
-                        <option value="box-prelims-gs">Syllabus: Prelims - General Studies I</option>
-                        <option value="box-prelims-csat">Syllabus: Prelims - CSAT/General Studies II</option>
+                        <option value="box-prelims-gs">Syllabus: Prelims GS I</option>
+                        <option value="box-prelims-csat">Syllabus: Prelims CSAT</option>
                         <option value="box-mains-gs1">Syllabus: Mains GS-I</option>
                         <option value="box-mains-gs2">Syllabus: Mains GS-II</option>
                         <option value="box-mains-gs3">Syllabus: Mains GS-III</option>
                         <option value="box-mains-gs4">Syllabus: Mains GS-IV</option>
-                        <option value="box-anthro-p1">Syllabus: Anthropology - Paper I</option>
-                        <option value="box-anthro-p2">Syllabus: Anthropology - Paper II</option>
-                        <option value="box-anthro-assignments">Stage III: Anthropology Assignments</option>
-                        <option value="box-pyq">PYQ Tracker</option>
-                        <option value="box-testseries">Test-Series Tracker</option>
+                        <option value="box-anthro-p1">Syllabus: Anthro Paper I</option>
+                        <option value="box-anthro-p2">Syllabus: Anthro Paper II</option>
+                        <option value="box-pyq">Tracker: PYQ Directory</option>
+                        <option value="box-ts">Tracker: Test Series</option>
                     </select>
                 </div>
                 <div>
@@ -251,24 +253,19 @@
         const dataGS4 = ["Ethics and Human Interface: Essence, determinants and consequences of Ethics in human actions; dimensions of ethics; ethics in private and public relationships. Human Values-lessons from the lives and teachings of great leaders, reformers and administrators; role of family, society and educational institutions in imparting values.", "Attitude: Content, structure, function; its influence and relation with thought and behaviour; moral and political attitudes; social influence and persuasion.", "Aptitude: Aptitude and foundational values for Civil Service, integrity, impartiality and non- partisanship, objectivity, dedication to public service, empathy, tolerance and compassion towards the weaker-sections.", "Emotional Intelligence: Concepts, and their utilities and application in administration and governance.", "Contributions of Moral Thinkers: Contributions of moral thinkers and philosophers from India and world.", "Public/Civil Service Values and Ethics in Public Administration: Status and problems; ethical concerns and dilemmas in government and private institutions; laws, rules, regulations and conscience as sources of ethical guidance; accountability and ethical governance; strengthening of ethical and moral values in governance; ethical issues in international relations and funding; corporate governance.", "Probity in Governance: Concept of public service; Philosophical basis of governance and probity; Information sharing and transparency in government, Right to Information, Codes of Ethics, Codes of Conduct, Citizen's Charters, Work culture, Quality of service delivery, Utilization of public funds, challenges of corruption.", "Case Studies on above issues."];
         const dataA1 = ["1.1 Meaning, Scope and Development of Anthropology.", "1.2 Relationships with other disciplines: Social Sciences, Behavioural Sciences, Life Sciences, Medical Sciences, Earth Sciences and Humanities.", "1.3 Main branches of Anthropology, their scope and relevance: (a) Social-cultural Anthropology. (b) Biological Anthropology. (c) Archaeological Anthropology. (d) Linguistic Anthropology.", "1.4 Human Evolution and emergence of Man: (a) Biological and Cultural factors in human evolution. (b) Theories of Organic Evolution (Pre- Darwinian, Darwinian and Post-Darwinian). (c) Synthetic theory of evolution; Brief outline of terms and concepts of evolutionary biology (Doll's rule, Cope's rule, Gause's rule, parallelism, convergence, adaptive radiation, and mosaic evolution).", "1.5 Characteristics of Primates; Evolutionary Trend and Primate Taxonomy; Primate Adaptations; (Arboreal and Terrestrial) Primate Behaviour; Tertiary and Quaternary fossil primates; Living Major Primates; Comparative Anatomy of Man and Apes; Skeletal changes due to erect posture and bipedalism.", "1.6 Phylogenetic status, characteristics and geographical distribution of the following: (a) Plio-pleistocene hominids in South and East Africa - Australopithecines. (b) Homo erectus: Africa (Homo ergaster), Europe (Homo heidelbergensis), Asia (Homo erectus pekinensis, Homo erectus javanicus). (c) Neanderthal Man - La-Chapelle-aux-Saints (Classical type), Mt. Carmel (Progressive type). (d) Rhodesian man. (e) Homo sapiens Cro-Magnon, Grimaldi and Chancelade.", "1.7 The biological basis of Life: Cell, DNA structure and replication, Protein Synthesis, Gene, Mutation, Chromosomes, and Cell Division.", "1.8 Principles of Prehistoric Archaeology: Chronology: Relative and Absolute dating methods. Cultural Evolution- Broad Outlines of Prehistoric cultures: (e) Paleolithic (b) Mesolithic (c) Neolithic (d) Chalcolithic (e) Copper-Bronze Age (f) Iron Age.", "2.1 The Nature of Culture: The concept and characteristics of culture and civilization; Ethnocentrism vis-a-vis Cultural Relativism.", "2.2 The Nature of Society: Concept of society; Society and Culture; Social Institutions; Social groups; and Social stratification.", "2.3 Marriage: Definition and universality; Laws of marriage (endogamy, exogamy, hypergamy, hypogamy, incest taboo); Types of marriage (monogamy, polygamy, polyandry, group marriage); Functions of marriage; Marriage regulations (preferential, prescriptive and proscriptive); Marriage payments (bride wealth and dowry).", "2.4 Family: Definition and universality; Family, household and domestic group; functions of family; Types of family (from the perspectives of structure, blood relation, marriage, residence and succession); Impact of urbanization, industrialization and feminist movements on family.", "2.5 Kinship: Consanguinity and Affinity; Principles and types of descent (Unilineal, Double, Bilateral, Ambilineal); Forms of descent groups (lineage, clan, phratry, moiety and kindred); Kinship terminology (descriptive and classificatory); Descent-Alliance networks.", "3. Economic Organization: Meaning, scope and relevance of economic anthropology; Formalist and Substantivist debate; Principles governing production, distribution and exchange (reciprocity, redistribution and market) in communities, subsisting on hunting and gathering, fishing, pastoralism, horticulture and agriculture; globalization and indigenous economic systems.", "4. Political Organization and Social Control: Band, tribe, chiefdom, kingdom and state; concepts of power, authority and legitimacy; social control, law and justice in simple societies.", "5. Religion: Anthropological approaches to the study of religion (evolutionary, psychological and functional); Monotheism and Polytheism; Sacred and profane; Myths and rituals; Forms of religion in tribal and peasant societies (animism, animatism, fetishism, naturism and totemism); Religion, magic and science distinguished; Magico-religious functionaries (priest, shaman, medicine man, sorcerer and witch).", "6. Anthropological Theories: (a) Classical Evolutionism (Tylor, Morgan and Frazer) (b) Historical Particularism (Boas); Diffusionism (British, German-Austrian and American) (c) Functionalism (Malinowski); Structural-functionalism (Radcliffe-Brown) (d) Structuralism (Lévi-Strauss and Leach) (e) Culture and Personality (Benedict, Mead, Linton, Kardiner and Cora-du Bois) (f) Neo - Evolutionism (Childe, White, Steward, Sahlins and Service) (g) Cultural Materialism (Harris) (h) Symbolic and Interpretive theories (Turner, Schneider and Geertz) (i) Cognitive Anthropology (Tyler, Conklin) (j) Post-modernism in Anthropology", "7. Culture, Language and Communication: Nature, origin and characteristics of language; verbal and non-verbal communication; social-context of language use.", "8. Research Methods in Anthropology: (a) Fieldwork tradition in anthropology (b) Distinction between technique, method and methodology (c) Tools of data collection: observation, interview, schedules, questionnaire, Case study, Strategies, life history, oral history, secondary sources of data, genealogical method. (d) Analysis, interpretation and presentation of data.", "9.1 Human Genetics: Methods and Application: Methods for study of genetic principles in man- family study (pedigree analysis, twin study, foster child, co-twin method, cytogenetic method, chromosomal and karyo-type analysis), biochemical methods, immunological methods, D.N.A. technology and recombinant technologies.", "9.2 Mendelian genetics in man-marriage and disease: Single locus inheritance (Autosomal dominant and recessive, sex-linked, sex-limited and sex-influenced traits); Linkage and crossing-over, sex determination and differentiation; Biochemical genetics (Rh, ABO blood groups, HLA, Gm, blood enzymes, Inborn errors of metabolism).", "9.3 Chromosomal aberrations in Man: numerical and structural aberrations (disorders); (a) Autosomal aberrations: Down's, Patau's, Edward's and Cri-du-chat syndromes. (b) Sex chromosomal aberrations: Klinefelter's, Turner's, Super female, XYY syndrome. (c) Genetic imprints in human disease, genetic screening, genetic counseling, forensics.", "9.4 Race and Racism: Biological concept of race, criteria of racial classification; race and intelligence, racism; race cross-breeding, genetic markers in racial classification.", "9.5 Ecological Anthropology: Bio-cultural adaptations to cold, heat, high altitude, and nutritional stresses.", "9.6 Epidemiological Anthropology: Infectious and non-infectious diseases; Nutritional deficiencies.", "10. Concept of Human Growth and Development: Stages of growth prenatal, natal, infant, childhood, adolescence, maturity, senescence; Factors affecting growth and development; Methodology of growth studies (cross-sectional, longitudinal, mixed longitudinal); Human physique and somatotyping.", "11.1 Relevance of menarche, menopause and other bioevents to fertility. Fertility patterns and differentials.", "11.2 Demographic theories - biological, social and cultural.", "11.3 Biological and socio-ecological factors influencing fecundity, fertility, natality and mortality.", "12. Applications of Anthropology: Anthropology of sports, Nutritional anthropology, Anthropology in designing of defence and other equipments, Forensic Anthropology, Methods and principles of personal identification and reconstruction, Applied human genetics Paternity diagnosis, genetic counseling and eugenics, DNA profiling, Gene mapping."];
         const dataA2 = ["1.1 Evolution of the Indian Culture and Civilization: Prehistoric (Paleolithic, Mesolithic, Neolithic and Chalcolithic); Protohistoric (Indus Valley Civilization); Islamic impacts; Westernization and Modernization trends.", "1.2 Paleoanthropological evidences from India with special reference to Ramapithecus, Sivapithecus and Narmada Man.", "1.3 Ethno-archaeology in India: The concept of ethno-archaeology; Survivals and Parallels among the hunter-gatherers, pastoralists, nomadic communities, agriculturalists and artisan communities.", "2. Demographic profile of India: Ethnic and linguistic elements in the Indian population and their distribution; Social and economic characteristics of the ethnographic elements.", "3.1 The structure and nature of traditional Indian social system: Varnashrama, Purushartha, Karma, Rina and Rebirth concepts.", "3.2 Caste system in India: Structure and characteristics; Varna and Caste; Theories of origin of caste system; Dominant Caste; Caste mobility; Future of caste system; Jajmani system; Jati Panchayat.", "3.3 Sacred Complex and Nature-Man-Spirit Complex.", "3.4 Impact of Buddhism, Jainism, Islam and Christianity on Indian society.", "4. Emergence and Growth of Anthropology in India: Contributions of the 18th, 19th and early 20th Century scholar-administrators; Contributions of Indian anthropologists to tribal and peasant studies.", "5.1 Indian Village: Significance of village study in India; Indian village as a social system; Traditional and changing patterns of settlement and inter-caste relations; Agrarian relations in Indian villages; Impact of globalization on Indian villages.", "5.2 Linguistic and religious minorities and their social, political and economic problems.", "5.3 Indigenous and exogenous processes of socio-cultural change in Indian society: Sanskritization, Westernization, Modernization; Inter-play of Little and Great Traditions; Panchayati Raj and social change.", "6.1 Tribal situation in India: Bio-genetic variability, linguistic and socio-economic characteristics of tribal populations and their distribution.", "6.2 Problems of the tribal Communities: Land alienation, poverty, indebtedness, low literacy, poor health, malnutrition, underemployment; Tribal unrest and Left-Wing Extremism.", "6.3 Developmental projects and their impact on tribal displacement and rehabilitation problems; Development of forest policy and tribals.", "7.1 Problems of exploitation and deprivation of Scheduled Castes, Scheduled Tribes and Other Backward Classes; Constitutional safeguards for Scheduled Tribes and Scheduled Castes.", "7.2 Social change and contemporary tribal societies: Impact of modern democratic institutions, development programmes and welfare measures on tribals and weaker sections.", "7.3 The concept of PTGs (Particularly Vulnerable Tribal Groups) and their distribution; Special programmes for their development; Role of NGOs in tribal development.", "8.1 Impact of Hinduism, Buddhism, Christianity, Islam and other religions on tribal societies.", "8.2 Tribe and nation state: Comparative study of tribal communities in India and other democratic countries; issues of integration and autonomy.", "9.1 History of administration of tribal areas: Tribal policies and plans during British rule and post- independence; 5th and 6th Schedules of the Constitution; Panchayati Raj provisions for tribal areas (PESA); Tribal Sub-Plan framework.", "9.2 Role of Anthropology in tribal and rural development.", "9.3 Contributions of anthropology to the understanding of regionalism, communalism, and ethnic conflicts."];
-
-        // NEW DATASOURCES FOR TIER 2 & TIER 3
-        const dataPYQ = ["Prelims GS Paper I - PYQ Analysis", "Prelims CSAT Paper II - PYQ Analysis", "Mains GS-I - PYQ Analysis", "Mains GS-II - PYQ Analysis", "Mains GS-III - PYQ Analysis", "Mains GS-IV Ethics - PYQ Analysis", "Anthropology Paper I - PYQ Analysis", "Anthropology Paper II - PYQ Analysis"];
-        const dataTestSeries = ["Prelims Mock Test 01", "Prelims Mock Test 02", "Prelims Mock Test 03", "Mains GS Sectional Test 01", "Mains GS Sectional Test 02", "Mains Essay Test 01", "Anthropology Sectional Test 01", "Anthropology Sectional Test 02"];
-        const dataAssignments = ["Anthropology Core Assignment 01", "Anthropology Core Assignment 02", "Anthropology Core Assignment 03", "Anthropology Core Assignment 04", "Anthropology Core Assignment 05"];
+        
+        // NEW MASTER TAB DATA
+        const dataPYQ = ["Prelims GS Paper I (2013-Present)", "Prelims CSAT Paper II (2013-Present)", "Mains GS-I (2013-Present)", "Mains GS-II (2013-Present)", "Mains GS-III (2013-Present)", "Mains GS-IV Ethics (2013-Present)", "Anthropology Paper I", "Anthropology Paper II"];
+        const dataTS = ["Prelims FLT Test 01", "Prelims FLT Test 02", "Prelims FLT Test 03", "Mains GS-I Sectional Test", "Mains GS-II Sectional Test", "Mains GS-III Sectional Test", "Mains GS-IV Sectional Test", "Anthro P1 Sectional Test", "Anthro P2 Sectional Test"];
 
         const pieColors = {
-            'p1':  { hex: '#6366f1', bg: '#e0e7ff', text: '#4f46e5' }, // Indigo
-            'p2':  { hex: '#10b981', bg: '#d1fae5', text: '#059669' }, // Emerald
-            'gs1': { hex: '#f59e0b', bg: '#fef3c7', text: '#d97706' }, // Amber
-            'gs2': { hex: '#f43f5e', bg: '#ffe4e6', text: '#e11d48' }, // Rose
-            'gs3': { hex: '#a855f7', bg: '#f3e8ff', text: '#9333ea' }, // Purple
-            'gs4': { hex: '#06b6d4', bg: '#cffafe', text: '#0891b2' }, // Cyan
-            'a1':  { hex: '#d946ef', bg: '#fae8ff', text: '#c026d3' }, // Fuchsia
-            'a2':  { hex: '#f97316', bg: '#ffedd5', text: '#ea580c' }  // Orange
+            'p1':  { hex: '#6366f1', bg: '#e0e7ff', text: '#4f46e5' }, 'p2':  { hex: '#10b981', bg: '#d1fae5', text: '#059669' },
+            'gs1': { hex: '#f59e0b', bg: '#fef3c7', text: '#d97706' }, 'gs2': { hex: '#f43f5e', bg: '#ffe4e6', text: '#e11d48' },
+            'gs3': { hex: '#a855f7', bg: '#f3e8ff', text: '#9333ea' }, 'gs4': { hex: '#06b6d4', bg: '#cffafe', text: '#0891b2' },
+            'a1':  { hex: '#d946ef', bg: '#fae8ff', text: '#c026d3' }, 'a2':  { hex: '#f97316', bg: '#ffedd5', text: '#ea580c' }
         };
 
-        // Initialize All Lists
+        // Initialize All Core Lists
         buildList('box-prelims-gs', dataP1, 'p1');
         buildList('box-prelims-csat', dataP2, 'p2');
         buildList('box-mains-lang-a', dataLA, 'la');
@@ -280,10 +277,11 @@
         buildList('box-mains-gs4', dataGS4, 'gs4');
         buildList('box-anthro-p1', dataA1, 'a1');
         buildList('box-anthro-p2', dataA2, 'a2');
-        
         buildList('box-pyq', dataPYQ, 'pyq');
-        buildList('box-testseries', dataTestSeries, 'ts');
-        buildList('box-anthro-assignments', dataAssignments, 'asn');
+        buildList('box-ts', dataTS, 'ts');
+
+        // Special Initializer for Editable Assignments List (Renders 10 slots)
+        buildEditableAssignmentsList('box-anthro-asn', 10, 'asn');
 
         trackLiveClockTimelines();
         calculateMetricsHUD();
@@ -302,6 +300,25 @@
                     </div>
                 </div>
             `).join('');
+        }
+
+        function buildEditableAssignmentsList(domId, count, prefix) {
+            const el = document.getElementById(domId);
+            if(!el) return;
+            let html = "";
+            for(let idx=0; idx<count; idx++) {
+                html += `
+                <div class="task-row flex flex-col p-3.5 bg-white border border-slate-200/80 hover:border-indigo-500/20 rounded-2xl transition duration-200 group relative shadow-2xs">
+                    <div class="flex items-start w-full">
+                        <input type="checkbox" id="uid-${prefix}-${idx}" onchange="handleSyncAction('uid-${prefix}-${idx}')" class="mt-0.5 mr-3.5 h-5 w-5 rounded-md border-slate-300 text-indigo-600 focus:ring-indigo-500/20 cursor-pointer">
+                        <input type="text" id="title-uid-${prefix}-${idx}" onchange="handleTitleSync('title-uid-${prefix}-${idx}')" placeholder="[Click to name assignment ${idx+1}]" class="flex-1 bg-transparent font-bold text-xs sm:text-sm text-slate-800 focus:outline-none focus:border-b focus:border-indigo-300 transition-all group-has-[:checked]:text-slate-400 group-has-[:checked]:line-through">
+                    </div>
+                    <div class="mt-2 ml-10 w-[calc(100%-2.5rem)]">
+                        <input type="text" id="note-uid-${prefix}-${idx}" onchange="handleSyncAction('uid-${prefix}-${idx}')" placeholder="Add notes for this assignment..." class="w-full bg-slate-50/50 border border-slate-200 rounded-lg p-2 text-[11px] font-mono text-slate-600 focus:outline-none focus:border-indigo-400 focus:bg-white transition-colors placeholder-slate-300">
+                    </div>
+                </div>`;
+            }
+            el.innerHTML = html;
         }
 
         let dbClient = null;
@@ -329,7 +346,6 @@
             try {
                 const fetchPromise = dbClient.from('nishant_upsc_tracker').select('*');
                 const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000));
-                
                 const response = await Promise.race([fetchPromise, timeoutPromise]);
 
                 if (response.error) throw response.error;
@@ -346,7 +362,13 @@
                                 const decodedText = decodeURIComponent(escape(atob(encodedPayload)));
                                 buildCustomTopicNode(targetBox, decodedText, row.id, row.is_checked, noteValue);
                             } catch(e) {}
-                        } else {
+                        } 
+                        else if (row.id.startsWith('title-uid-asn-')) {
+                            // Syncing the Assignment Editable Titles
+                            const titleInput = document.getElementById(row.id);
+                            if (titleInput) titleInput.value = noteValue;
+                        }
+                        else {
                             const box = document.getElementById(row.id);
                             const noteInput = document.getElementById('note-' + row.id);
                             if (box) box.checked = row.is_checked;
@@ -363,6 +385,18 @@
             }
         }
 
+        // Separate function to sync the Assignment Titles securely into the same DB column
+        async function handleTitleSync(titleId) {
+            if(!dbClient) return;
+            const titleInput = document.getElementById(titleId);
+            const titleText = titleInput ? titleInput.value : '';
+            try {
+                await dbClient.from('nishant_upsc_tracker').upsert({ 
+                    id: titleId, is_checked: false, topic_note: titleText, updated_at: new Date().toISOString() 
+                });
+            } catch(e) {}
+        }
+
         async function handleSyncAction(elementId) {
             calculateMetricsHUD(); 
             if(!dbClient) return;
@@ -373,10 +407,7 @@
 
             try {
                 const pushPromise = dbClient.from('nishant_upsc_tracker').upsert({ 
-                    id: elementId, 
-                    is_checked: isChecked, 
-                    topic_note: noteText,
-                    updated_at: new Date().toISOString() 
+                    id: elementId, is_checked: isChecked, topic_note: noteText, updated_at: new Date().toISOString() 
                 });
                 const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 3000));
                 await Promise.race([pushPromise, timeoutPromise]);
@@ -446,7 +477,6 @@
                 
                 const sPct = sTotal > 0 ? Math.round((sChecked / sTotal) * 100) : 0;
                 const theme = pieColors[pfx];
-                
                 const pieEl = document.getElementById(`pie-${pfx}`);
                 const lblEl = document.getElementById(`lbl-${pfx}`);
                 
@@ -455,7 +485,6 @@
                     lblEl.style.backgroundColor = theme.bg;
                     lblEl.style.color = theme.text;
                     pieEl.style.background = `conic-gradient(${theme.hex} ${sPct}%, #e2e8f0 0%)`;
-                    
                     if (sPct > 0) { pieEl.style.boxShadow = `0 0 12px -2px ${theme.hex}80`; } 
                     else { pieEl.style.boxShadow = 'none'; }
                 }
@@ -475,27 +504,47 @@
             update(); setInterval(update, 60000);
         }
 
-        // NAVIGATION LOGIC 
+        // ==========================
+        // 3-TIER NAVIGATION LOGIC
+        // ==========================
+
+        // Level 1: Master Tabs (Syllabus, PYQ, Test-Series)
         function activateMasterTab(id) {
             document.querySelectorAll('.master-pane-view').forEach(p => p.classList.add('hidden'));
             document.getElementById(`master-${id}`).classList.remove('hidden');
             ['syllabus', 'pyq', 'testseries'].forEach(k => {
                 const btn = document.getElementById(`btn-master-${k}`);
-                if (k === id) {
-                    btn.className = "cursor-pointer flex-1 text-center py-4 px-6 rounded-xl font-black text-sm uppercase tracking-wider transition-all bg-slate-900 text-white shadow-md heading-font";
-                } else {
-                    btn.className = "cursor-pointer flex-1 text-center py-4 px-6 rounded-xl font-black text-sm uppercase tracking-wider transition-all text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 heading-font";
-                }
+                if (k === id) { btn.className = "cursor-pointer flex-1 text-center py-4 px-6 rounded-xl font-black text-sm uppercase tracking-wider transition-all bg-slate-900 text-white shadow-md heading-font"; } 
+                else { btn.className = "cursor-pointer flex-1 text-center py-4 px-6 rounded-xl font-black text-sm uppercase tracking-wider transition-all text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 heading-font"; }
             });
         }
 
-        function activateTab(id) {
-            document.querySelectorAll('.tab-pane-view').forEach(p => p.classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
+        // Level 2: Syllabus Stages (Prelims, Mains, Anthro)
+        function activateStageTab(id) {
+            document.querySelectorAll('.stage-pane-view').forEach(p => p.classList.add('hidden'));
+            document.getElementById(`deck-${id}`).classList.remove('hidden');
             ['prelims', 'mains', 'anthro'].forEach(k => {
-                const btn = document.getElementById(`btn-deck-${k}`);
-                btn.className = `deck-${k}` === id ? "cursor-pointer flex-1 py-3.5 px-6 rounded-xl font-black text-xs uppercase bg-indigo-600 text-white" : "cursor-pointer flex-1 py-3.5 px-6 rounded-xl font-black text-xs uppercase text-slate-500 hover:bg-slate-100/80";
+                const btn = document.getElementById(`btn-stage-${k}`);
+                btn.className = `deck-${k}` === `deck-${id}` ? "cursor-pointer flex-1 text-center py-3.5 px-6 rounded-xl font-black text-xs uppercase tracking-wider transition-all bg-indigo-600 text-white shadow-md heading-font" : "cursor-pointer flex-1 text-center py-3.5 px-6 rounded-xl font-black text-xs uppercase tracking-wider transition-all text-slate-500 hover:text-slate-900 hover:bg-white/80 heading-font";
             });
+        }
+
+        // Level 3: Individual Papers Sub-Tabs (GS1, CSAT, Essay, etc.)
+        function activateSubTab(groupClass, panelId, btnElement) {
+            document.querySelectorAll('.sub-pane-' + groupClass).forEach(p => p.classList.add('hidden'));
+            document.getElementById(panelId).classList.remove('hidden');
+
+            document.querySelectorAll('.sub-tab-' + groupClass).forEach(btn => {
+                // Determine if it's the Anthro Assignments button for special styling
+                if (btn.id === 'btn-anthro-asn') {
+                    btn.className = `sub-tab-${groupClass} inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-200/50 border border-transparent`;
+                } else {
+                    btn.className = `sub-tab-${groupClass} inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-200/50 border border-transparent`;
+                }
+            });
+            
+            // Apply active state specifically
+            btnElement.className = `sub-tab-${groupClass} inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all bg-white text-indigo-700 shadow-sm border border-slate-200`;
         }
     </script>
 </body>
