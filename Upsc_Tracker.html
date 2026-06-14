@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nishant Kumar • UPSC CSE Command Center 2027</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cabinet+Grotesk:wght@700;800;900&display=swap');
         
@@ -15,8 +16,6 @@
         .custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
-        /* Fallback CSS in case Tailwind is blocked by network */
-        .hidden { display: none !important; }
     </style>
 </head>
 <body class="text-slate-800 antialiased min-h-screen flex flex-col custom-scrollbar">
@@ -42,7 +41,7 @@
                 </button>
                 <div class="bg-slate-100 rounded-xl p-1 flex border border-slate-200">
                     <span class="px-2.5 py-1 text-slate-500">System Time:</span>
-                    <span id="live-date-hud" class="px-2.5 py-1 bg-white rounded-lg text-slate-900 shadow-xs">Loading...</span>
+                    <span id="live-date-hud" class="px-2.5 py-1 bg-white rounded-lg text-slate-900 shadow-xs">---</span>
                 </div>
             </div>
         </div>
@@ -162,7 +161,6 @@
         const dataA1 = ["1.1 Meaning, Scope and Development of Anthropology.","1.2 Relationship tracking with Social Sciences, Life Sciences, Earth fields.","1.3 Core branches definition: Socio-cultural, Biological, Archaeological, Linguistic.","1.4 Human Evolution mechanics: Organic evolution theories, Synthetic code.","1.5 Primates Taxonomy: Behavioral characteristics, living apes comparison.","1.6 Phylogenetic status analysis: Australopithecines, Homo erectus, Neanderthal.","1.7 Biological metrics: Cell structures, DNA replication loops, protein systems.","1.8 Prehistoric Archaeology Chronologies: Dating systems, Paleolithic to Iron maps.","2.1 Culture concept: Civilization parameters, Relativism models.","2.2 Society frameworks: Social configurations, institutional layers.","2.3 Marriage systems: Endo/exogamy rules, incest taboos, payments structures.","2.4 Family setups: Household typologies, corporate units functions, urban shifts.","2.5 Kinship lines: Descent groups systems, terminology frameworks.","3. Economic Anthropology: Formalist vs. Substantivist configuration debates.","4. Political Architectures: Power/legitimacy; simple justice execution rules.","5. Religion parameters: Theories, animism, magic vs. science functional borders.","6. Anthropological Thought: Classical Evolutionism, Particularism, Structuralism.","7. Language & Communication: Verbal/non-verbal communication parameters.","8. Research Methodologies: Fieldwork tracking methods, Genealogical tools.","9.1 Human Genetics: Twin study methods, pedigree models, DNA setups.","9.2 Mendelian patterns in human disease tracking: ABO, Rh, HLA configurations.","9.3 Chromosomal aberrations anomalies: Down syndrome configuration, Turner setups.","9.4 Race & Racism concepts: Polytypic human variations sorting, marker tracking.","9.5 Ecological Adaptations: Bio-cultural responses mapping heat, cold stresses.","9.6 Epidemiological tracking: Infectious vectors footprints vs. chronic patterns.","10. Human Growth & Development stages: Pre-natal/natal markers, somatotyping.","11. Demography theories: Biological/social frameworks, fertility variables.","12. Applied Anthropology applications: Ergonomics, forensic metrics, DNA profiling."];
         const dataA2 = ["1.1 Indian Culture Evolution: Prehistoric to Chalcolithic grids, IVC, shifts.","1.2 Paleoanthropological nodes in India: Ramapithecus, Narmada Man logs.","1.3 Ethno-archaeological parallels mapping: Contemporary hunter-gatherer survivals matching.","2. Demographic Profile of India: Spatial layout of ethnic markers, language sets.","3.1 Traditional Social Systems: Varnashrama tracking, Purushartha targets.","3.2 Caste system layers: Theories of origin, mobility indexes, Jati Panchayat frameworks.","3.3 Sacred Complex models and Nature-Man-Spirit Complex conceptual frameworks.","3.4 Impact of World Religions on Indian society: Buddhism, Islam, Christianity.","4. Growth of Anthropology in India: Scholar-administrator foundational records.","5.1 Indian Village setups: Inter-caste dependency tracking, globalization impacts.","5.2 Minorities sorting: Linguistic and religious minority groups tracking.","5.3 Structural Change processes: Sanskritization parameters, Modernization trends.","6.1 Tribal Situation in India: Biogenetic variation clustering, configurations.","6.2 Tribal Hardships: Land alienation vectors tracking, multi-dimensional debt, LWE.","6.3 Forest Policy actions: Historical forest codes tracking vs. tribal rights.","7.1 Exploitation protections: Constitutional safeguards for SC and ST.","7.2 Social Change vectors: Modern democratic institutional footprints.","7.3 PVTGs (Particularly Vulnerable Tribal Groups): Structural parameters tracking.","8.1 Religious shifts: Syncretic adjustments, tribal conversions dynamics tracking.","8.2 Tribe and Nation-State integration metrics, regional autonomy friction points.","9.1 Tribal Administration Architectures: Fifth and Sixth Schedule tracking, PESA regulations.","9.2 Anthropology applications inside structural grass-roots rural planning.","9.3 Resolving frictions: Anthropological analytical tracks exploring conflicts."];
 
-        // 1. Instantly generate interface (No network required)
         buildList('box-prelims-gs', dataP1, 'p1');
         buildList('box-prelims-csat', dataP2, 'p2');
         buildList('box-mains-lang-a', dataLA, 'la');
@@ -175,7 +173,6 @@
         buildList('box-anthro-p1', dataA1, 'a1');
         buildList('box-anthro-p2', dataA2, 'a2');
 
-        // 2. Instantly start clocks
         trackLiveClockTimelines();
         calculateMetricsHUD();
 
@@ -193,41 +190,37 @@
         }
 
         // ==========================================
-        // SAFE CLOUD INTEGRATION (Runs in Background)
+        // SAFE CLOUD INTEGRATION WITH 5-SECOND KILL SWITCH
         // ==========================================
         const SUPABASE_URL = "https://wdbwnutkomemrciybezz.supabase.co"; 
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndkYndudXRrb21lbXJjaXliZXp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIzMTU4NTgsImV4cCI6MjA1NzkwMzg1OH0.8y6xYpM3PbyL2-zS3g7yT6fT8uS_w8H9H6M_9w6E5mI";
         let dbClient = null;
 
-        // Wait for external libraries to download without blocking the screen
-        window.addEventListener('load', () => {
+        document.addEventListener('DOMContentLoaded', () => {
             document.getElementById("sync-status-text").innerText = "CONNECTING CLOUD...";
-            setTimeout(() => {
-                if (window.supabase) {
-                    dbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                    syncLatestCloudState();
-                } else {
-                    document.getElementById("sync-status-text").innerText = "LOCAL MODE (NETWORK BLOCKED)";
-                    document.getElementById("sync-status-indicator").className = "inline-block w-2.5 h-2.5 rounded-full bg-amber-500";
-                }
-            }, 1000);
+            
+            if (window.supabase) {
+                dbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                syncLatestCloudState();
+            } else {
+                document.getElementById("sync-status-text").innerText = "OFFLINE: SCRIPT BLOCKED";
+                document.getElementById("sync-status-indicator").className = "inline-block w-2.5 h-2.5 rounded-full bg-rose-500";
+            }
         });
-
-        async function handleCheck(elementId, isChecked) {
-            calculateMetricsHUD();
-            if(!dbClient) return;
-            try {
-                await dbClient.from('nishant_upsc_tracker')
-                    .upsert({ id: elementId, is_checked: isChecked, updated_at: new Date().toISOString() });
-            } catch(e) {}
-        }
 
         async function syncLatestCloudState() {
             if(!dbClient) return;
             try {
-                const { data, error } = await dbClient.from('nishant_upsc_tracker').select('*');
-                if (!error && data) {
-                    data.forEach(row => {
+                // 5-Second Kill Switch for the fetch request
+                const fetchPromise = dbClient.from('nishant_upsc_tracker').select('*');
+                const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000));
+                
+                const response = await Promise.race([fetchPromise, timeoutPromise]);
+
+                if (response.error) throw response.error;
+                
+                if (response.data) {
+                    response.data.forEach(row => {
                         if(row.id.startsWith('custom_')) {
                             const parts = row.id.split('_');
                             const targetBox = parts[1];
@@ -245,12 +238,30 @@
                     document.getElementById("sync-status-indicator").className = "inline-block w-2.5 h-2.5 rounded-full bg-emerald-500";
                     calculateMetricsHUD();
                 }
-            } catch(e) {}
+            } catch(e) {
+                // Network blocked the request or it timed out
+                document.getElementById("sync-status-text").innerText = "OFFLINE: DATABASE BLOCKED BY NETWORK";
+                document.getElementById("sync-status-indicator").className = "inline-block w-2.5 h-2.5 rounded-full bg-rose-500";
+                console.error("Supabase sync failed:", e);
+            }
         }
 
-        // ==========================
-        // CUSTOM TOPIC INJECTION
-        // ==========================
+        async function handleCheck(elementId, isChecked) {
+            calculateMetricsHUD(); // Instant local UI update
+            if(!dbClient) return;
+            try {
+                const pushPromise = dbClient.from('nishant_upsc_tracker').upsert({ id: elementId, is_checked: isChecked, updated_at: new Date().toISOString() });
+                const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 3000));
+                await Promise.race([pushPromise, timeoutPromise]);
+                
+                document.getElementById("sync-status-text").innerText = "CLOUD SYNCED ACROSS DEVICES";
+                document.getElementById("sync-status-indicator").className = "inline-block w-2.5 h-2.5 rounded-full bg-emerald-500";
+            } catch(e) {
+                document.getElementById("sync-status-text").innerText = "SYNC FAILED: NETWORK OFFLINE";
+                document.getElementById("sync-status-indicator").className = "inline-block w-2.5 h-2.5 rounded-full bg-rose-500";
+            }
+        }
+
         function openCustomTopicModal() { document.getElementById("custom-modal").classList.remove('hidden'); }
         function closeCustomTopicModal() { document.getElementById("custom-modal").classList.add('hidden'); document.getElementById("modal-text-content").value = ""; }
 
@@ -286,9 +297,6 @@
             calculateMetricsHUD();
         }
 
-        // ==========================
-        // UI HELPERS
-        // ==========================
         function calculateMetricsHUD() {
             const boxes = document.querySelectorAll('input[type="checkbox"]');
             let total = boxes.length, checked = 0;
@@ -322,6 +330,5 @@
             });
         }
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 </body>
 </html>
