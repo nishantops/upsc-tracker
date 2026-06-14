@@ -319,7 +319,13 @@
             <!-- TRACK 2: CA TRACKER -->
             <div id="master-ca" class="master-pane-view hidden space-y-8">
                 <div class="neo-card rounded-3xl p-6">
-                    <h2 class="heading-font text-2xl font-black border-b border-slate-100 pb-3 mb-4">Current Affairs (CA) Matrix</h2>
+                    <div class="flex justify-between items-center border-b border-slate-100 pb-3 mb-4">
+                        <h2 class="heading-font text-2xl font-black">Current Affairs (CA) Matrix</h2>
+                        <a href="https://tracker.atishmathur.com/Welcome-to-your-Tracker-Pro-1365f7f7d62180b6ad13e8ee5d16ac78" target="_blank" rel="noopener" class="flex items-center gap-1.5 bg-gradient-to-r from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 text-amber-700 text-[10px] font-bold px-3 py-2 rounded-lg transition-all border border-amber-200/60 shadow-sm">
+                            📰 CA Monthly Magazine & Newspaper
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
+                        </a>
+                    </div>
                     <div class="space-y-3" id="box-ca"></div>
                 </div>
             </div>
@@ -437,14 +443,40 @@
         <!-- ROOT 2: PLANNER VIEW -->
         <!-- ============================================== -->
         <div id="view-planner" class="root-pane-view hidden space-y-8">
-            <div class="neo-card rounded-3xl p-6 bg-slate-900 text-white flex flex-col md:flex-row justify-between items-center gap-4">
-                <div>
-                    <h2 class="heading-font text-2xl font-black">Strategic Mission Planner</h2>
-                    <p class="text-sm text-slate-300 mt-1 font-medium">Create custom dynamic plans (Daily, Weekly, Monthly) with isolated progress tracking.</p>
-                </div>
-                <button onclick="openPlannerModal()" class="cursor-pointer bg-emerald-500 hover:bg-emerald-400 text-white font-black px-6 py-3 rounded-xl transition-all shadow-lg heading-font whitespace-nowrap">+ CREATE NEW PLAN</button>
+            <!-- Planner sub-tabs -->
+            <div class="flex flex-row gap-1 overflow-x-auto whitespace-nowrap scrollbar-none p-1.5 bg-gradient-to-r from-emerald-50/80 via-teal-50/80 to-cyan-50/80 rounded-2xl border border-emerald-200/40 shadow-sm">
+                <button onclick="activatePlannerTab('plans')" id="btn-planner-plans" class="cursor-pointer flex-1 text-center py-3.5 px-6 rounded-xl font-black text-xs uppercase tracking-widest transition-all bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-500/25 heading-font border border-emerald-500">📋 My Plans</button>
+                <button onclick="activatePlannerTab('sources')" id="btn-planner-sources" class="cursor-pointer flex-1 text-center py-3.5 px-6 rounded-xl font-black text-xs uppercase tracking-widest transition-all text-slate-500 hover:text-teal-700 hover:bg-white/80 heading-font border border-transparent">📚 Sources & Links</button>
             </div>
-            <div id="planner-container" class="space-y-6"></div>
+
+            <!-- Plans subtab -->
+            <div id="planner-tab-plans" class="planner-subtab block space-y-8">
+                <div class="neo-card rounded-3xl p-6 bg-slate-900 text-white flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div>
+                        <h2 class="heading-font text-2xl font-black">Strategic Mission Planner</h2>
+                        <p class="text-sm text-slate-300 mt-1 font-medium">Create custom dynamic plans (Daily, Weekly, Monthly) with isolated progress tracking.</p>
+                    </div>
+                    <button onclick="openPlannerModal()" class="cursor-pointer bg-emerald-500 hover:bg-emerald-400 text-white font-black px-6 py-3 rounded-xl transition-all shadow-lg heading-font whitespace-nowrap">+ CREATE NEW PLAN</button>
+                </div>
+                <div id="planner-container" class="space-y-6"></div>
+            </div>
+
+            <!-- Sources subtab -->
+            <div id="planner-tab-sources" class="planner-subtab hidden space-y-6">
+                <div class="neo-card rounded-3xl p-6 bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 text-white flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div>
+                        <h2 class="heading-font text-2xl font-black flex items-center gap-2">📚 Sources & Reference Links</h2>
+                        <p class="text-sm text-slate-300 mt-1 font-medium">Save study materials, YouTube channels, PDFs, websites — anything useful for your prep.</p>
+                    </div>
+                    <button onclick="openSourceModal()" class="cursor-pointer bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-400 hover:to-fuchsia-400 text-white font-black px-6 py-3 rounded-xl transition-all shadow-lg heading-font whitespace-nowrap btn-vibrant">+ ADD SOURCE</button>
+                </div>
+                <div id="sources-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+                <div id="sources-empty" class="neo-card rounded-3xl p-12 text-center" style="display:none;">
+                    <div style="font-size:3rem;margin-bottom:1rem;">📭</div>
+                    <p class="heading-font text-lg font-black text-slate-400">No sources added yet</p>
+                    <p class="text-sm text-slate-400 mt-1">Click "Add Source" to save your first study link or reference.</p>
+                </div>
+            </div>
         </div>
     </main>
 
@@ -527,6 +559,52 @@
             <div class="mt-6 flex justify-end gap-2 text-xs font-bold font-mono">
                 <button onclick="closePlannerModal()" class="cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-3 rounded-xl">Cancel</button>
                 <button onclick="executeCreatePlan()" class="cursor-pointer bg-emerald-500 hover:bg-emerald-400 text-white px-5 py-3 rounded-xl shadow-md">Build Plan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SOURCE ADD/EDIT MODAL -->
+    <div id="source-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-3xl p-6 shadow-2xl border border-slate-200">
+            <h3 id="source-modal-title" class="text-lg font-black text-slate-900 heading-font mb-4 flex items-center gap-2">📚 Add New Source</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5 font-mono">Title / Name *</label>
+                    <input type="text" id="source-input-title" placeholder="e.g., Vision IAS Monthly Magazine" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs sm:text-sm font-medium text-slate-700 focus:outline-none focus:border-violet-500">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5 font-mono">Link / URL (optional)</label>
+                    <input type="url" id="source-input-link" placeholder="https://..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs sm:text-sm font-medium text-slate-700 focus:outline-none focus:border-violet-500">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5 font-mono">Topic / Category</label>
+                    <select id="source-input-topic" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs sm:text-sm font-medium text-slate-700 focus:outline-none focus:border-violet-500">
+                        <option value="General">General</option>
+                        <option value="Current Affairs">Current Affairs</option>
+                        <option value="History">History</option>
+                        <option value="Geography">Geography</option>
+                        <option value="Polity">Polity</option>
+                        <option value="Economy">Economy</option>
+                        <option value="Science & Tech">Science & Tech</option>
+                        <option value="Environment">Environment</option>
+                        <option value="Ethics">Ethics</option>
+                        <option value="Anthropology">Anthropology</option>
+                        <option value="Essay">Essay</option>
+                        <option value="Newspaper">Newspaper</option>
+                        <option value="YouTube">YouTube</option>
+                        <option value="Test Series">Test Series</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5 font-mono">Notes / Description (optional)</label>
+                    <textarea id="source-input-notes" placeholder="Any additional notes about this source..." rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs sm:text-sm font-medium text-slate-700 focus:outline-none focus:border-violet-500 resize-none"></textarea>
+                </div>
+            </div>
+            <input type="hidden" id="source-edit-id" value="">
+            <div class="mt-6 flex justify-end gap-2 text-xs font-bold font-mono">
+                <button onclick="closeSourceModal()" class="cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-3 rounded-xl">Cancel</button>
+                <button onclick="saveSource()" class="cursor-pointer bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-400 hover:to-fuchsia-400 text-white px-5 py-3 rounded-xl shadow-md btn-vibrant">Save Source</button>
             </div>
         </div>
     </div>
@@ -1222,6 +1300,156 @@
                 if (k === id) { btn.className = "cursor-pointer flex-1 text-center py-4 px-6 rounded-xl font-black text-sm uppercase tracking-widest transition-all bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 heading-font border border-indigo-500"; } 
                 else { btn.className = "cursor-pointer flex-1 text-center py-4 px-6 rounded-xl font-black text-sm uppercase tracking-widest transition-all text-slate-500 hover:text-violet-700 hover:bg-white/80 heading-font border border-transparent"; }
             });
+        }
+
+        function activatePlannerTab(id) {
+            document.querySelectorAll('.planner-subtab').forEach(p => p.classList.add('hidden'));
+            document.getElementById(`planner-tab-${id}`).classList.remove('hidden');
+            ['plans', 'sources'].forEach(k => {
+                const btn = document.getElementById(`btn-planner-${k}`);
+                if (k === id) { btn.className = "cursor-pointer flex-1 text-center py-3.5 px-6 rounded-xl font-black text-xs uppercase tracking-widest transition-all bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-500/25 heading-font border border-emerald-500"; }
+                else { btn.className = "cursor-pointer flex-1 text-center py-3.5 px-6 rounded-xl font-black text-xs uppercase tracking-widest transition-all text-slate-500 hover:text-teal-700 hover:bg-white/80 heading-font border border-transparent"; }
+            });
+            if (id === 'sources') loadSources();
+        }
+
+        // ===== SOURCES CRUD =====
+        function openSourceModal(editId) {
+            document.getElementById('source-modal').classList.remove('hidden');
+            document.getElementById('source-edit-id').value = editId || '';
+            if (editId) {
+                document.getElementById('source-modal-title').innerHTML = '✏️ Edit Source';
+                // Pre-fill from DOM data attributes
+                const card = document.getElementById(`source-card-${editId}`);
+                if (card) {
+                    document.getElementById('source-input-title').value = card.dataset.title || '';
+                    document.getElementById('source-input-link').value = card.dataset.link || '';
+                    document.getElementById('source-input-topic').value = card.dataset.topic || 'General';
+                    document.getElementById('source-input-notes').value = card.dataset.notes || '';
+                }
+            } else {
+                document.getElementById('source-modal-title').innerHTML = '📚 Add New Source';
+            }
+        }
+
+        function closeSourceModal() {
+            document.getElementById('source-modal').classList.add('hidden');
+            document.getElementById('source-input-title').value = '';
+            document.getElementById('source-input-link').value = '';
+            document.getElementById('source-input-topic').value = 'General';
+            document.getElementById('source-input-notes').value = '';
+            document.getElementById('source-edit-id').value = '';
+        }
+
+        async function saveSource() {
+            const title = document.getElementById('source-input-title').value.trim();
+            const link = document.getElementById('source-input-link').value.trim();
+            const topic = document.getElementById('source-input-topic').value;
+            const notes = document.getElementById('source-input-notes').value.trim();
+            const editId = document.getElementById('source-edit-id').value;
+
+            if (!title) { alert('Title is required.'); return; }
+
+            const sourceId = editId || ('src_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8));
+
+            if (dbClient && currentUserId) {
+                try {
+                    await dbClient.from('upsc_user_sources').upsert({
+                        source_id: sourceId,
+                        user_id: currentUserId,
+                        title: title,
+                        link: link || null,
+                        topic: topic,
+                        notes: notes || null
+                    }, { onConflict: 'source_id,user_id' });
+                } catch(e) { console.error('Save source error:', e); }
+            }
+
+            closeSourceModal();
+            loadSources();
+        }
+
+        async function deleteSource(sourceId) {
+            if (!confirm('Delete this source permanently?')) return;
+            if (dbClient && currentUserId) {
+                try {
+                    await dbClient.from('upsc_user_sources').delete().eq('source_id', sourceId).eq('user_id', currentUserId);
+                } catch(e) { console.error('Delete source error:', e); }
+            }
+            loadSources();
+        }
+
+        async function loadSources() {
+            const container = document.getElementById('sources-container');
+            const emptyEl = document.getElementById('sources-empty');
+            if (!dbClient || !currentUserId) return;
+
+            try {
+                const { data, error } = await dbClient.from('upsc_user_sources').select('*').eq('user_id', currentUserId).order('created_at', { ascending: false });
+                if (error) throw error;
+
+                container.innerHTML = '';
+                if (!data || data.length === 0) {
+                    emptyEl.style.display = 'block';
+                    return;
+                }
+                emptyEl.style.display = 'none';
+
+                const topicColors = {
+                    'General': 'from-slate-100 to-gray-100 border-slate-300 text-slate-700',
+                    'Current Affairs': 'from-amber-50 to-orange-50 border-amber-300 text-amber-700',
+                    'History': 'from-rose-50 to-pink-50 border-rose-300 text-rose-700',
+                    'Geography': 'from-emerald-50 to-green-50 border-emerald-300 text-emerald-700',
+                    'Polity': 'from-blue-50 to-indigo-50 border-blue-300 text-blue-700',
+                    'Economy': 'from-violet-50 to-purple-50 border-violet-300 text-violet-700',
+                    'Science & Tech': 'from-cyan-50 to-sky-50 border-cyan-300 text-cyan-700',
+                    'Environment': 'from-lime-50 to-green-50 border-lime-300 text-lime-700',
+                    'Ethics': 'from-fuchsia-50 to-pink-50 border-fuchsia-300 text-fuchsia-700',
+                    'Anthropology': 'from-orange-50 to-amber-50 border-orange-300 text-orange-700',
+                    'Essay': 'from-teal-50 to-emerald-50 border-teal-300 text-teal-700',
+                    'Newspaper': 'from-yellow-50 to-amber-50 border-yellow-300 text-yellow-700',
+                    'YouTube': 'from-red-50 to-rose-50 border-red-300 text-red-700',
+                    'Test Series': 'from-indigo-50 to-violet-50 border-indigo-300 text-indigo-700',
+                    'Other': 'from-gray-50 to-slate-50 border-gray-300 text-gray-700'
+                };
+
+                data.forEach(src => {
+                    const colorClass = topicColors[src.topic] || topicColors['Other'];
+                    const linkHtml = src.link 
+                        ? `<a href="${src.link}" target="_blank" rel="noopener" class="flex items-center gap-1 text-[11px] font-bold text-indigo-600 hover:text-indigo-500 mt-2 truncate transition-all hover:underline">
+                            <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                            <span class="truncate">${src.link}</span>
+                           </a>` 
+                        : '';
+                    const notesHtml = src.notes ? `<p class="text-[11px] text-slate-500 mt-2 line-clamp-2 font-medium">${src.notes}</p>` : '';
+
+                    container.innerHTML += `
+                        <div id="source-card-${src.source_id}" class="neo-card rounded-2xl p-5 border-l-4 border-l-transparent bg-gradient-to-br ${colorClass} relative group transition-all hover:shadow-lg" 
+                             data-title="${src.title}" data-link="${src.link || ''}" data-topic="${src.topic}" data-notes="${src.notes || ''}">
+                            <div class="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button onclick="openSourceModal('${src.source_id}')" class="p-1.5 rounded-lg bg-white/80 hover:bg-white text-slate-500 hover:text-violet-600 shadow-sm transition-all cursor-pointer" title="Edit">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/></svg>
+                                </button>
+                                <button onclick="deleteSource('${src.source_id}')" class="p-1.5 rounded-lg bg-white/80 hover:bg-white text-slate-500 hover:text-rose-600 shadow-sm transition-all cursor-pointer" title="Delete">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+                                </button>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <div class="flex-shrink-0 w-9 h-9 rounded-xl bg-white/80 flex items-center justify-center shadow-sm border border-white/60">
+                                    <span class="text-base">${src.link ? '🔗' : '📄'}</span>
+                                </div>
+                                <div class="flex-1 min-w-0 pr-12">
+                                    <h4 class="font-bold text-sm text-slate-800 truncate">${src.title}</h4>
+                                    <span class="inline-block mt-1 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/60 border border-current/20">${src.topic}</span>
+                                    ${linkHtml}
+                                    ${notesHtml}
+                                </div>
+                            </div>
+                        </div>`;
+                });
+            } catch(e) {
+                console.error('Load sources error:', e);
+            }
         }
 
         function activateMasterTab(id) {

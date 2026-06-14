@@ -100,6 +100,29 @@ CREATE POLICY "Users delete own plans" ON upsc_custom_plans
     FOR DELETE USING (auth.uid() = user_id);
 
 -- ============================================================================
--- DONE! Each user now gets isolated data.
--- The app sends user_id on every write, RLS filters reads automatically.
+-- TABLE 5: User Sources & Reference Links
 -- ============================================================================
+DROP TABLE IF EXISTS upsc_user_sources CASCADE;
+
+CREATE TABLE upsc_user_sources (
+    source_id TEXT NOT NULL,
+    user_id UUID NOT NULL DEFAULT auth.uid() REFERENCES auth.users(id) ON DELETE CASCADE,
+    title TEXT NOT NULL,
+    link TEXT,
+    topic TEXT DEFAULT 'General',
+    notes TEXT,
+    created_at TIMESTAMPTZ DEFAULT now(),
+    PRIMARY KEY (source_id, user_id)
+);
+
+CREATE INDEX idx_sources_user_id ON upsc_user_sources(user_id);
+ALTER TABLE upsc_user_sources ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users read own sources" ON upsc_user_sources
+    FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users insert own sources" ON upsc_user_sources
+    FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users update own sources" ON upsc_user_sources
+    FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users delete own sources" ON upsc_user_sources
+    FOR DELETE USING (auth.uid() = user_id);
