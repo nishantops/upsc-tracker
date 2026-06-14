@@ -33,20 +33,73 @@ const AI_CHAT = (() => {
     }
 
     function getCurrentSectionContext() {
-        let context = 'UPSC CSE Command Center tracker app.\n';
         const name = document.getElementById('user-display-name')?.textContent || 'User';
         const pct = document.getElementById('global-perc-text')?.textContent || '0%';
-        context += `Student: ${name}, Progress: ${pct}\n`;
+        const checked = document.getElementById('global-count-checked')?.textContent || '0';
+        const total = document.getElementById('global-count-total')?.textContent || '0';
+        const prelimsDays = document.getElementById('prelims-countdown-live')?.textContent || '---';
+        const mainsDays = document.getElementById('mains-countdown-live')?.textContent || '---';
 
-        const marathon = document.getElementById('view-marathon');
-        const planner = document.getElementById('view-planner');
-        if (marathon && !marathon.classList.contains('hidden')) context += 'Section: Marathon Tracker\n';
-        else if (planner && !planner.classList.contains('hidden')) context += 'Section: Strategy Planner\n';
-        return context;
+        // Collect section-wise completion
+        const sections = ['p1','p2','gs1','gs2','gs3','gs4','a1','a2','ca'].map(id => {
+            const el = document.getElementById('lbl-' + id);
+            return el ? `${id.toUpperCase()}: ${el.textContent}` : null;
+        }).filter(Boolean).join(', ');
+
+        // Detect active view
+        let activeView = 'Marathon Tracker';
+        if (!document.getElementById('view-planner')?.classList.contains('hidden')) activeView = 'Strategy Planner';
+        let activeTab = '';
+        if (activeView === 'Marathon Tracker') {
+            if (!document.getElementById('master-syllabus')?.classList.contains('hidden')) activeTab = 'Syllabus';
+            else if (!document.getElementById('master-ca')?.classList.contains('hidden')) activeTab = 'Current Affairs';
+            else if (!document.getElementById('master-pyq')?.classList.contains('hidden')) activeTab = 'PYQ (Previous Year Questions)';
+            else if (!document.getElementById('master-testseries')?.classList.contains('hidden')) activeTab = 'Test Series';
+        }
+
+        return `Student: ${name}
+Overall Progress: ${pct} (${checked}/${total} units checked)
+Countdown: Prelims ${prelimsDays}, Mains ${mainsDays}
+Section Completion: ${sections}
+Active View: ${activeView}${activeTab ? ' > ' + activeTab : ''}`;
     }
 
     async function callGemini(message, apiKey) {
-        const systemInstruction = `You are an expert UPSC CSE preparation assistant. Help with syllabus, strategy, current affairs, answer writing, and study planning. Be concise and actionable.\n\nContext:\n${getCurrentSectionContext()}`;
+        const APP_KNOWLEDGE = `You are the built-in AI assistant of "UPSC CSE Command Center 2027" — a personal tracker app built by Nishant Kumar for UPSC Civil Services Examination preparation (target: 2027).
+
+APP FEATURES YOU MUST KNOW:
+1. MARATHON TRACKER (main view):
+   - Syllabus tab: Full UPSC syllabus broken into checkable units across Prelims (GS Paper I, CSAT), Mains (GS-I to GS-IV, Essay, Languages), and Anthropology Optional (Paper I, II, Assignments)
+   - CA Tracker tab: Monthly Current Affairs tracking with newspaper/magazine links, "My CA Links" self-service tab
+   - PYQ tab: Previous Year Questions (2013-2025) for Prelims GS & CSAT, Mains GS-I to GS-IV, Anthro — searchable, filterable by year
+   - Test Series tab: Track test performance across all papers
+
+2. STRATEGY PLANNER (second root view):
+   - My Plans: Create custom plans (Daily/Weekly/Monthly) with isolated progress
+   - Sources & Links: Manage study resources and bookmarks
+
+3. KEY METRICS:
+   - Global Syllabus Absorption % (across all sections)
+   - Section-wise pie charts (P1, P2, GS1-4, A1, A2, CA)
+   - Prelims & Mains countdown timers
+   - Custom topic addition
+
+4. OTHER FEATURES:
+   - Google OAuth + Email sign-in via Supabase
+   - Auto-save (debounced) on all inputs
+   - 15-minute session timeout
+   - Custom CA links management
+   - Profile (name/alias) stored in DB
+   - Dark glassmorphism UI
+
+BEHAVIOR RULES:
+- You have access to the student's LIVE progress data (provided below). Reference it when giving advice.
+- Be specific: mention their actual percentages, days left, weak sections.
+- Give actionable UPSC-specific advice: booklist suggestions, answer writing tips, revision strategies, current affairs sources.
+- If asked about app features, explain them from the list above.
+- Keep answers concise (2-4 paragraphs max) unless detailed explanation requested.`;
+
+        const systemInstruction = `${APP_KNOWLEDGE}\n\nLIVE DATA:\n${getCurrentSectionContext()}`;
 
         // Only send last 10 messages as context to keep requests fast
         const recentHistory = chatHistory.slice(-10).map(m => ({
