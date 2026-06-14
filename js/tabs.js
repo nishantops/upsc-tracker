@@ -95,6 +95,7 @@ function activateSubTab_PYQ(groupClass, panelId, btnElement) {
     btnElement.className = `sub-tab-pyq-${groupClass} inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all bg-indigo-600 text-white shadow-sm border border-indigo-500`;
     if (panelId === 'panel-pyq-a1') renderAnthroP1PYQ();
     if (panelId === 'panel-pyq-a2') renderAnthroP2PYQ();
+    if (panelId === 'panel-pyq-essay') renderEssayPYQ();
     if (panelId === 'panel-pyq-gs1') renderMainsGS1PYQ();
     if (panelId === 'panel-pyq-gs2') renderMainsGS2PYQ();
     if (panelId === 'panel-pyq-gs3') renderMainsGS3PYQ();

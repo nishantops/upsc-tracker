@@ -449,3 +449,7 @@ function renderMainsGS3PYQ() {
 function renderMainsGS4PYQ() {
     renderAnthroPYQGeneric(pyqMainsGS4Data, 'mains-gs4', 'mains-gs4-search', 'mains-gs4-year-filter', 'mains-gs4-total-count');
 }
+
+function renderEssayPYQ() {
+    renderAnthroPYQGeneric(pyqEssayData, 'essay', 'essay-search', 'essay-year-filter', 'essay-total-count');
+}
