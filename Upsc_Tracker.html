@@ -6,6 +6,7 @@
     <title>Nishant Kumar • UPSC CSE Command Center 2027</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="pyq_data.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cabinet+Grotesk:wght@700;800;900&display=swap');
         
@@ -186,7 +187,26 @@
                         <button onclick="activateSubTab_PYQ('prelims', 'panel-pyq-p1', this)" class="sub-tab-pyq-prelims inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all bg-white text-indigo-700 shadow-sm border border-slate-200">GS Paper I</button>
                         <button onclick="activateSubTab_PYQ('prelims', 'panel-pyq-p2', this)" class="sub-tab-pyq-prelims inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-200/50 border border-transparent">CSAT Paper II</button>
                     </div>
-                    <div id="panel-pyq-p1" class="sub-pane-pyq-prelims block neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">PYQ: GS Paper I</h2><div class="space-y-3" id="box-pyq-p1"></div></div>
+                    <div id="panel-pyq-p1" class="sub-pane-pyq-prelims block neo-card rounded-3xl p-6">
+                        <div class="flex justify-between items-center border-b border-slate-100 pb-3 mb-4">
+                            <h2 class="heading-font text-xl font-black">PYQ: GS Paper I</h2>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] font-mono font-bold text-slate-400">TOTAL: <span id="pyq-total-count" class="text-indigo-600">0</span> Questions</span>
+                            </div>
+                        </div>
+                        <div class="mb-4 flex flex-wrap gap-2 items-center">
+                            <input type="text" id="pyq-search" placeholder="Search questions..." oninput="filterPYQ()" class="flex-1 min-w-[200px] bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs font-mono focus:outline-none focus:border-indigo-400">
+                            <select id="pyq-year-filter" onchange="filterPYQ()" class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs font-mono focus:outline-none focus:border-indigo-400">
+                                <option value="">All Years</option>
+                                <option value="2025">2025</option><option value="2024">2024</option><option value="2023">2023</option>
+                                <option value="2022">2022</option><option value="2021">2021</option><option value="2020">2020</option>
+                                <option value="2019">2019</option><option value="2018">2018</option><option value="2017">2017</option>
+                                <option value="2016">2016</option><option value="2015">2015</option><option value="2014">2014</option>
+                                <option value="2013">2013</option>
+                            </select>
+                        </div>
+                        <div id="pyq-topics-container" class="space-y-3"></div>
+                    </div>
                     <div id="panel-pyq-p2" class="sub-pane-pyq-prelims hidden neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">PYQ: CSAT Paper II</h2><div class="space-y-3" id="box-pyq-p2"></div></div>
                 </div>
 
@@ -364,40 +384,8 @@
         const dataA2 = ["1.1 Evolution of the Indian Culture and Civilization: Prehistoric (Paleolithic, Mesolithic, Neolithic and Chalcolithic); Protohistoric (Indus Valley Civilization); Islamic impacts; Westernization and Modernization trends.", "1.2 Paleoanthropological evidences from India with special reference to Ramapithecus, Sivapithecus and Narmada Man.", "1.3 Ethno-archaeology in India: The concept of ethno-archaeology; Survivals and Parallels among the hunter-gatherers, pastoralists, nomadic communities, agriculturalists and artisan communities.", "2. Demographic profile of India: Ethnic and linguistic elements in the Indian population and their distribution; Social and economic characteristics of the ethnographic elements.", "3.1 The structure and nature of traditional Indian social system: Varnashrama, Purushartha, Karma, Rina and Rebirth concepts.", "3.2 Caste system in India: Structure and characteristics; Varna and Caste; Theories of origin of caste system; Dominant Caste; Caste mobility; Future of caste system; Jajmani system; Jati Panchayat.", "3.3 Sacred Complex and Nature-Man-Spirit Complex.", "3.4 Impact of Buddhism, Jainism, Islam and Christianity on Indian society.", "4. Emergence and Growth of Anthropology in India: Contributions of the 18th, 19th and early 20th Century scholar-administrators; Contributions of Indian anthropologists to tribal and peasant studies.", "5.1 Indian Village: Significance of village study in India; Indian village as a social system; Traditional and changing patterns of settlement and inter-caste relations; Agrarian relations in Indian villages; Impact of globalization on Indian villages.", "5.2 Linguistic and religious minorities and their social, political and economic problems.", "5.3 Indigenous and exogenous processes of socio-cultural change in Indian society: Sanskritization, Westernization, Modernization; Inter-play of Little and Great Traditions; Panchayati Raj and social change.", "6.1 Tribal situation in India: Bio-genetic variability, linguistic and socio-economic characteristics of tribal populations and their distribution.", "6.2 Problems of the tribal Communities: Land alienation, poverty, indebtedness, low literacy, poor health, malnutrition, underemployment; Tribal unrest and Left-Wing Extremism.", "6.3 Developmental projects and their impact on tribal displacement and rehabilitation problems; Development of forest policy and tribals.", "7.1 Problems of exploitation and deprivation of Scheduled Castes, Scheduled Tribes and Other Backward Classes; Constitutional safeguards for Scheduled Tribes and Scheduled Castes.", "7.2 Social change and contemporary tribal societies: Impact of modern democratic institutions, development programmes and welfare measures on tribals and weaker sections.", "7.3 The concept of PTGs (Particularly Vulnerable Tribal Groups) and their distribution; Special programmes for their development; Role of NGOs in tribal development.", "8.1 Impact of Hinduism, Buddhism, Christianity, Islam and other religions on tribal societies.", "8.2 Tribe and nation state: Comparative study of tribal communities in India and other democratic countries; issues of integration and autonomy.", "9.1 History of administration of tribal areas: Tribal policies and plans during British rule and post- independence; 5th and 6th Schedules of the Constitution; Panchayati Raj provisions for tribal areas (PESA); Tribal Sub-Plan framework.", "9.2 Role of Anthropology in tribal and rural development.", "9.3 Contributions of anthropology to the understanding of regionalism, communalism, and ethnic conflicts."];
         const dataCA = ["June 2026 Monthly Compilation", "July 2026 Monthly Compilation", "August 2026 Monthly Compilation", "September 2026 Monthly Compilation", "October 2026 Monthly Compilation", "November 2026 Monthly Compilation", "December 2026 Monthly Compilation", "January 2027 Monthly Compilation", "February 2027 Monthly Compilation", "March 2027 Monthly Compilation", "April 2027 Monthly Compilation", "May 2027 (Pre-Exam Update)"];
         
-        // ====================================================================================================
-        // NATIVE INJECTION: EXACT PYQ GS-1 QUESTIONS SOURCED VERBATIM FROM UNACADEMY COMPILATION[cite: 2]
-        // ====================================================================================================
-        const dataPYQ_p1 = [
-            `1. Consider the following fruits: I. Papaya II. Pineapple III. Guava. How many of the above were introduced in India by the Portuguese in the sixteenth and seventeenth centuries? (a) Only one (b) Only two (c) All the three (d) None[cite: 2]`,
-            `2. With reference to revenue collection by Cornwallis, consider the following statements: 1. Under the Ryotwari Settlement of revenue collection, the peasants were exempted from revenue payment in case of bad harvests or natural calamities. 2. Under the Permanent Settlement in Bengal, if the Zamindar failed to pay his revenues to the state, on or before the fixed date, he would be removed from his Zamindari. Which of the statements given above is/are correct? (a) 1 only (b) 2 only (c) Both 1 and 2 (d) Neither 1 nor 2[cite: 2]`,
-            `3. In the first quarter of the seventeenth century, in which of the following was/were the factory/factories of the English East India Company located? 1. Broach 2. Chicacole 3. Trichinopoly. Select the correct answer using the code given below: (a) 1 only (b) 1 and 2 (c) 3 only (d) 2 and 3[cite: 2]`,
-            `4. By which one of the following Acts was the Governor General of Bengal designated as the Governor General of India? (a) The Regulating Act (b) The Pitt's India Act (c) The Charter Act of 1793 (d) The Charter Act of 1833[cite: 2]`,
-            `5. With reference to Indian History, Alexander Rea, A.H. Longhurst, Robert Sewell, James Burgess and Walter Elliot were associated with (a) archaeological excavations (b) establishment of English Press in Colonial India (c) establishment of Churches in Princely States (d) construction of railways in Colonial India[cite: 2]`,
-            `6. With reference to Indian history, consider the following statements: 1. The Dutch established their factories/warehouses on the east coast on lands granted to them by the Gajapati rulers. 2. Alfonso de Albuquerque captured Goa from the Bijapur Sultanate. 3. The English East India Company established a factory at Madras on a plot of land leased from a representative of the Vijayanagara empire. Which of the statements given above are correct? (a) 1 and 2 only (b) 2 and 3 only (c) 1 and 3 only (d) 1, 2 and 3[cite: 2]`,
-            `7. Which of the following statements correctly explains the impact of the Industrial Revolution on India during the first half of the nineteenth century? (a) Indian handicrafts were ruined. (b) Machines were introduced in the Indian textile industry in large numbers. (c) Railway lines were laid in many parts of the country. (d) Heavy duties were imposed on the imports of British manufactures.[cite: 2]`,
-            `8. Who among the following rulers of medieval Gujarat surrendered Diu to the Portuguese? (a) Ahmad Shah (b) Mahmud Begarha (c) Bahadur Shah (d) Muhammad Shah[cite: 2]`,
-            `9. With reference to the history of India, consider the following pairs: 1. Aurang: In-charge of treasury of the State 2. Banian: Indian agent of the East India Company 3. Mirasidar: Designated revenue payer to the State. Which of the pairs given above is/are correctly matched? (a) 1 and 2 only (b) 2 and 3 only (c) 3 only (d) 1, 2 and 3[cite: 2]`,
-            `10. Wellesley established the Fort William College Calcutta because (a) He was asked by the Board of Directors at London to do so (b) He wanted to revive interest in oriental learning in India (c) He wanted to provide William Carey and his associates with employment (d) He wanted to train British civilians for administrative purpose in India[cite: 2]`,
-            `11. Which one of the following groups of plants was domesticated in the New world and introduced in the Old World? (a) Tobacco, cocoa and rubber (b) Tobacco, cotton and rubber (c) Cotton, coffee and sugarcane (d) Rubber, coffee and wheat[cite: 2]`,
-            `12. Consider the following statements about 'the Charter Act of 1813': 1. It ended the trade monopoly of the East India Company in India except for trade in tea and trade with China. 2. It asserted the sovereignty of the British Crown over the Indian territories held by the Company. 3. The revenues of India were now controlled by the British Parliament. Which of the statements given above are correct? (a) 1 and 2 only (b) 2 and 3 only (c) 1 and 3 only (d) 1, 2 and 3[cite: 2]`,
-            `13. The staple commodities of export by the English East India Company from Bengal in the middle of the 18th century were: (a) Raw cotton, oil-seeds and opium (b) Sugar, salt, zinc and lead (c) Copper, silver, gold, spices and tea (d) Cotton, silk, saltpetre and opium[cite: 2]`,
-            `14. Which one of the following statements does not apply to the system of Subsidiary Alliance introduced by Lord Wellesley? (a) To maintain a large standing army at others expense (b) To keep India safe from Napoleonic danger (c) To secure a fixed income for the Company (d) To establish British paramountcy over the Indian States[cite: 2]`,
-            `15. Who among the following was/were associated with the introduction of Ryotwari Settlement in India during the British rule? 1. Lord Cornwallis 2. Alexander Read 3. Thomas Munro. Select the correct answer using the code given below: (a) 1 only (b) 1 and 3 only (c) 2 and 3 only (d) 1, 2 and 3[cite: 2]`,
-            `16. Who among the following was the founder of the 'Self-Respect Movement'? (a) 'Periyar' E.V.Ramaswamy Naicker (b) Dr. B. R. Ambedkar (c) Bhaskarrao Jadhav (d) Dinkarrao Javalkar[cite: 2]`,
-            `17. Consider the following statements about Raja Ram Mohan Roy: I. He possessed great love and respect for the traditional philosophical systems of the East. II. He desired his countrymen to accept the rational and scientific approach and the principle of human dignity and social equality of all men and women. Which of the statements given above is/are correct? (a) I only (b) II only (c) Both I and II (d) Neither I nor II[cite: 2]`,
-            `18. With reference to Madanapalle of Andhra Pradesh, which one of the following statements is correct? (a) Pingali Venkayya designed the tricolour Indian National Flag here. (b) Pattabhi Sitaramaiah led the Quit India Movement of the Andhra region from here. (c) Rabindranath Tagore translated the National Anthem from Bengali to English here. (d) Madame Blavatsky and Colonel Olcott set up headquarters of Theosophical Society first here.[cite: 2]`,
-            `19. The Vital-Vidhwansak, the first monthly journal to have the untouchable people as its target audience, was published by: (a) Gopal Baba Walangkar (b) Jyotiba Phule (c) Mohandas Karamchand Gandhi (d) Bhimrao Ramji Ambedkar[cite: 2]`,
-            `20. In the context of Indian history, the Rakhmabai case of 1884 revolved around: 1. Women's right to gain education 2. Age of consent 3. Restitution of conjugal rights. Select the correct answer using the code given below: (a) 1 and 2 only (b) 2 and 3 only (c) 1 and 3 only (d) 1, 2 and 3[cite: 2]`,
-            `21. Consider the following pairs: Movement/Organisation - Leader. 1. All India Anti-Untouchability League - Mahatma Gandhi 2. All India Kisan Sabha - Swami Sahajanand Saraswati 3. Self-Respect Movement - Naicker E.V. Ramaswami. Which of the pairs given above is/are correctly matched? (a) 1 only (b) 1 and 2 only (c) 2 and 3 only (d) 1, 2 and 3[cite: 2]`,
-            `22. Which among the following events happened earliest? (a) Swami Dayanand established Arya Samaj. (b) Dinabandhu Mitra wrote Neel Darpan. (c) Bankim Chandra Chattopadhyay wrote Anandmath. (d) Satyendranath Tagore became the first Indian to succeed in the Indian Civil Services Examination.[cite: 2]`,
-            `23. Satya Shodhak Samaj organised: (a) a movement for upliftment of tribals in Bihar (b) a temple-entry movement in Gujarat (c) an anti-caste movement in Maharashtra (d) a peasant movement in Punjab[cite: 2]`,
-            `24. Consider the following: 1. Calcutta Unitarian Committee 2. Tabernacle of New Dispensation 3. Indian Reform Association. Keshab Chandra Sen is associated with the establishment of which of the above? (a) 1 and 3 only (b) 2 and 3 only (c) 3 only (d) 1, 2 and 3[cite: 2]`,
-            `25. Annie Besant was: 1. Responsible for starting the Home Rule Movement. 2. The founder of the Theosophical Society. 3. Once the President of the Indian National Congress. Select the correct statement/statements using the code given below: (a) 1 only (b) 2 and 3 only (c) 1 and 3 only (d) 1, 2 and 3[cite: 2]`,
-            `26. Indigo cultivation in India declined by the beginning of the 20th century because of: (a) peasant resistance to the oppressive conduct of planters (b) its unprofitability in the world market because of new inventions (c) national leaders' opposition to the cultivation of indigo (d) Government control over the planters[cite: 2]`,
-            `27. With reference to the history of India, "Ulgulan" or the Great Tumult is the description of which of the following events? (a) The Revolt of 1857 (b) The Mappila Rebellion of 1921 (c) The Indigo Revolt of 1859-60 (d) Birsa Munda's Revolt of 1899-1900[cite: 2]`,
-            `28. After the Santhal Uprising subsided, what were the measure/measures taken by the colonial government? 1. The territories called 'Santhal Parganas' were created. 2. It became illegal for a Santhal to transfer land to a non-Santhal. Select the correct answer using the code given below: (a) 1 only (b) 2 only (c) Both 1 and 2 (d) Neither 1 nor 2[cite: 2]`,
-            `29. What was/were the object/objects of Queen Victoria's Proclamation (1858)? 1. To disclaim any intention to annex Indian States. 2. To place the Indian administration under the British Crown. 3. To regulate East India Company's trade with India. Select the correct answer using the code given below: (a) 1 and 2 only (b) 2 only (c) 1 and 3 only (d) 1, 2 and 3[cite: 2]`
-        ];
+        // PYQ GS1 data now loaded from external pyq_data.js file
+        const dataPYQ_p1 = [];
 
         const dataPYQ_p2 = ["CSAT PYQ (2023)", "CSAT PYQ (2022)"];
         const dataPYQ_gs1 = ["GS-I PYQ (2023)", "GS-I PYQ (2022)"];
@@ -431,7 +419,7 @@
         buildList('box-anthro-p1', dataA1, 'a1'); buildList('box-anthro-p2', dataA2, 'a2');
         buildList('box-ca', dataCA, 'ca');
 
-        buildList('box-pyq-p1', dataPYQ_p1, 'pq1'); buildList('box-pyq-p2', dataPYQ_p2, 'pq2');
+        buildList('box-pyq-p1', dataPYQ_p1, 'pq1'); renderPYQTopics(); buildList('box-pyq-p2', dataPYQ_p2, 'pq2');
         buildList('box-pyq-gs1', dataPYQ_gs1, 'qg1'); buildList('box-pyq-gs2', dataPYQ_gs2, 'qg2'); buildList('box-pyq-gs3', dataPYQ_gs3, 'qg3'); buildList('box-pyq-gs4', dataPYQ_gs4, 'qg4');
         buildList('box-pyq-a1', dataPYQ_a1, 'qa1'); buildList('box-pyq-a2', dataPYQ_a2, 'qa2');
 
@@ -825,6 +813,128 @@
                 btn.className = `sub-tab-ts-${groupClass} inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-200/50 border border-transparent`;
             });
             btnElement.className = `sub-tab-ts-${groupClass} inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all bg-white text-indigo-700 shadow-sm border border-slate-200`;
+        }
+
+        // ===== PYQ GS Paper I - Topic-wise Question Bank Rendering =====
+        function renderPYQTopics() {
+            if (typeof pyqGS1Data === 'undefined') return;
+            const container = document.getElementById('pyq-topics-container');
+            if (!container) return;
+            
+            let totalQ = 0;
+            let topicHtml = '';
+            
+            pyqGS1Data.forEach((topic, tIdx) => {
+                let topicQCount = 0;
+                topic.subtopics.forEach(st => { topicQCount += st.questions.length; });
+                totalQ += topicQCount;
+                
+                let subtopicsHtml = '';
+                topic.subtopics.forEach((st, sIdx) => {
+                    subtopicsHtml += `
+                        <div class="pyq-subtopic border-b border-slate-50 last:border-b-0">
+                            <button onclick="togglePYQSubtopic(${tIdx}, ${sIdx})" class="w-full flex items-center justify-between px-6 py-3 hover:bg-slate-50 transition-all cursor-pointer">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-slate-300 text-xs transition-transform duration-200" id="arrow-st-${tIdx}-${sIdx}">&#9654;</span>
+                                    <span class="font-semibold text-xs text-slate-600">${st.name}</span>
+                                </div>
+                                <span class="text-[9px] font-mono text-slate-400">${st.questions.length} Q</span>
+                            </button>
+                            <div id="pyq-st-body-${tIdx}-${sIdx}" class="hidden px-4 pb-3"></div>
+                        </div>`;
+                });
+                
+                topicHtml += `
+                <div class="pyq-topic border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                    <button onclick="togglePYQTopic(${tIdx})" class="w-full flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-white hover:from-indigo-50 hover:to-white transition-all cursor-pointer">
+                        <div class="flex items-center gap-3">
+                            <span class="text-slate-400 transition-transform duration-200" id="arrow-topic-${tIdx}">&#9654;</span>
+                            <span class="font-bold text-sm text-slate-800">${topic.name}</span>
+                        </div>
+                        <span class="text-[10px] font-mono font-bold bg-indigo-50 text-indigo-600 px-2.5 py-1 rounded-md">${topicQCount} Q</span>
+                    </button>
+                    <div id="pyq-topic-body-${tIdx}" class="hidden border-t border-slate-100">
+                        ${subtopicsHtml}
+                    </div>
+                </div>`;
+            });
+            
+            container.innerHTML = topicHtml;
+            const countEl = document.getElementById('pyq-total-count');
+            if (countEl) countEl.textContent = totalQ;
+        }
+
+        function togglePYQTopic(tIdx) {
+            const body = document.getElementById('pyq-topic-body-' + tIdx);
+            const arrow = document.getElementById('arrow-topic-' + tIdx);
+            if (body.classList.contains('hidden')) {
+                body.classList.remove('hidden');
+                arrow.style.transform = 'rotate(90deg)';
+            } else {
+                body.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        function togglePYQSubtopic(tIdx, sIdx) {
+            const body = document.getElementById('pyq-st-body-' + tIdx + '-' + sIdx);
+            const arrow = document.getElementById('arrow-st-' + tIdx + '-' + sIdx);
+            if (body.classList.contains('hidden')) {
+                body.classList.remove('hidden');
+                arrow.style.transform = 'rotate(90deg)';
+                if (!body.dataset.rendered) {
+                    renderSubtopicQuestions(tIdx, sIdx);
+                    body.dataset.rendered = 'true';
+                }
+            } else {
+                body.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        function renderSubtopicQuestions(tIdx, sIdx) {
+            const container = document.getElementById('pyq-st-body-' + tIdx + '-' + sIdx);
+            const questions = pyqGS1Data[tIdx].subtopics[sIdx].questions;
+            
+            let qHtml = '<div class="space-y-2">';
+            questions.forEach((q, qIdx) => {
+                const optHtml = Object.entries(q.options || {}).map(([key, val]) => 
+                    '<div class="flex items-start gap-1.5 py-0.5"><span class="font-bold text-indigo-500 text-[11px]">(' + key + ')</span><span class="text-[11px] text-slate-600">' + escH(val) + '</span></div>'
+                ).join('');
+                
+                const yearBadge = q.year ? '<span class="text-[9px] font-mono font-bold bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded">' + q.year + '</span>' : '';
+                const ansLetter = q.answer ? q.answer.toUpperCase() : '?';
+                const ansText = (q.answer && q.options && q.options[q.answer]) ? q.options[q.answer] : '';
+                
+                qHtml += '<div class="pyq-question bg-white border border-slate-100 rounded-xl p-3 hover:border-indigo-200 transition-all" data-year="' + (q.year||'') + '" data-qtext="' + escA(q.question) + '">' +
+                    '<div class="flex items-start gap-2">' +
+                        '<input type="checkbox" id="pyq-cb-' + tIdx + '-' + sIdx + '-' + qIdx + '" onchange="handleSyncAction(this.id)" class="mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500/20 cursor-pointer shrink-0">' +
+                        '<div class="flex-1 min-w-0">' +
+                            '<div class="flex items-center gap-2 mb-1"><span class="text-[10px] font-mono font-bold text-slate-400">Q' + q.number + '</span>' + yearBadge + '</div>' +
+                            '<p class="text-xs text-slate-700 font-medium leading-relaxed">' + escH(q.question) + '</p>' +
+                            '<div class="mt-2 pl-2 border-l-2 border-slate-100">' + optHtml + '</div>' +
+                            '<div class="mt-2"><button onclick="this.nextElementSibling.classList.toggle(\'hidden\');this.textContent=this.textContent===\'Show Answer\'?\'Hide Answer\':\'Show Answer\'" class="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 cursor-pointer">Show Answer</button>' +
+                            '<div class="hidden mt-1 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-1.5"><span class="text-[11px] font-bold text-emerald-700">Answer: (' + ansLetter + ')</span>' + (ansText ? '<span class="text-[11px] text-emerald-600 ml-1">- ' + escH(ansText) + '</span>' : '') + '</div></div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="mt-2 ml-6"><input type="text" id="note-pyq-cb-' + tIdx + '-' + sIdx + '-' + qIdx + '" onchange="handleSyncAction(\'pyq-cb-' + tIdx + '-' + sIdx + '-' + qIdx + '\')" placeholder="Add a note..." class="w-full bg-slate-50/50 border border-slate-200 rounded-lg p-1.5 text-[10px] font-mono text-slate-600 focus:outline-none focus:border-indigo-400 focus:bg-white transition-all placeholder-slate-300"></div>' +
+                '</div>';
+            });
+            qHtml += '</div>';
+            container.innerHTML = qHtml;
+        }
+
+        function escH(s) { return s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') : ''; }
+        function escA(s) { return s ? s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : ''; }
+
+        function filterPYQ() {
+            const search = (document.getElementById('pyq-search').value || '').toLowerCase();
+            const year = document.getElementById('pyq-year-filter').value;
+            document.querySelectorAll('.pyq-question').forEach(el => {
+                const qText = (el.dataset.qtext || '').toLowerCase();
+                const qYear = el.dataset.year || '';
+                el.style.display = ((!search || qText.includes(search)) && (!year || qYear === year)) ? '' : 'none';
+            });
         }
     </script>
 </body>
