@@ -2128,7 +2128,9 @@
         }
     </script>
 
-    <!-- AI CHAT WIDGET -->
+    </div><!-- END app-container -->
+
+    <!-- AI CHAT WIDGET (outside app-container so it renders with position:fixed) -->
     <div id="ai-chat-fab" onclick="AI_CHAT.toggle()" title="AI Study Assistant">🤖</div>
     <div id="ai-chat-panel" class="hidden">
         <!-- Chat View -->
@@ -2176,8 +2178,6 @@
             </div>
         </div>
     </div>
-    <script src="js/ai-chat.js?v=1"></script>
-
-    </div><!-- END app-container -->
+    <script src="js/ai-chat.js?v=2"></script>
 </body>
 </html>
