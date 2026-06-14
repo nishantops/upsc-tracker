@@ -207,7 +207,26 @@
                         </div>
                         <div id="pyq-topics-container" class="space-y-3"></div>
                     </div>
-                    <div id="panel-pyq-p2" class="sub-pane-pyq-prelims hidden neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">PYQ: CSAT Paper II</h2><div class="space-y-3" id="box-pyq-p2"></div></div>
+                    <div id="panel-pyq-p2" class="sub-pane-pyq-prelims hidden neo-card rounded-3xl p-6">
+                        <div class="flex justify-between items-center border-b border-slate-100 pb-3 mb-4">
+                            <h2 class="heading-font text-xl font-black">PYQ: CSAT Paper II</h2>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] font-mono font-bold text-slate-400">TOTAL: <span id="csat-total-count" class="text-indigo-600">0</span> Questions</span>
+                            </div>
+                        </div>
+                        <div class="mb-4 flex flex-wrap gap-2 items-center">
+                            <input type="text" id="csat-search" placeholder="Search questions..." oninput="filterCSAT()" class="flex-1 min-w-[200px] bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs font-mono focus:outline-none focus:border-indigo-400">
+                            <select id="csat-year-filter" onchange="filterCSAT()" class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs font-mono focus:outline-none focus:border-indigo-400">
+                                <option value="">All Years</option>
+                                <option value="2025">2025</option><option value="2024">2024</option><option value="2023">2023</option>
+                                <option value="2022">2022</option><option value="2021">2021</option><option value="2020">2020</option>
+                                <option value="2019">2019</option><option value="2018">2018</option><option value="2017">2017</option>
+                                <option value="2016">2016</option><option value="2015">2015</option><option value="2014">2014</option>
+                                <option value="2013">2013</option><option value="2012">2012</option><option value="2011">2011</option>
+                            </select>
+                        </div>
+                        <div id="csat-topics-container" class="space-y-3"></div>
+                    </div>
                 </div>
 
                 <div id="deck-pyq-mains" class="stage-pane-pyq hidden space-y-4">
@@ -419,7 +438,7 @@
         buildList('box-anthro-p1', dataA1, 'a1'); buildList('box-anthro-p2', dataA2, 'a2');
         buildList('box-ca', dataCA, 'ca');
 
-        buildList('box-pyq-p1', dataPYQ_p1, 'pq1'); renderPYQTopics(); buildList('box-pyq-p2', dataPYQ_p2, 'pq2');
+        buildList('box-pyq-p1', dataPYQ_p1, 'pq1'); renderPYQTopics(); renderCSATTopics();
         buildList('box-pyq-gs1', dataPYQ_gs1, 'qg1'); buildList('box-pyq-gs2', dataPYQ_gs2, 'qg2'); buildList('box-pyq-gs3', dataPYQ_gs3, 'qg3'); buildList('box-pyq-gs4', dataPYQ_gs4, 'qg4');
         buildList('box-pyq-a1', dataPYQ_a1, 'qa1'); buildList('box-pyq-a2', dataPYQ_a2, 'qa2');
 
@@ -891,12 +910,19 @@
         }
 
         function renderSubtopicQuestions(tIdx, sIdx) {
-            const container = document.getElementById('pyq-st-body-' + tIdx + '-' + sIdx);
-            const allQuestions = pyqGS1Data[tIdx].subtopics[sIdx].questions;
+            renderQuestionsGeneric(tIdx, sIdx, pyqGS1Data, 'pyq', 'pyq-search', 'pyq-year-filter');
+        }
+
+        function renderCSATSubtopicQuestions(tIdx, sIdx) {
+            renderQuestionsGeneric(tIdx, sIdx, pyqCSATData, 'csat', 'csat-search', 'csat-year-filter');
+        }
+
+        function renderQuestionsGeneric(tIdx, sIdx, dataSource, prefix, searchId, yearId) {
+            const container = document.getElementById(prefix + '-st-body-' + tIdx + '-' + sIdx);
+            const allQuestions = dataSource[tIdx].subtopics[sIdx].questions;
             
-            // Apply active filter
-            const search = (document.getElementById('pyq-search').value || '').toLowerCase();
-            const year = document.getElementById('pyq-year-filter').value;
+            const search = (document.getElementById(searchId).value || '').toLowerCase();
+            const year = document.getElementById(yearId).value;
             const questions = allQuestions.filter(q => {
                 const matchSearch = !search || (q.question || '').toLowerCase().includes(search);
                 const matchYear = !year || q.year === year;
@@ -905,30 +931,81 @@
             
             let qHtml = '<div class="space-y-2">';
             questions.forEach((q, qIdx) => {
+                const qId = prefix + '-q-' + tIdx + '-' + sIdx + '-' + qIdx;
+                const isDropped = q.answer === 'X';
+                const ansLetter = isDropped ? 'X' : (q.answer ? q.answer.toUpperCase() : '?');
+                
+                // Options with selectable radio buttons
                 const optHtml = Object.entries(q.options || {}).map(([key, val]) => 
-                    '<div class="flex items-start gap-1.5 py-0.5"><span class="font-bold text-indigo-500 text-[11px]">(' + key + ')</span><span class="text-[11px] text-slate-600">' + escH(val) + '</span></div>'
+                    '<label class="flex items-start gap-1.5 py-0.5 cursor-pointer rounded px-1 hover:bg-slate-50 transition-all" id="' + qId + '-opt-' + key + '">' +
+                        '<input type="radio" name="' + qId + '" value="' + key + '" onchange="checkAnswer(\'' + qId + '\',\'' + key + '\',\'' + (q.answer || '') + '\')" class="mt-0.5 h-3.5 w-3.5 text-indigo-600 border-slate-300 cursor-pointer">' +
+                        '<span class="font-bold text-indigo-500 text-[11px]">(' + key + ')</span>' +
+                        '<span class="text-[11px] text-slate-600">' + escH(val) + '</span>' +
+                    '</label>'
                 ).join('');
                 
                 const yearBadge = q.year ? '<span class="text-[9px] font-mono font-bold bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded">' + q.year + '</span>' : '';
-                const ansLetter = q.answer ? q.answer.toUpperCase() : '?';
-                const ansText = (q.answer && q.options && q.options[q.answer]) ? q.options[q.answer] : '';
                 
-                qHtml += '<div class="pyq-question bg-white border border-slate-100 rounded-xl p-3 hover:border-indigo-200 transition-all" data-year="' + (q.year||'') + '" data-qtext="' + escA(q.question) + '">' +
+                // Answer display
+                let answerDisplay;
+                if (isDropped) {
+                    answerDisplay = '<div class="hidden mt-1 bg-orange-50 border border-orange-200 rounded-lg px-3 py-1.5"><span class="text-[11px] font-bold text-orange-700">Dropped by UPSC</span><span class="text-[10px] text-orange-500 ml-1">- No valid answer</span></div>';
+                } else {
+                    const ansText = (q.answer && q.options && q.options[q.answer]) ? q.options[q.answer] : '';
+                    answerDisplay = '<div class="hidden mt-1 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-1.5"><span class="text-[11px] font-bold text-emerald-700">Answer: (' + ansLetter + ')</span>' + (ansText ? '<span class="text-[11px] text-emerald-600 ml-1">- ' + escH(ansText) + '</span>' : '') + '</div>';
+                }
+                
+                // Feedback container
+                const feedbackDiv = '<div id="' + qId + '-feedback" class="hidden mt-1.5 rounded-lg px-3 py-1.5 text-[11px] font-bold"></div>';
+                
+                qHtml += '<div class="pyq-question bg-white border border-slate-100 rounded-xl p-3 hover:border-indigo-200 transition-all" id="' + qId + '-card">' +
                     '<div class="flex items-start gap-2">' +
-                        '<input type="checkbox" id="pyq-cb-' + tIdx + '-' + sIdx + '-' + qIdx + '" onchange="handleSyncAction(this.id)" class="mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500/20 cursor-pointer shrink-0">' +
+                        '<input type="checkbox" id="' + prefix + '-cb-' + tIdx + '-' + sIdx + '-' + qIdx + '" onchange="handleSyncAction(this.id)" class="mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500/20 cursor-pointer shrink-0">' +
                         '<div class="flex-1 min-w-0">' +
-                            '<div class="flex items-center gap-2 mb-1"><span class="text-[10px] font-mono font-bold text-slate-400">Q' + q.number + '</span>' + yearBadge + '</div>' +
-                            '<p class="text-xs text-slate-700 font-medium leading-relaxed">' + escH(q.question) + '</p>' +
+                            '<div class="flex items-center gap-2 mb-1"><span class="text-[10px] font-mono font-bold text-slate-400">Q' + q.number + '</span>' + yearBadge + (isDropped ? '<span class="text-[9px] font-mono font-bold bg-orange-50 text-orange-600 px-1.5 py-0.5 rounded">DROPPED</span>' : '') + '</div>' +
+                            '<p class="text-xs text-slate-700 font-medium leading-relaxed">' + formatQText(q.question) + '</p>' +
                             '<div class="mt-2 pl-2 border-l-2 border-slate-100">' + optHtml + '</div>' +
+                            feedbackDiv +
                             '<div class="mt-2"><button onclick="this.nextElementSibling.classList.toggle(\'hidden\');this.textContent=this.textContent===\'Show Answer\'?\'Hide Answer\':\'Show Answer\'" class="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 cursor-pointer">Show Answer</button>' +
-                            '<div class="hidden mt-1 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-1.5"><span class="text-[11px] font-bold text-emerald-700">Answer: (' + ansLetter + ')</span>' + (ansText ? '<span class="text-[11px] text-emerald-600 ml-1">- ' + escH(ansText) + '</span>' : '') + '</div></div>' +
+                            answerDisplay + '</div>' +
                         '</div>' +
                     '</div>' +
-                    '<div class="mt-2 ml-6"><input type="text" id="note-pyq-cb-' + tIdx + '-' + sIdx + '-' + qIdx + '" onchange="handleSyncAction(\'pyq-cb-' + tIdx + '-' + sIdx + '-' + qIdx + '\')" placeholder="Add a note..." class="w-full bg-slate-50/50 border border-slate-200 rounded-lg p-1.5 text-[10px] font-mono text-slate-600 focus:outline-none focus:border-indigo-400 focus:bg-white transition-all placeholder-slate-300"></div>' +
+                    '<div class="mt-2 ml-6"><input type="text" id="note-' + prefix + '-cb-' + tIdx + '-' + sIdx + '-' + qIdx + '" onchange="handleSyncAction(\'' + prefix + '-cb-' + tIdx + '-' + sIdx + '-' + qIdx + '\')" placeholder="Add a note..." class="w-full bg-slate-50/50 border border-slate-200 rounded-lg p-1.5 text-[10px] font-mono text-slate-600 focus:outline-none focus:border-indigo-400 focus:bg-white transition-all placeholder-slate-300"></div>' +
                 '</div>';
             });
             qHtml += '</div>';
             container.innerHTML = qHtml;
+        }
+
+        function formatQText(s) {
+            // Allow <br> tags through but escape everything else
+            if (!s) return '';
+            // Split on <br>, escape each part, rejoin with actual <br>
+            return s.split('<br>').map(p => escH(p)).join('<br>');
+        }
+
+        function checkAnswer(qId, selected, correct) {
+            const fb = document.getElementById(qId + '-feedback');
+            if (!fb) return;
+            fb.classList.remove('hidden');
+            
+            if (correct === 'X') {
+                fb.className = 'mt-1.5 rounded-lg px-3 py-1.5 text-[11px] font-bold bg-orange-50 border border-orange-200 text-orange-700';
+                fb.textContent = '⚠ This question was dropped by UPSC - no valid answer';
+                return;
+            }
+            
+            if (selected === correct) {
+                fb.className = 'mt-1.5 rounded-lg px-3 py-1.5 text-[11px] font-bold bg-emerald-50 border border-emerald-200 text-emerald-700';
+                fb.textContent = '✓ Correct!';
+                document.getElementById(qId + '-card').classList.add('border-emerald-200');
+                document.getElementById(qId + '-card').classList.remove('border-red-200');
+            } else {
+                fb.className = 'mt-1.5 rounded-lg px-3 py-1.5 text-[11px] font-bold bg-red-50 border border-red-200 text-red-700';
+                fb.textContent = '✗ Wrong! Correct answer is (' + correct.toUpperCase() + ')';
+                document.getElementById(qId + '-card').classList.add('border-red-200');
+                document.getElementById(qId + '-card').classList.remove('border-emerald-200');
+            }
         }
 
         function escH(s) { return s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') : ''; }
@@ -987,6 +1064,124 @@
             
             container.innerHTML = topicHtml;
             const countEl = document.getElementById('pyq-total-count');
+            if (countEl) countEl.textContent = totalFiltered + (year || search ? ' (filtered)' : '');
+        }
+
+        // ===== CSAT Paper II - Topic-wise Question Bank Rendering =====
+        function renderCSATTopics() {
+            if (typeof pyqCSATData === 'undefined') return;
+            const container = document.getElementById('csat-topics-container');
+            if (!container) return;
+            
+            let totalQ = 0;
+            let topicHtml = '';
+            
+            pyqCSATData.forEach((topic, tIdx) => {
+                let topicQCount = 0;
+                topic.subtopics.forEach(st => { topicQCount += st.questions.length; });
+                totalQ += topicQCount;
+                
+                let subtopicsHtml = '';
+                topic.subtopics.forEach((st, sIdx) => {
+                    subtopicsHtml += '<div class="pyq-subtopic border-b border-slate-50 last:border-b-0">' +
+                        '<button onclick="toggleCSATSubtopic(' + tIdx + ',' + sIdx + ')" class="w-full flex items-center justify-between px-6 py-3 hover:bg-slate-50 transition-all cursor-pointer">' +
+                            '<div class="flex items-center gap-2"><span class="text-slate-300 text-xs transition-transform duration-200" id="arrow-st-csat-' + tIdx + '-' + sIdx + '">&#9654;</span>' +
+                            '<span class="font-semibold text-xs text-slate-600">' + st.name + '</span></div>' +
+                            '<span class="text-[9px] font-mono text-slate-400">' + st.questions.length + ' Q</span>' +
+                        '</button>' +
+                        '<div id="csat-st-body-' + tIdx + '-' + sIdx + '" class="hidden px-4 pb-3"></div></div>';
+                });
+                
+                topicHtml += '<div class="pyq-topic border border-slate-200 rounded-2xl overflow-hidden shadow-sm">' +
+                    '<button onclick="toggleCSATTopic(' + tIdx + ')" class="w-full flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-white hover:from-teal-50 hover:to-white transition-all cursor-pointer">' +
+                        '<div class="flex items-center gap-3"><span class="text-slate-400 transition-transform duration-200" id="arrow-topic-csat-' + tIdx + '">&#9654;</span>' +
+                        '<span class="font-bold text-sm text-slate-800">' + topic.name + '</span></div>' +
+                        '<span class="text-[10px] font-mono font-bold bg-teal-50 text-teal-600 px-2.5 py-1 rounded-md">' + topicQCount + ' Q</span>' +
+                    '</button>' +
+                    '<div id="csat-topic-body-' + tIdx + '" class="hidden border-t border-slate-100">' + subtopicsHtml + '</div></div>';
+            });
+            
+            container.innerHTML = topicHtml;
+            const countEl = document.getElementById('csat-total-count');
+            if (countEl) countEl.textContent = totalQ;
+        }
+
+        function toggleCSATTopic(tIdx) {
+            const body = document.getElementById('csat-topic-body-' + tIdx);
+            const arrow = document.getElementById('arrow-topic-csat-' + tIdx);
+            if (body.classList.contains('hidden')) {
+                body.classList.remove('hidden');
+                arrow.style.transform = 'rotate(90deg)';
+            } else {
+                body.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        function toggleCSATSubtopic(tIdx, sIdx) {
+            const body = document.getElementById('csat-st-body-' + tIdx + '-' + sIdx);
+            const arrow = document.getElementById('arrow-st-csat-' + tIdx + '-' + sIdx);
+            if (body.classList.contains('hidden')) {
+                body.classList.remove('hidden');
+                arrow.style.transform = 'rotate(90deg)';
+                renderCSATSubtopicQuestions(tIdx, sIdx);
+            } else {
+                body.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        function filterCSAT() {
+            const search = (document.getElementById('csat-search').value || '').toLowerCase();
+            const year = document.getElementById('csat-year-filter').value;
+            
+            if (!search && !year) {
+                renderCSATTopics();
+                return;
+            }
+            
+            const container = document.getElementById('csat-topics-container');
+            if (!container) return;
+            let totalFiltered = 0;
+            let topicHtml = '';
+            
+            pyqCSATData.forEach((topic, tIdx) => {
+                let topicMatch = 0;
+                let subtopicsHtml = '';
+                
+                topic.subtopics.forEach((st, sIdx) => {
+                    const matchingQs = st.questions.filter(q => {
+                        const matchSearch = !search || (q.question || '').toLowerCase().includes(search);
+                        const matchYear = !year || q.year === year;
+                        return matchSearch && matchYear;
+                    });
+                    
+                    if (matchingQs.length > 0) {
+                        topicMatch += matchingQs.length;
+                        subtopicsHtml += '<div class="pyq-subtopic border-b border-slate-50 last:border-b-0">' +
+                            '<button onclick="toggleCSATSubtopic(' + tIdx + ',' + sIdx + ')" class="w-full flex items-center justify-between px-6 py-3 hover:bg-slate-50 transition-all cursor-pointer">' +
+                                '<div class="flex items-center gap-2"><span class="text-slate-300 text-xs transition-transform duration-200" id="arrow-st-csat-' + tIdx + '-' + sIdx + '">&#9654;</span>' +
+                                '<span class="font-semibold text-xs text-slate-600">' + st.name + '</span></div>' +
+                                '<span class="text-[9px] font-mono text-amber-600 font-bold">' + matchingQs.length + '/' + st.questions.length + ' Q</span>' +
+                            '</button>' +
+                            '<div id="csat-st-body-' + tIdx + '-' + sIdx + '" class="hidden px-4 pb-3"></div></div>';
+                    }
+                });
+                
+                if (topicMatch > 0) {
+                    totalFiltered += topicMatch;
+                    topicHtml += '<div class="pyq-topic border border-slate-200 rounded-2xl overflow-hidden shadow-sm">' +
+                        '<button onclick="toggleCSATTopic(' + tIdx + ')" class="w-full flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-white hover:from-teal-50 hover:to-white transition-all cursor-pointer">' +
+                            '<div class="flex items-center gap-3"><span class="text-slate-400 transition-transform duration-200" id="arrow-topic-csat-' + tIdx + '">&#9654;</span>' +
+                            '<span class="font-bold text-sm text-slate-800">' + topic.name + '</span></div>' +
+                            '<span class="text-[10px] font-mono font-bold bg-amber-50 text-amber-600 px-2.5 py-1 rounded-md">' + topicMatch + ' Q</span>' +
+                        '</button>' +
+                        '<div id="csat-topic-body-' + tIdx + '" class="hidden border-t border-slate-100">' + subtopicsHtml + '</div></div>';
+                }
+            });
+            
+            container.innerHTML = topicHtml;
+            const countEl = document.getElementById('csat-total-count');
             if (countEl) countEl.textContent = totalFiltered + (year || search ? ' (filtered)' : '');
         }
     </script>
