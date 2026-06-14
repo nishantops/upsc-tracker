@@ -17,9 +17,14 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
         
-        /* High Performance Pure CSS Pie Charts */
-        .pie-chart-frame { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-center: center; transition: all 0.4s ease-in-out; }
-        .pie-chart-center { width: 48px; height: 64px; background: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; font-family: monospace; }
+        /* Updated Pure Solid Pie Chart Styling */
+        .pie-chart-frame { 
+            width: 48px; 
+            height: 48px; 
+            border-radius: 50%; 
+            transition: all 0.5s ease-out; 
+            border: 2px solid rgba(255,255,255,0.8);
+        }
     </style>
 </head>
 <body class="text-slate-800 antialiased min-h-screen flex flex-col custom-scrollbar">
@@ -96,49 +101,49 @@
             </div>
         </div>
 
-        <!-- PIE CHART GRAPHICAL HUB OVERVIEW -->
+        <!-- NEW FULL COLOR PIE CHART GRAPHICAL HUB -->
         <div class="neo-card rounded-3xl p-6">
             <h3 class="text-xs font-bold tracking-widest text-slate-400 uppercase font-mono mb-4 border-b border-slate-100 pb-2">SECTIONAL SYLLABUS PIE COMPLETION MATRIX</h3>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <!-- Prelims P1 -->
-                <div class="bg-white/50 border border-slate-200/60 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-2xs">
-                    <div id="pie-p1" class="pie-chart-frame bg-slate-200"><div id="lbl-p1" class="pie-chart-center text-slate-800">0%</div></div>
-                    <div><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase">Prelims P1</div><div class="text-xs font-black text-slate-800 mt-0.5 leading-none">GS Paper I</div></div>
+                <div class="bg-white/80 border border-slate-200/60 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-sm transition hover:shadow-md">
+                    <div id="pie-p1" class="pie-chart-frame bg-slate-200"></div>
+                    <div><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase flex items-center gap-1.5">Prelims P1 <span id="lbl-p1" class="px-1.5 py-0.5 rounded text-[9px]">0%</span></div><div class="text-xs sm:text-sm font-black text-slate-800 mt-0.5 leading-tight">GS Paper I</div></div>
                 </div>
                 <!-- Prelims CSAT -->
-                <div class="bg-white/50 border border-slate-200/60 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-2xs">
-                    <div id="pie-p2" class="pie-chart-frame bg-slate-200"><div id="lbl-p2" class="pie-chart-center text-slate-800">0%</div></div>
-                    <div><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase">Prelims P2</div><div class="text-xs font-black text-slate-800 mt-0.5 leading-none">CSAT Paper II</div></div>
+                <div class="bg-white/80 border border-slate-200/60 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-sm transition hover:shadow-md">
+                    <div id="pie-p2" class="pie-chart-frame bg-slate-200"></div>
+                    <div><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase flex items-center gap-1.5">Prelims P2 <span id="lbl-p2" class="px-1.5 py-0.5 rounded text-[9px]">0%</span></div><div class="text-xs sm:text-sm font-black text-slate-800 mt-0.5 leading-tight">CSAT Paper II</div></div>
                 </div>
                 <!-- Mains GS1 -->
-                <div class="bg-white/50 border border-slate-200/60 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-2xs">
-                    <div id="pie-gs1" class="pie-chart-frame bg-slate-200"><div id="lbl-gs1" class="pie-chart-center text-slate-800">0%</div></div>
-                    <div><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase">Mains GS1</div><div class="text-xs font-black text-slate-800 mt-0.5 leading-none">GS-I Blueprint</div></div>
+                <div class="bg-white/80 border border-slate-200/60 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-sm transition hover:shadow-md">
+                    <div id="pie-gs1" class="pie-chart-frame bg-slate-200"></div>
+                    <div><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase flex items-center gap-1.5">Mains GS1 <span id="lbl-gs1" class="px-1.5 py-0.5 rounded text-[9px]">0%</span></div><div class="text-xs sm:text-sm font-black text-slate-800 mt-0.5 leading-tight">GS-I Blueprint</div></div>
                 </div>
                 <!-- Mains GS2 -->
-                <div class="bg-white/50 border border-slate-200/60 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-2xs">
-                    <div id="pie-gs2" class="pie-chart-frame bg-slate-200"><div id="lbl-gs2" class="pie-chart-center text-slate-800">0%</div></div>
-                    <div><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase">Mains GS2</div><div class="text-xs font-black text-slate-800 mt-0.5 leading-none">GS-II Blueprint</div></div>
+                <div class="bg-white/80 border border-slate-200/60 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-sm transition hover:shadow-md">
+                    <div id="pie-gs2" class="pie-chart-frame bg-slate-200"></div>
+                    <div><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase flex items-center gap-1.5">Mains GS2 <span id="lbl-gs2" class="px-1.5 py-0.5 rounded text-[9px]">0%</span></div><div class="text-xs sm:text-sm font-black text-slate-800 mt-0.5 leading-tight">GS-II Blueprint</div></div>
                 </div>
                 <!-- Mains GS3 -->
-                <div class="bg-white/50 border border-slate-200/60 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-2xs">
-                    <div id="pie-gs3" class="pie-chart-frame bg-slate-200"><div id="lbl-gs3" class="pie-chart-center text-slate-800">0%</div></div>
-                    <div><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase">Mains GS3</div><div class="text-xs font-black text-slate-800 mt-0.5 leading-none">GS-III Blueprint</div></div>
+                <div class="bg-white/80 border border-slate-200/60 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-sm transition hover:shadow-md">
+                    <div id="pie-gs3" class="pie-chart-frame bg-slate-200"></div>
+                    <div><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase flex items-center gap-1.5">Mains GS3 <span id="lbl-gs3" class="px-1.5 py-0.5 rounded text-[9px]">0%</span></div><div class="text-xs sm:text-sm font-black text-slate-800 mt-0.5 leading-tight">GS-III Blueprint</div></div>
                 </div>
                 <!-- Mains GS4 -->
-                <div class="bg-white/50 border border-slate-200/60 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-2xs">
-                    <div id="pie-gs4" class="pie-chart-frame bg-slate-200"><div id="lbl-gs4" class="pie-chart-center text-slate-800">0%</div></div>
-                    <div><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase">Mains GS4</div><div class="text-xs font-black text-slate-800 mt-0.5 leading-none">GS-IV Ethics</div></div>
+                <div class="bg-white/80 border border-slate-200/60 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-sm transition hover:shadow-md">
+                    <div id="pie-gs4" class="pie-chart-frame bg-slate-200"></div>
+                    <div><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase flex items-center gap-1.5">Mains GS4 <span id="lbl-gs4" class="px-1.5 py-0.5 rounded text-[9px]">0%</span></div><div class="text-xs sm:text-sm font-black text-slate-800 mt-0.5 leading-tight">GS-IV Ethics</div></div>
                 </div>
                 <!-- Anthro Paper 1 -->
-                <div class="bg-white/50 border border-slate-200/60 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-2xs">
-                    <div id="pie-a1" class="pie-chart-frame bg-slate-200"><div id="lbl-a1" class="pie-chart-center text-slate-800">0%</div></div>
-                    <div><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase">Anthro P1</div><div class="text-xs font-black text-slate-800 mt-0.5 leading-none">Paper I Focus</div></div>
+                <div class="bg-white/80 border border-slate-200/60 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-sm transition hover:shadow-md">
+                    <div id="pie-a1" class="pie-chart-frame bg-slate-200"></div>
+                    <div><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase flex items-center gap-1.5">Anthro P1 <span id="lbl-a1" class="px-1.5 py-0.5 rounded text-[9px]">0%</span></div><div class="text-xs sm:text-sm font-black text-slate-800 mt-0.5 leading-tight">Paper I Focus</div></div>
                 </div>
                 <!-- Anthro Paper 2 -->
-                <div class="bg-white/50 border border-slate-200/60 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-2xs">
-                    <div id="pie-a2" class="pie-chart-frame bg-slate-200"><div id="lbl-a2" class="pie-chart-center text-slate-800">0%</div></div>
-                    <div><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase">Anthro P2</div><div class="text-xs font-black text-slate-800 mt-0.5 leading-none">Paper II Focus</div></div>
+                <div class="bg-white/80 border border-slate-200/60 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-sm transition hover:shadow-md">
+                    <div id="pie-a2" class="pie-chart-frame bg-slate-200"></div>
+                    <div><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase flex items-center gap-1.5">Anthro P2 <span id="lbl-a2" class="px-1.5 py-0.5 rounded text-[9px]">0%</span></div><div class="text-xs sm:text-sm font-black text-slate-800 mt-0.5 leading-tight">Paper II Focus</div></div>
                 </div>
             </div>
         </div>
@@ -161,7 +166,7 @@
                 <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Paper A: Compulsory Indian Language</h2><div class="space-y-3" id="box-mains-lang-a"></div></div>
                 <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Paper B: Compulsory English Language</h2><div class="space-y-3" id="box-mains-lang-b"></div></div>
                 <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Paper I: Essay Framework</h2><div class="space-y-3" id="box-mains-essay"></div></div>
-                <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Paper II: General Studies I (GS-1)</h2><div class="space-y-3" id="box-mains-gs1"></div></div>
+                <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Paper II: General Studies I (GS-I)</h2><div class="space-y-3" id="box-mains-gs1"></div></div>
                 <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Paper III: General Studies II (GS-II)</h2><div class="space-y-3" id="box-mains-gs2"></div></div>
                 <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Paper IV: General Studies III (GS-III)</h2><div class="space-y-3" id="box-mains-gs3"></div></div>
                 <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">Paper V: General Studies IV (GS-IV)</h2><div class="space-y-3" id="box-mains-gs4"></div></div>
@@ -224,6 +229,18 @@
         const dataA1 = ["1.1 Meaning, Scope and Development of Anthropology.", "1.2 Relationships with other disciplines: Social Sciences, Behavioural Sciences, Life Sciences, Medical Sciences, Earth Sciences and Humanities.", "1.3 Main branches of Anthropology, their scope and relevance: (a) Social-cultural Anthropology. (b) Biological Anthropology. (c) Archaeological Anthropology. (d) Linguistic Anthropology.", "1.4 Human Evolution and emergence of Man: (a) Biological and Cultural factors in human evolution. (b) Theories of Organic Evolution (Pre- Darwinian, Darwinian and Post-Darwinian). (c) Synthetic theory of evolution; Brief outline of terms and concepts of evolutionary biology (Doll's rule, Cope's rule, Gause's rule, parallelism, convergence, adaptive radiation, and mosaic evolution).", "1.5 Characteristics of Primates; Evolutionary Trend and Primate Taxonomy; Primate Adaptations; (Arboreal and Terrestrial) Primate Behaviour; Tertiary and Quaternary fossil primates; Living Major Primates; Comparative Anatomy of Man and Apes; Skeletal changes due to erect posture and bipedalism.", "1.6 Phylogenetic status, characteristics and geographical distribution of the following: (a) Plio-pleistocene hominids in South and East Africa - Australopithecines. (b) Homo erectus: Africa (Homo ergaster), Europe (Homo heidelbergensis), Asia (Homo erectus pekinensis, Homo erectus javanicus). (c) Neanderthal Man - La-Chapelle-aux-Saints (Classical type), Mt. Carmel (Progressive type). (d) Rhodesian man. (e) Homo sapiens Cro-Magnon, Grimaldi and Chancelade.", "1.7 The biological basis of Life: Cell, DNA structure and replication, Protein Synthesis, Gene, Mutation, Chromosomes, and Cell Division.", "1.8 Principles of Prehistoric Archaeology: Chronology: Relative and Absolute dating methods. Cultural Evolution- Broad Outlines of Prehistoric cultures: (e) Paleolithic (b) Mesolithic (c) Neolithic (d) Chalcolithic (e) Copper-Bronze Age (f) Iron Age.", "2.1 The Nature of Culture: The concept and characteristics of culture and civilization; Ethnocentrism vis-a-vis Cultural Relativism.", "2.2 The Nature of Society: Concept of society; Society and Culture; Social Institutions; Social groups; and Social stratification.", "2.3 Marriage: Definition and universality; Laws of marriage (endogamy, exogamy, hypergamy, hypogamy, incest taboo); Types of marriage (monogamy, polygamy, polyandry, group marriage); Functions of marriage; Marriage regulations (preferential, prescriptive and proscriptive); Marriage payments (bride wealth and dowry).", "2.4 Family: Definition and universality; Family, household and domestic group; functions of family; Types of family (from the perspectives of structure, blood relation, marriage, residence and succession); Impact of urbanization, industrialization and feminist movements on family.", "2.5 Kinship: Consanguinity and Affinity; Principles and types of descent (Unilineal, Double, Bilateral, Ambilineal); Forms of descent groups (lineage, clan, phratry, moiety and kindred); Kinship terminology (descriptive and classificatory); Descent-Alliance networks.", "3. Economic Organization: Meaning, scope and relevance of economic anthropology; Formalist and Substantivist debate; Principles governing production, distribution and exchange (reciprocity, redistribution and market) in communities, subsisting on hunting and gathering, fishing, pastoralism, horticulture and agriculture; globalization and indigenous economic systems.", "4. Political Organization and Social Control: Band, tribe, chiefdom, kingdom and state; concepts of power, authority and legitimacy; social control, law and justice in simple societies.", "5. Religion: Anthropological approaches to the study of religion (evolutionary, psychological and functional); Monotheism and Polytheism; Sacred and profane; Myths and rituals; Forms of religion in tribal and peasant societies (animism, animatism, fetishism, naturism and totemism); Religion, magic and science distinguished; Magico-religious functionaries (priest, shaman, medicine man, sorcerer and witch).", "6. Anthropological Theories: (a) Classical Evolutionism (Tylor, Morgan and Frazer) (b) Historical Particularism (Boas); Diffusionism (British, German-Austrian and American) (c) Functionalism (Malinowski); Structural-functionalism (Radcliffe-Brown) (d) Structuralism (Lévi-Strauss and Leach) (e) Culture and Personality (Benedict, Mead, Linton, Kardiner and Cora-du Bois) (f) Neo - Evolutionism (Childe, White, Steward, Sahlins and Service) (g) Cultural Materialism (Harris) (h) Symbolic and Interpretive theories (Turner, Schneider and Geertz) (i) Cognitive Anthropology (Tyler, Conklin) (j) Post-modernism in Anthropology", "7. Culture, Language and Communication: Nature, origin and characteristics of language; verbal and non-verbal communication; social-context of language use.", "8. Research Methods in Anthropology: (a) Fieldwork tradition in anthropology (b) Distinction between technique, method and methodology (c) Tools of data collection: observation, interview, schedules, questionnaire, Case study, Strategies, life history, oral history, secondary sources of data, genealogical method. (d) Analysis, interpretation and presentation of data.", "9.1 Human Genetics: Methods and Application: Methods for study of genetic principles in man- family study (pedigree analysis, twin study, foster child, co-twin method, cytogenetic method, chromosomal and karyo-type analysis), biochemical methods, immunological methods, D.N.A. technology and recombinant technologies.", "9.2 Mendelian genetics in man-marriage and disease: Single locus inheritance (Autosomal dominant and recessive, sex-linked, sex-limited and sex-influenced traits); Linkage and crossing-over, sex determination and differentiation; Biochemical genetics (Rh, ABO blood groups, HLA, Gm, blood enzymes, Inborn errors of metabolism).", "9.3 Chromosomal aberrations in Man: numerical and structural aberrations (disorders); (a) Autosomal aberrations: Down's, Patau's, Edward's and Cri-du-chat syndromes. (b) Sex chromosomal aberrations: Klinefelter's, Turner's, Super female, XYY syndrome. (c) Genetic imprints in human disease, genetic screening, genetic counseling, forensics.", "9.4 Race and Racism: Biological concept of race, criteria of racial classification; race and intelligence, racism; race cross-breeding, genetic markers in racial classification.", "9.5 Ecological Anthropology: Bio-cultural adaptations to cold, heat, high altitude, and nutritional stresses.", "9.6 Epidemiological Anthropology: Infectious and non-infectious diseases; Nutritional deficiencies.", "10. Concept of Human Growth and Development: Stages of growth prenatal, natal, infant, childhood, adolescence, maturity, senescence; Factors affecting growth and development; Methodology of growth studies (cross-sectional, longitudinal, mixed longitudinal); Human physique and somatotyping.", "11.1 Relevance of menarche, menopause and other bioevents to fertility. Fertility patterns and differentials.", "11.2 Demographic theories - biological, social and cultural.", "11.3 Biological and socio-ecological factors influencing fecundity, fertility, natality and mortality.", "12. Applications of Anthropology: Anthropology of sports, Nutritional anthropology, Anthropology in designing of defence and other equipments, Forensic Anthropology, Methods and principles of personal identification and reconstruction, Applied human genetics Paternity diagnosis, genetic counseling and eugenics, DNA profiling, Gene mapping."];
         const dataA2 = ["1.1 Evolution of the Indian Culture and Civilization: Prehistoric (Paleolithic, Mesolithic, Neolithic and Chalcolithic); Protohistoric (Indus Valley Civilization); Islamic impacts; Westernization and Modernization trends.", "1.2 Paleoanthropological evidences from India with special reference to Ramapithecus, Sivapithecus and Narmada Man.", "1.3 Ethno-archaeology in India: The concept of ethno-archaeology; Survivals and Parallels among the hunter-gatherers, pastoralists, nomadic communities, agriculturalists and artisan communities.", "2. Demographic profile of India: Ethnic and linguistic elements in the Indian population and their distribution; Social and economic characteristics of the ethnographic elements.", "3.1 The structure and nature of traditional Indian social system: Varnashrama, Purushartha, Karma, Rina and Rebirth concepts.", "3.2 Caste system in India: Structure and characteristics; Varna and Caste; Theories of origin of caste system; Dominant Caste; Caste mobility; Future of caste system; Jajmani system; Jati Panchayat.", "3.3 Sacred Complex and Nature-Man-Spirit Complex.", "3.4 Impact of Buddhism, Jainism, Islam and Christianity on Indian society.", "4. Emergence and Growth of Anthropology in India: Contributions of the 18th, 19th and early 20th Century scholar-administrators; Contributions of Indian anthropologists to tribal and peasant studies.", "5.1 Indian Village: Significance of village study in India; Indian village as a social system; Traditional and changing patterns of settlement and inter-caste relations; Agrarian relations in Indian villages; Impact of globalization on Indian villages.", "5.2 Linguistic and religious minorities and their social, political and economic problems.", "5.3 Indigenous and exogenous processes of socio-cultural change in Indian society: Sanskritization, Westernization, Modernization; Inter-play of Little and Great Traditions; Panchayati Raj and social change.", "6.1 Tribal situation in India: Bio-genetic variability, linguistic and socio-economic characteristics of tribal populations and their distribution.", "6.2 Problems of the tribal Communities: Land alienation, poverty, indebtedness, low literacy, poor health, malnutrition, underemployment; Tribal unrest and Left-Wing Extremism.", "6.3 Developmental projects and their impact on tribal displacement and rehabilitation problems; Development of forest policy and tribals.", "7.1 Problems of exploitation and deprivation of Scheduled Castes, Scheduled Tribes and Other Backward Classes; Constitutional safeguards for Scheduled Tribes and Scheduled Castes.", "7.2 Social change and contemporary tribal societies: Impact of modern democratic institutions, development programmes and welfare measures on tribals and weaker sections.", "7.3 The concept of PTGs (Particularly Vulnerable Tribal Groups) and their distribution; Special programmes for their development; Role of NGOs in tribal development.", "8.1 Impact of Hinduism, Buddhism, Christianity, Islam and other religions on tribal societies.", "8.2 Tribe and nation state: Comparative study of tribal communities in India and other democratic countries; issues of integration and autonomy.", "9.1 History of administration of tribal areas: Tribal policies and plans during British rule and post- independence; 5th and 6th Schedules of the Constitution; Panchayati Raj provisions for tribal areas (PESA); Tribal Sub-Plan framework.", "9.2 Role of Anthropology in tribal and rural development.", "9.3 Contributions of anthropology to the understanding of regionalism, communalism, and ethnic conflicts."];
 
+        // Dynamic Color Map for the Pie Charts
+        const pieColors = {
+            'p1':  { hex: '#6366f1', bg: '#e0e7ff', text: '#4f46e5' }, // Indigo
+            'p2':  { hex: '#10b981', bg: '#d1fae5', text: '#059669' }, // Emerald
+            'gs1': { hex: '#f59e0b', bg: '#fef3c7', text: '#d97706' }, // Amber
+            'gs2': { hex: '#f43f5e', bg: '#ffe4e6', text: '#e11d48' }, // Rose
+            'gs3': { hex: '#a855f7', bg: '#f3e8ff', text: '#9333ea' }, // Purple
+            'gs4': { hex: '#06b6d4', bg: '#cffafe', text: '#0891b2' }, // Cyan
+            'a1':  { hex: '#d946ef', bg: '#fae8ff', text: '#c026d3' }, // Fuchsia
+            'a2':  { hex: '#f97316', bg: '#ffedd5', text: '#ea580c' }  // Orange
+        };
+
         buildList('box-prelims-gs', dataP1, 'p1');
         buildList('box-prelims-csat', dataP2, 'p2');
         buildList('box-mains-lang-a', dataLA, 'la');
@@ -261,7 +278,7 @@
             if (SUPABASE_ANON_KEY.includes("YOUR_KEY_HERE") || SUPABASE_ANON_KEY.startsWith("eyJhbGci")) {
                 document.getElementById("sync-status-text").innerText = "CRITICAL: MISSING API KEY";
                 document.getElementById("sync-status-indicator").className = "inline-block w-2.5 h-2.5 rounded-full bg-rose-500";
-                alert("Nishant: The code still contains the wrong API key.\\n\\nPlease open your Upsc_Tracker.html file, scroll down to Line 183, and paste your actual 'sb_publishable_...' key inside the quotes.");
+                alert("Nishant: The code still contains the wrong API key.\\n\\nPlease open your Upsc_Tracker.html file, scroll down to Line 214, and paste your actual 'sb_publishable_...' key inside the quotes.");
                 return;
             }
 
@@ -390,7 +407,7 @@
             document.getElementById("global-perc-text").innerText = percentage + "%";
             document.getElementById("global-progress-bar").style.width = percentage + "%";
 
-            // Recalculate Sections and Update CSS Pie Gradient Fill Rings dynamically
+            // Full, solid pie chart generation with distinct colors
             const prefixes = ['p1', 'p2', 'gs1', 'gs2', 'gs3', 'gs4', 'a1', 'a2'];
             prefixes.forEach(pfx => {
                 const secBoxes = document.querySelectorAll(`input[type="checkbox"][id*="-${pfx}-"]`);
@@ -398,13 +415,22 @@
                 secBoxes.forEach(b => { if(b.checked) sChecked++; });
                 
                 const sPct = sTotal > 0 ? Math.round((sChecked / sTotal) * 100) : 0;
+                const theme = pieColors[pfx];
                 
-                // Native gradient manipulation bypasses script network parsing blocks entirely
                 const pieEl = document.getElementById(`pie-${pfx}`);
                 const lblEl = document.getElementById(`lbl-${pfx}`);
+                
                 if (pieEl && lblEl) {
                     lblEl.innerText = sPct + "%";
-                    pieEl.style.background = `conic-gradient(#4f46e5 ${sPct}%, #e2e8f0 0%)`;
+                    lblEl.style.backgroundColor = theme.bg;
+                    lblEl.style.color = theme.text;
+                    pieEl.style.background = `conic-gradient(${theme.hex} ${sPct}%, #e2e8f0 0%)`;
+                    
+                    if (sPct > 0) {
+                        pieEl.style.boxShadow = `0 0 12px -2px ${theme.hex}80`;
+                    } else {
+                        pieEl.style.boxShadow = 'none';
+                    }
                 }
             });
         }
