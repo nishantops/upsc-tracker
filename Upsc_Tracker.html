@@ -12,7 +12,7 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); }
         .heading-font { font-family: 'Cabinet Grotesk', sans-serif; }
         .neo-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 10px 30px -10px rgba(148, 163, 184, 0.3); }
-        .task-row:has(input:checked) { background: linear-gradient(90deg, rgba(79, 70, 229, 0.05) 0%, rgba(255, 255, 255, 0.5) 100%) !important; border-color: rgba(16, 185, 129, 0.3) !important; }
+        .task-row:has(input[type="checkbox"]:checked) { background: linear-gradient(90deg, rgba(79, 70, 229, 0.05) 0%, rgba(255, 255, 255, 0.5) 100%) !important; border-color: rgba(16, 185, 129, 0.3) !important; }
         .custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
@@ -20,7 +20,6 @@
 </head>
 <body class="text-slate-800 antialiased min-h-screen flex flex-col custom-scrollbar">
 
-    <!-- MASTER GLOBAL HUD NAVBAR -->
     <header class="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-slate-200/80 px-4 lg:px-8 py-4 shadow-xs">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center space-x-4 w-full md:w-auto">
@@ -48,7 +47,6 @@
         </div>
     </header>
 
-    <!-- MAIN DASHBOARD METRICS -->
     <main class="max-w-7xl mx-auto px-4 lg:px-8 py-8 flex-1 w-full space-y-8">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="neo-card rounded-3xl p-6 border-l-4 border-indigo-600 flex flex-col justify-between relative overflow-hidden">
@@ -92,14 +90,12 @@
             </div>
         </div>
 
-        <!-- TABS CONTROLLER -->
         <div class="neo-card rounded-2xl p-2 flex flex-row gap-1 overflow-x-auto whitespace-nowrap scrollbar-none shadow-sm">
             <button onclick="activateTab('deck-prelims')" id="btn-deck-prelims" class="cursor-pointer flex-1 text-center py-3.5 px-6 rounded-xl font-black text-xs uppercase tracking-wider transition-all bg-indigo-600 text-white shadow-md heading-font">Stage I: Prelims Blueprint</button>
             <button onclick="activateTab('deck-mains')" id="btn-deck-mains" class="cursor-pointer flex-1 text-center py-3.5 px-6 rounded-xl font-black text-xs uppercase tracking-wider transition-all text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 heading-font">Stage II: Core Mains &amp; Languages</button>
             <button onclick="activateTab('deck-anthro')" id="btn-deck-anthro" class="cursor-pointer flex-1 text-center py-3.5 px-6 rounded-xl font-black text-xs uppercase tracking-wider transition-all text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 heading-font">Stage III: Anthropology Optional</button>
         </div>
 
-        <!-- SYLLABUS LIST LAYOUT SLOTS -->
         <div class="space-y-6">
             <div id="deck-prelims" class="tab-pane-view block space-y-8">
                 <div class="neo-card rounded-3xl p-6"><h2 class="heading-font text-xl font-black border-b border-slate-100 pb-3 mb-4">General Studies (Paper I) Matrix</h2><div class="space-y-3" id="box-prelims-gs"></div></div>
@@ -123,7 +119,6 @@
         </div>
     </main>
 
-    <!-- CUSTOM TOPIC MODAL -->
     <div id="custom-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl border border-slate-200">
             <h3 class="text-lg font-black text-slate-900 heading-font mb-4">📂 Add Custom Sync Topic</h3>
@@ -161,7 +156,6 @@
         const SUPABASE_ANON_KEY = "sb_publishable_HYqlB7gJZmJ-Ni8ZywKJ_w_bNZWlGGy";
         // =========================================================================
 
-
         const dataP1 = ["Current Events: Current events of national and international importance.", "History of India and Indian National Movement: Social, economic, and political aspects of ancient, medieval, and modern Indian history; structural phases of the national freedom struggle.", "Indian and World Geography: Physical, social, and economic geography of India and the global domains.", "Indian Polity and Governance: Constitution, political system, Panchayati Raj, public policy, rights issues, statutory frameworks, and structural governance architectures.", "Economic and Social Development: Sustainable development, poverty inclusion dynamics, demographics, social sector initiatives, fiscal policies, and macroeconomic foundations.", "General Issues on Environmental Ecology, Bio-diversity, and Climate Change: Global environmental challenges, conservation paradigms, ecosystem parameters (that do not require specialized academic domain expertise).", "General Science: Foundational scientific vectors encompassing physics, chemistry, biology, and contemporary technological advancements."];
         const dataP2 = ["Comprehension frameworks and contextual textual interpretation analytical streams.", "Interpersonal skills including comprehensive communication architectures.", "Logical reasoning and analytical capability domains.", "Decision-making mechanics and problem-solving scenarios.", "General mental ability parameters.", "Basic Numeracy: Numbers and their relations, orders of magnitude, etc. (Class X level data matrices).", "Data Interpretation: Charts, graphs, tables, data sufficiency profiles (Class X level presentation matrices)."];
         const dataLA = ["One of the Indian languages to be selected by the candidate from the Languages included in the Eighth Schedule to the Constitution."];
@@ -193,11 +187,14 @@
             const el = document.getElementById(domId);
             if(!el) return;
             el.innerHTML = dataArr.map((text, idx) => `
-                <div class="task-row flex items-start justify-between p-3.5 bg-white border border-slate-200/80 hover:border-indigo-500/20 rounded-2xl transition duration-200 group relative shadow-2xs">
+                <div class="task-row flex flex-col p-3.5 bg-white border border-slate-200/80 hover:border-indigo-500/20 rounded-2xl transition duration-200 group relative shadow-2xs">
                     <label for="uid-${prefix}-${idx}" class="flex items-start cursor-pointer w-full text-xs sm:text-sm font-bold tracking-tight select-none">
-                        <input type="checkbox" id="uid-${prefix}-${idx}" onchange="handleCheck(this.id, this.checked)" class="mt-0.5 mr-3.5 h-5 w-5 rounded-md border-slate-300 text-indigo-600 focus:ring-indigo-500/20 cursor-pointer">
+                        <input type="checkbox" id="uid-${prefix}-${idx}" onchange="handleSyncAction('uid-${prefix}-${idx}')" class="mt-0.5 mr-3.5 h-5 w-5 rounded-md border-slate-300 text-indigo-600 focus:ring-indigo-500/20 cursor-pointer">
                         <span class="text-slate-700 font-medium ml-2 break-words group-has-[:checked]:text-slate-400 group-has-[:checked]:line-through transition-all">${text}</span>
                     </label>
+                    <div class="mt-2 ml-10 w-[calc(100%-2.5rem)]">
+                        <input type="text" id="note-uid-${prefix}-${idx}" onchange="handleSyncAction('uid-${prefix}-${idx}')" placeholder="Add a note or reminder here (e.g., 'Half done', 'Revise NCERT')..." class="w-full bg-slate-50/50 border border-slate-200 rounded-lg p-2 text-[11px] font-mono text-slate-600 focus:outline-none focus:border-indigo-400 focus:bg-white transition-colors placeholder-slate-300">
+                    </div>
                 </div>
             `).join('');
         }
@@ -235,17 +232,21 @@
                 
                 if (response.data) {
                     response.data.forEach(row => {
+                        const noteValue = row.topic_note || '';
+                        
                         if(row.id.startsWith('custom_')) {
                             const parts = row.id.split('_');
                             const targetBox = parts[1];
                             const encodedPayload = parts.slice(2).join('_');
                             try {
                                 const decodedText = decodeURIComponent(escape(atob(encodedPayload)));
-                                buildCustomTopicNode(targetBox, decodedText, row.id, row.is_checked);
+                                buildCustomTopicNode(targetBox, decodedText, row.id, row.is_checked, noteValue);
                             } catch(e) {}
                         } else {
                             const box = document.getElementById(row.id);
+                            const noteInput = document.getElementById('note-' + row.id);
                             if (box) box.checked = row.is_checked;
+                            if (noteInput) noteInput.value = noteValue;
                         }
                     });
                     document.getElementById("sync-status-text").innerText = "CLOUD SYNCED ACROSS DEVICES";
@@ -258,11 +259,21 @@
             }
         }
 
-        async function handleCheck(elementId, isChecked) {
+        async function handleSyncAction(elementId) {
             calculateMetricsHUD(); 
             if(!dbClient) return;
+            
+            const isChecked = document.getElementById(elementId).checked;
+            const noteInput = document.getElementById('note-' + elementId);
+            const noteText = noteInput ? noteInput.value : '';
+
             try {
-                const pushPromise = dbClient.from('nishant_upsc_tracker').upsert({ id: elementId, is_checked: isChecked, updated_at: new Date().toISOString() });
+                const pushPromise = dbClient.from('nishant_upsc_tracker').upsert({ 
+                    id: elementId, 
+                    is_checked: isChecked, 
+                    topic_note: noteText,
+                    updated_at: new Date().toISOString() 
+                });
                 const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 3000));
                 await Promise.race([pushPromise, timeoutPromise]);
                 
@@ -285,25 +296,28 @@
             const encodedSafeText = btoa(unescape(encodeURIComponent(textValue)));
             const generatedCloudId = `custom_${targetBox}_${encodedSafeText}`;
 
-            buildCustomTopicNode(targetBox, textValue, generatedCloudId, false);
-            handleCheck(generatedCloudId, false);
+            buildCustomTopicNode(targetBox, textValue, generatedCloudId, false, "");
+            handleSyncAction(generatedCloudId);
             closeCustomTopicModal();
         }
 
-        function buildCustomTopicNode(targetBoxId, text, fullId, isChecked) {
+        function buildCustomTopicNode(targetBoxId, text, fullId, isChecked, noteText) {
             const container = document.getElementById(targetBoxId);
             if(!container || document.getElementById(fullId)) return;
             
             const checkAttr = isChecked ? 'checked' : '';
             const htmlNode = `
-                <div class="task-row flex items-start justify-between p-3.5 bg-indigo-50/50 border border-indigo-200/80 rounded-2xl transition group relative">
+                <div class="task-row flex flex-col p-3.5 bg-indigo-50/50 border border-indigo-200/80 rounded-2xl transition group relative">
                     <label for="${fullId}" class="flex items-start cursor-pointer w-full text-xs sm:text-sm font-bold tracking-tight select-none">
-                        <input type="checkbox" id="${fullId}" onchange="handleCheck(this.id, this.checked)" class="mt-0.5 mr-3.5 h-5 w-5 rounded-md border-indigo-300 text-indigo-600 cursor-pointer" ${checkAttr}>
+                        <input type="checkbox" id="${fullId}" onchange="handleSyncAction('${fullId}')" class="mt-0.5 mr-3.5 h-5 w-5 rounded-md border-indigo-300 text-indigo-600 cursor-pointer" ${checkAttr}>
                         <span class="text-indigo-900 group-has-[:checked]:text-indigo-400 group-has-[:checked]:line-through break-words font-medium flex items-center flex-wrap gap-2">
                             <span class="bg-indigo-600 text-white text-[9px] px-1.5 py-0.5 rounded uppercase tracking-wider font-black">Added Task</span>
                             ${text}
                         </span>
                     </label>
+                    <div class="mt-2 ml-10 w-[calc(100%-2.5rem)]">
+                        <input type="text" id="note-${fullId}" onchange="handleSyncAction('${fullId}')" value="${noteText || ''}" placeholder="Add a note or reminder here..." class="w-full bg-white/60 border border-indigo-200 rounded-lg p-2 text-[11px] font-mono text-indigo-800 focus:outline-none focus:border-indigo-400 focus:bg-white transition-colors placeholder-indigo-300">
+                    </div>
                 </div>`;
             container.insertAdjacentHTML('beforeend', htmlNode);
             calculateMetricsHUD();
