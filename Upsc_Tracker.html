@@ -288,7 +288,7 @@
         </div>
     </main>
 
-    <!-- CUSTOM TOPIC/TASK MODAL (UPDATED WITH NEW GROUPS) -->
+    <!-- CUSTOM TOPIC/TASK MODAL -->
     <div id="custom-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl border border-slate-200">
             <h3 id="modal-title-display" class="text-lg font-black text-slate-900 heading-font mb-4">📂 Add Custom Entry</h3>
@@ -390,11 +390,111 @@
         const dataGS4 = ["Ethics and Human Interface: Essence, determinants and consequences of Ethics in human actions; dimensions of ethics; ethics in private and public relationships. Human Values-lessons from the lives and teachings of great leaders, reformers and administrators; role of family, society and educational institutions in imparting values.", "Attitude: Content, structure, function; its influence and relation with thought and behaviour; moral and political attitudes; social influence and persuasion.", "Aptitude: Aptitude and foundational values for Civil Service, integrity, impartiality and non- partisanship, objectivity, dedication to public service, empathy, tolerance and compassion towards the weaker-sections.", "Emotional Intelligence: Concepts, and their utilities and application in administration and governance.", "Contributions of Moral Thinkers: Contributions of moral thinkers and philosophers from India and world.", "Public/Civil Service Values and Ethics in Public Administration: Status and problems; ethical concerns and dilemmas in government and private institutions; laws, rules, regulations and conscience as sources of ethical guidance; accountability and ethical governance; strengthening of ethical and moral values in governance; ethical issues in international relations and funding; corporate governance.", "Probity in Governance: Concept of public service; Philosophical basis of governance and probity; Information sharing and transparency in government, Right to Information, Codes of Ethics, Codes of Conduct, Citizen's Charters, Work culture, Quality of service delivery, Utilization of public funds, challenges of corruption.", "Case Studies on above issues."];
         const dataA1 = ["1.1 Meaning, Scope and Development of Anthropology.", "1.2 Relationships with other disciplines: Social Sciences, Behavioural Sciences, Life Sciences, Medical Sciences, Earth Sciences and Humanities.", "1.3 Main branches of Anthropology, their scope and relevance: (a) Social-cultural Anthropology. (b) Biological Anthropology. (c) Archaeological Anthropology. (d) Linguistic Anthropology.", "1.4 Human Evolution and emergence of Man: (a) Biological and Cultural factors in human evolution. (b) Theories of Organic Evolution (Pre- Darwinian, Darwinian and Post-Darwinian). (c) Synthetic theory of evolution; Brief outline of terms and concepts of evolutionary biology (Doll's rule, Cope's rule, Gause's rule, parallelism, convergence, adaptive radiation, and mosaic evolution).", "1.5 Characteristics of Primates; Evolutionary Trend and Primate Taxonomy; Primate Adaptations; (Arboreal and Terrestrial) Primate Behaviour; Tertiary and Quaternary fossil primates; Living Major Primates; Comparative Anatomy of Man and Apes; Skeletal changes due to erect posture and bipedalism.", "1.6 Phylogenetic status, characteristics and geographical distribution of the following: (a) Plio-pleistocene hominids in South and East Africa - Australopithecines. (b) Homo erectus: Africa (Homo ergaster), Europe (Homo heidelbergensis), Asia (Homo erectus pekinensis, Homo erectus javanicus). (c) Neanderthal Man - La-Chapelle-aux-Saints (Classical type), Mt. Carmel (Progressive type). (d) Rhodesian man. (e) Homo sapiens Cro-Magnon, Grimaldi and Chancelade.", "1.7 The biological basis of Life: Cell, DNA structure and replication, Protein Synthesis, Gene, Mutation, Chromosomes, and Cell Division.", "1.8 Principles of Prehistoric Archaeology: Chronology: Relative and Absolute dating methods. Cultural Evolution- Broad Outlines of Prehistoric cultures: (e) Paleolithic (b) Mesolithic (c) Neolithic (d) Chalcolithic (e) Copper-Bronze Age (f) Iron Age.", "2.1 The Nature of Culture: The concept and characteristics of culture and civilization; Ethnocentrism vis-a-vis Cultural Relativism.", "2.2 The Nature of Society: Concept of society; Society and Culture; Social Institutions; Social groups; and Social stratification.", "2.3 Marriage: Definition and universality; Laws of marriage (endogamy, exogamy, hypergamy, hypogamy, incest taboo); Types of marriage (monogamy, polygamy, polyandry, group marriage); Functions of marriage; Marriage regulations (preferential, prescriptive and proscriptive); Marriage payments (bride wealth and dowry).", "2.4 Family: Definition and universality; Family, household and domestic group; functions of family; Types of family (from the perspectives of structure, blood relation, marriage, residence and succession); Impact of urbanization, industrialization and feminist movements on family.", "2.5 Kinship: Consanguinity and Affinity; Principles and types of descent (Unilineal, Double, Bilateral, Ambilineal); Forms of descent groups (lineage, clan, phratry, moiety and kindred); Kinship terminology (descriptive and classificatory); Descent-Alliance networks.", "3. Economic Organization: Meaning, scope and relevance of economic anthropology; Formalist and Substantivist debate; Principles governing production, distribution and exchange (reciprocity, redistribution and market) in communities, subsisting on hunting and gathering, fishing, pastoralism, horticulture and agriculture; globalization and indigenous economic systems.", "4. Political Organization and Social Control: Band, tribe, chiefdom, kingdom and state; concepts of power, authority and legitimacy; social control, law and justice in simple societies.", "5. Religion: Anthropological approaches to the study of religion (evolutionary, psychological and functional); Monotheism and Polytheism; Sacred and profane; Myths and rituals; Forms of religion in tribal and peasant societies (animism, animatism, fetishism, naturism and totemism); Religion, magic and science distinguished; Magico-religious functionaries (priest, shaman, medicine man, sorcerer and witch).", "6. Anthropological Theories: (a) Classical Evolutionism (Tylor, Morgan and Frazer) (b) Historical Particularism (Boas); Diffusionism (British, German-Austrian and American) (c) Functionalism (Malinowski); Structural-functionalism (Radcliffe-Brown) (d) Structuralism (Lévi-Strauss and Leach) (e) Culture and Personality (Benedict, Mead, Linton, Kardiner and Cora-du Bois) (f) Neo - Evolutionism (Childe, White, Steward, Sahlins and Service) (g) Cultural Materialism (Harris) (h) Symbolic and Interpretive theories (Turner, Schneider and Geertz) (i) Cognitive Anthropology (Tyler, Conklin) (j) Post-modernism in Anthropology", "7. Culture, Language and Communication: Nature, origin and characteristics of language; verbal and non-verbal communication; social-context of language use.", "8. Research Methods in Anthropology: (a) Fieldwork tradition in anthropology (b) Distinction between technique, method and methodology (c) Tools of data collection: observation, interview, schedules, questionnaire, Case study, Strategies, life history, oral history, secondary sources of data, genealogical method. (d) Analysis, interpretation and presentation of data.", "9.1 Human Genetics: Methods and Application: Methods for study of genetic principles in man- family study (pedigree analysis, twin study, foster child, co-twin method, cytogenetic method, chromosomal and karyo-type analysis), biochemical methods, immunological methods, D.N.A. technology and recombinant technologies.", "9.2 Mendelian genetics in man-marriage and disease: Single locus inheritance (Autosomal dominant and recessive, sex-linked, sex-limited and sex-influenced traits); Linkage and crossing-over, sex determination and differentiation; Biochemical genetics (Rh, ABO blood groups, HLA, Gm, blood enzymes, Inborn errors of metabolism).", "9.3 Chromosomal aberrations in Man: numerical and structural aberrations (disorders); (a) Autosomal aberrations: Down's, Patau's, Edward's and Cri-du-chat syndromes. (b) Sex chromosomal aberrations: Klinefelter's, Turner's, Super female, XYY syndrome. (c) Genetic imprints in human disease, genetic screening, genetic counseling, forensics.", "9.4 Race and Racism: Biological concept of race, criteria of racial classification; race and intelligence, racism; race cross-breeding, genetic markers in racial classification.", "9.5 Ecological Anthropology: Bio-cultural adaptations to cold, heat, high altitude, and nutritional stresses.", "9.6 Epidemiological Anthropology: Infectious and non-infectious diseases; Nutritional deficiencies.", "10. Concept of Human Growth and Development: Stages of growth prenatal, natal, infant, childhood, adolescence, maturity, senescence; Factors affecting growth and development; Methodology of growth studies (cross-sectional, longitudinal, mixed longitudinal); Human physique and somatotyping.", "11.1 Relevance of menarche, menopause and other bioevents to fertility. Fertility patterns and differentials.", "11.2 Demographic theories - biological, social and cultural.", "11.3 Biological and socio-ecological factors influencing fecundity, fertility, natality and mortality.", "12. Applications of Anthropology: Anthropology of sports, Nutritional anthropology, Anthropology in designing of defence and other equipments, Forensic Anthropology, Methods and principles of personal identification and reconstruction, Applied human genetics Paternity diagnosis, genetic counseling and eugenics, DNA profiling, Gene mapping."];
         const dataA2 = ["1.1 Evolution of the Indian Culture and Civilization: Prehistoric (Paleolithic, Mesolithic, Neolithic and Chalcolithic); Protohistoric (Indus Valley Civilization); Islamic impacts; Westernization and Modernization trends.", "1.2 Paleoanthropological evidences from India with special reference to Ramapithecus, Sivapithecus and Narmada Man.", "1.3 Ethno-archaeology in India: The concept of ethno-archaeology; Survivals and Parallels among the hunter-gatherers, pastoralists, nomadic communities, agriculturalists and artisan communities.", "2. Demographic profile of India: Ethnic and linguistic elements in the Indian population and their distribution; Social and economic characteristics of the ethnographic elements.", "3.1 The structure and nature of traditional Indian social system: Varnashrama, Purushartha, Karma, Rina and Rebirth concepts.", "3.2 Caste system in India: Structure and characteristics; Varna and Caste; Theories of origin of caste system; Dominant Caste; Caste mobility; Future of caste system; Jajmani system; Jati Panchayat.", "3.3 Sacred Complex and Nature-Man-Spirit Complex.", "3.4 Impact of Buddhism, Jainism, Islam and Christianity on Indian society.", "4. Emergence and Growth of Anthropology in India: Contributions of the 18th, 19th and early 20th Century scholar-administrators; Contributions of Indian anthropologists to tribal and peasant studies.", "5.1 Indian Village: Significance of village study in India; Indian village as a social system; Traditional and changing patterns of settlement and inter-caste relations; Agrarian relations in Indian villages; Impact of globalization on Indian villages.", "5.2 Linguistic and religious minorities and their social, political and economic problems.", "5.3 Indigenous and exogenous processes of socio-cultural change in Indian society: Sanskritization, Westernization, Modernization; Inter-play of Little and Great Traditions; Panchayati Raj and social change.", "6.1 Tribal situation in India: Bio-genetic variability, linguistic and socio-economic characteristics of tribal populations and their distribution.", "6.2 Problems of the tribal Communities: Land alienation, poverty, indebtedness, low literacy, poor health, malnutrition, underemployment; Tribal unrest and Left-Wing Extremism.", "6.3 Developmental projects and their impact on tribal displacement and rehabilitation problems; Development of forest policy and tribals.", "7.1 Problems of exploitation and deprivation of Scheduled Castes, Scheduled Tribes and Other Backward Classes; Constitutional safeguards for Scheduled Tribes and Scheduled Castes.", "7.2 Social change and contemporary tribal societies: Impact of modern democratic institutions, development programmes and welfare measures on tribals and weaker sections.", "7.3 The concept of PTGs (Particularly Vulnerable Tribal Groups) and their distribution; Special programmes for their development; Role of NGOs in tribal development.", "8.1 Impact of Hinduism, Buddhism, Christianity, Islam and other religions on tribal societies.", "8.2 Tribe and nation state: Comparative study of tribal communities in India and other democratic countries; issues of integration and autonomy.", "9.1 History of administration of tribal areas: Tribal policies and plans during British rule and post- independence; 5th and 6th Schedules of the Constitution; Panchayati Raj provisions for tribal areas (PESA); Tribal Sub-Plan framework.", "9.2 Role of Anthropology in tribal and rural development.", "9.3 Contributions of anthropology to the understanding of regionalism, communalism, and ethnic conflicts."];
-        
         const dataCA = ["June 2026 Monthly Compilation", "July 2026 Monthly Compilation", "August 2026 Monthly Compilation", "September 2026 Monthly Compilation", "October 2026 Monthly Compilation", "November 2026 Monthly Compilation", "December 2026 Monthly Compilation", "January 2027 Monthly Compilation", "February 2027 Monthly Compilation", "March 2027 Monthly Compilation", "April 2027 Monthly Compilation", "May 2027 (Pre-Exam Update)"];
         
-        // NEW TIER 3 ARRAYS (PYQ)
-        const dataPYQ_p1 = ["GS Paper I PYQ (2023)", "GS Paper I PYQ (2022)"];
+        // =========================================================================================
+        // NEW SYLLABUS-MATCHED PYQ GS PAPER I ARRAY INCORPORATED DIRECTLY FROM THE SOURCE DOCUMENT
+        // =========================================================================================
+        const dataPYQ_p1 = [
+            "Modern India: India in the 18th Century",
+            "Modern India: Indian Renaissance and Reform Movements",
+            "Modern India: Early Uprising Against the British and Revolt of 1857",
+            "Modern India: Rise of Indian National Movement: Moderate and Extremists Phase",
+            "Modern India: Phases of Revolutionary Nationalism",
+            "Modern India: The Beginning of Gandhian Era",
+            "Modern India: The National Movement in the 1940s",
+            "Modern India: Development of Press, Education and Civil Services",
+            "Modern India: Independence to Partition",
+            "Ancient India: Prehistoric Period and Indus Valley Civilisation",
+            "Ancient India: Vedic and Later Vedic Age",
+            "Ancient India: Mauryan and Post-Mauryan Age",
+            "Ancient India: Gupta and Post- Gupta Age",
+            "Ancient India: Sangam Age",
+            "Medieval India: Delhi Sultanate (1206 AD to 1526 AD)",
+            "Medieval India: Mughal Empire (1526 AD to 1761 AD)",
+            "Medieval India: Provincial Kingdoms in Medieval India",
+            "Medieval India: Religious movement during medieval period",
+            "Art & Culture: Architecture and Sculpture",
+            "Art & Culture: Literature: Religious and Scientific",
+            "Art & Culture: Performing Arts: Dance, Theatre and Music",
+            "Art & Culture: Visual Arts: Painting, ceramics and drawing",
+            "Art & Culture: Indian Philosophy and Bhakti & Sufi Movements",
+            "Art & Culture: Indian Traditions, Festivals, and Calendars",
+            "Art & Culture: Miscellaneous",
+            "World Geography: The Earth and the Universe",
+            "World Geography: Geomorphology",
+            "World Geography: Climatology",
+            "World Geography: Oceanography",
+            "World Geography: World Climatic Regions",
+            "World Geography: Human and Economic Geography",
+            "World Geography: World Map",
+            "Indian Geography: Physiography of India",
+            "Indian Geography: Drainage System of India",
+            "Indian Geography: Indian Climate",
+            "Indian Geography: Soils",
+            "Indian Geography: Natural Vegetation in India",
+            "Indian Geography: Mineral and Industries",
+            "Indian Geography: Agriculture in India",
+            "Indian Geography: Indian Map",
+            "Environment & Ecology: Protected Area Network: NP, WS, BR, etc.",
+            "Environment & Ecology: Ecosystem and Ecology",
+            "Environment & Ecology: Environmental Pollution",
+            "Environment & Ecology: Biodiversity",
+            "Environment & Ecology: Global Conservation Efforts",
+            "Environment & Ecology: National Conservation Efforts",
+            "Environment & Ecology: Climate Change: Causes and Implications",
+            "Environment & Ecology: Environment, Sustainable Development and General Issues",
+            "Environment & Ecology: Agriculture",
+            "Indian Polity and Governance: Historical Background & Making of Indian Constitution",
+            "Indian Polity and Governance: Features of the Indian Constitution",
+            "Indian Polity and Governance: Legislature",
+            "Indian Polity and Governance: Executive",
+            "Indian Polity and Governance: Judiciary",
+            "Indian Polity and Governance: Local Self Government",
+            "Indian Polity and Governance: Governance",
+            "Indian Polity and Governance: Constitutional and Non-constitutional Bodies",
+            "Indian Polity and Governance: Judicial & Quasi-Judicial Bodies",
+            "International Relations: India's Foreign Policy",
+            "International Relations: India & Its Neighbors",
+            "International Relations: International Groups and Political Organizations",
+            "International Relations: Places in news",
+            "Indian Economy: Money: Barter to Bitcoins",
+            "Indian Economy: Bank Classification",
+            "Indian Economy: NPA, Bad-Loans, BASEL",
+            "Indian Economy: Sharemarket, Companies Act",
+            "Indian Economy: Insurance, Pension, Financial inclusion",
+            "Indian Economy: Budget Direct Taxes",
+            "Indian Economy: Budget Indirect Taxes GST",
+            "Indian Economy: Finance Commission, BlackMoney, Subsidies",
+            "Indian Economy: BOP, CAD Currency Exchange",
+            "Indian Economy: WTO, IMF & other International Organisations & Agreeements",
+            "Indian Economy: Sectors of Economy- Agriculture",
+            "Indian Economy: Sectors- MFG, Services, Ease of Doing Biz, IPR, Startup, MSME",
+            "Indian Economy: NITI, Planning Commission, FYP, Unemployment",
+            "Indian Economy: GDP, GNP",
+            "Indian Economy: Inflation",
+            "Indian Economy: Infra: Energy",
+            "Indian Economy: Infra: Transport, Urban Rural, Communication, Investment, PPP",
+            "Indian Economy: HRD: Census, Health Hunger",
+            "Indian Economy: HRD: Education and Skill",
+            "Indian Economy: HRD: Poverty",
+            "Indian Economy: HRD: Weaker Section, HDI, SDG",
+            "Indian Economy: Microeconomics",
+            "Science & Tech: Biotechnology",
+            "Science & Tech: Defence Technology",
+            "Science & Tech: Space Science",
+            "Science & Tech: Communication Technology",
+            "Science & Tech: Energy",
+            "Science & Tech: Miscellaneous",
+            "Science & Tech: Physics",
+            "Science & Tech: Chemistry",
+            "Science & Tech: Biology",
+            "Current Affairs and Miscellaneous: Current Affairs: India",
+            "Current Affairs and Miscellaneous: Current Affairs: World",
+            "Current Affairs and Miscellaneous: GK/Persons in News",
+            "Current Affairs and Miscellaneous: Miscellaneous"
+        ];
+        
         const dataPYQ_p2 = ["CSAT PYQ (2023)", "CSAT PYQ (2022)"];
         const dataPYQ_gs1 = ["GS-I PYQ (2023)", "GS-I PYQ (2022)"];
         const dataPYQ_gs2 = ["GS-II PYQ (2023)", "GS-II PYQ (2022)"];
@@ -403,7 +503,6 @@
         const dataPYQ_a1 = ["Anthro P1 PYQ (2023)", "Anthro P1 PYQ (2022)"];
         const dataPYQ_a2 = ["Anthro P2 PYQ (2023)", "Anthro P2 PYQ (2022)"];
 
-        // NEW TIER 3 ARRAYS (TEST SERIES)
         const dataTS_p1 = ["Prelims GS1 Mock Test 01", "Prelims GS1 Mock Test 02"];
         const dataTS_p2 = ["Prelims CSAT Mock Test 01", "Prelims CSAT Mock Test 02"];
         const dataTS_gs1 = ["Mains GS-I Sectional Test 01"];
@@ -491,7 +590,6 @@
 
                 if (response.error) throw response.error;
                 if (response.data) {
-                    // Pass 1: Build Planners
                     response.data.forEach(row => {
                         if(row.id.startsWith('plan_meta_')) {
                             const encodedName = row.id.substring(10);
@@ -500,7 +598,6 @@
                         }
                     });
 
-                    // Pass 2: Populate Everything
                     response.data.forEach(row => {
                         const noteValue = row.topic_note || '';
                         if(row.id.startsWith('custom_')) {
@@ -722,7 +819,7 @@
         // ==========================
         function calculateMetricsHUD() {
             const allBoxes = Array.from(document.querySelectorAll('input[type="checkbox"]'));
-            const syllabusBoxes = allBoxes.filter(b => !b.id.startsWith('plan_') && !b.id.startsWith('uid-pyq') && !b.id.startsWith('uid-ts'));
+            const syllabusBoxes = allBoxes.filter(b => !b.id.startsWith('plan_') && !b.id.startsWith('uid-pyq') && !b.id.startsWith('uid-ts') && !b.id.startsWith('uid-pq') && !b.id.startsWith('uid-qg') && !b.id.startsWith('uid-qa') && !b.id.startsWith('uid-tp') && !b.id.startsWith('uid-tg') && !b.id.startsWith('uid-te') && !b.id.startsWith('uid-ta'));
             
             let total = syllabusBoxes.length, checked = 0;
             syllabusBoxes.forEach(b => { if(b.checked) checked++; });
