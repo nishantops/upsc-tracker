@@ -112,14 +112,44 @@ const AI_CHAT = (() => {
         const container = document.getElementById('ai-chat-messages');
         const div = document.createElement('div');
         div.className = `ai-msg ai-msg-${role}`;
+        div.setAttribute('data-raw', content);
         div.innerHTML = content
             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
             .replace(/\*(.*?)\*/g, '<em>$1</em>')
             .replace(/`(.*?)`/g, '<code>$1</code>')
             .replace(/\n/g, '<br>');
+        if (role === 'user') {
+            div.title = 'Click to edit';
+            div.addEventListener('click', () => editMessage(div, content));
+        }
         container.appendChild(div);
-        container.scrollTop = container.scrollHeight;
+        requestAnimationFrame(() => { container.scrollTop = container.scrollHeight; });
         return div;
+    }
+
+    function editMessage(msgEl, originalText) {
+        const inputEl = document.getElementById('ai-chat-input');
+        if (!inputEl) return;
+        inputEl.value = originalText;
+        inputEl.focus();
+        // Remove this message and its response from history & DOM
+        const container = document.getElementById('ai-chat-messages');
+        const msgs = Array.from(container.children);
+        const idx = msgs.indexOf(msgEl);
+        // Remove from idx onwards (user msg + assistant reply)
+        for (let i = msgs.length - 1; i >= idx; i--) {
+            msgs[i].remove();
+        }
+        // Trim chatHistory to match
+        const userMsgIndex = chatHistory.findIndex((m, hi) => {
+            let count = 0;
+            for (let j = 0; j <= hi; j++) { if (chatHistory[j].role === 'user') count++; }
+            return count === Math.ceil((idx + 1) / 2) && m.role === 'user';
+        });
+        if (userMsgIndex >= 0) {
+            chatHistory = chatHistory.slice(0, userMsgIndex);
+            saveHistory();
+        }
     }
 
     function renderSavedHistory() {
