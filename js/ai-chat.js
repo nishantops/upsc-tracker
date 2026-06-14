@@ -100,7 +100,10 @@ const AI_CHAT = (() => {
             saveHistory();
         } catch(e) {
             typingEl.remove();
-            appendMessage('system', `❌ ${e.message}`);
+            const msg = e.message.includes('quota') || e.message.includes('429')
+                ? '⚠️ Rate limit reached. Please wait a moment and try again.'
+                : `❌ ${e.message}`;
+            appendMessage('system', msg);
         }
     }
 
