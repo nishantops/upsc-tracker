@@ -11,7 +11,7 @@ const AI_CHAT = (() => {
 
     // Default key (free tier, shared across all users)
     // Users can override with their own key in settings
-    const DEFAULT_KEY = ''; // Will be set when user provides it
+    const DEFAULT_KEY = (typeof ENV !== 'undefined' && ENV.GEMINI_API_KEY) || '';
 
     function getApiKey() {
         return localStorage.getItem(CUSTOM_KEY_STORAGE) || DEFAULT_KEY;

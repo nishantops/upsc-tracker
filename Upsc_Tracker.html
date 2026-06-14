@@ -6,6 +6,7 @@
     <title>Nishant Kumar • UPSC CSE Command Center 2027</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="env.js?v=1"></script>
     <script src="pyq_data.js?v=5" defer></script>
     <link rel="stylesheet" href="css/ai-chat.css?v=1">
     <style>
@@ -683,14 +684,13 @@
 
     <script>
         // =========================================================================
-        // CONFIGURATION
+        // CONFIGURATION (from env.js)
         // =========================================================================
-        const SUPABASE_URL = "https://wdbwnutkomemrciybezz.supabase.co"; 
-        const SUPABASE_ANON_KEY = "sb_publishable_HYqlB7gJZmJ-Ni8ZywKJ_w_bNZWlGGy";
-        // Superuser config: never auto-logged-out, direct login
-        const SUPERUSER_EMAIL = "sanit@upsc-admin.local";
-        const SUPERUSER_ALIAS = "sanit"; // can type this instead of full email
-        const AUTO_LOGOUT_MS = 15 * 60 * 1000; // 15 minutes for non-superusers
+        const SUPABASE_URL = ENV.SUPABASE_URL;
+        const SUPABASE_ANON_KEY = ENV.SUPABASE_ANON_KEY;
+        const SUPERUSER_EMAIL = ENV.SUPERUSER_EMAIL;
+        const SUPERUSER_ALIAS = ENV.SUPERUSER_ALIAS;
+        const AUTO_LOGOUT_MS = ENV.AUTO_LOGOUT_MS;
         // =========================================================================
 
         const dataP1 = ["Current Events: Current events of national and international importance.", "History of India and Indian National Movement: Social, economic, and political aspects of ancient, medieval, and modern Indian history; structural phases of the national freedom struggle.", "Indian and World Geography: Physical, social, and economic geography of India and the global domains.", "Indian Polity and Governance: Constitution, political system, Panchayati Raj, public policy, rights issues, statutory frameworks, and structural governance architectures.", "Economic and Social Development: Sustainable development, poverty inclusion dynamics, demographics, social sector initiatives, fiscal policies, and macroeconomic foundations.", "General Issues on Environmental Ecology, Bio-diversity, and Climate Change: Global environmental challenges, conservation paradigms, ecosystem parameters (that do not require specialized academic domain expertise).", "General Science: Foundational scientific vectors encompassing physics, chemistry, biology, and contemporary technological advancements."];
@@ -1438,8 +1438,8 @@
         }
 
         function trackLiveClockTimelines() {
-            const pDate = new Date("May 23, 2027 09:00:00").getTime();
-            const mDate = new Date("August 20, 2027 09:00:00").getTime();
+            const pDate = new Date(ENV.PRELIMS_DATE).getTime();
+            const mDate = new Date(ENV.MAINS_DATE).getTime();
             function update() {
                 const now = new Date();
                 document.getElementById("live-date-hud").innerText = now.toLocaleDateString('en-IN', {day:'numeric', month:'short', year:'numeric'});
