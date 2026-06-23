@@ -520,12 +520,11 @@ Ctrl+B → Bold · Ctrl+I → Italic · Ctrl+U → Underline
 Use the toolbar above for bullets, colors and more."></div>
                         </div>
 
-                        <!-- Table Style Notes Grid -->
+                        <!-- Table Style — uses plantable.js (same engine as Plan Spreadsheets) -->
                         <div id="ca-notes-table-pane" class="hidden">
-                            <div class="flex justify-end mb-4">
-                                <button onclick="addTableNote()" class="cursor-pointer bg-gradient-to-r from-indigo-500 to-violet-600 hover:opacity-90 text-white text-[10px] font-bold px-3 py-2 rounded-lg shadow-sm font-mono">➕ Add Note Card</button>
+                            <div id="plan-table-container-ca_notes" class="pt-container">
+                                <div class="pt-loading">Loading table&#8230;</div>
                             </div>
-                            <div id="ca-table-notes-grid" class="ca-table-notes-grid"></div>
                         </div>
                     </div>
                 </div>
@@ -1168,13 +1167,8 @@ Use the toolbar above for bullets, colors and more."></div>
     <script src="js/tracker.js?v=3"></script>
     <script src="js/plans.js?v=2"></script>
     <script src="js/assignments.js?v=3"></script>
-    <script src="js/tabs.js?v=2"></script>
-    <script src="js/sources.js?v=1"></script>
-    <script src="js/pyq.js?v=3"></script>
-    <script src="js/trends.js?v=1"></script>
-    <script src="js/profile.js?v=1"></script>
-    <script src="js/sw.js?v=1"></script>
     <script src="js/plantable.js?v=1"></script>
+    <script src="js/tabs.js?v=2"></script>
     <script src="js/notifications.js?v=1"></script>
     <script src="js/focus.js?v=5"></script>
     <script src="js/auth.js?v=2"></script>

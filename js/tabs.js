@@ -229,7 +229,10 @@ function switchNotesMode(mode) {
     if (btnWord)  { btnWord.classList.toggle('notes-mode-active', mode === 'word'); }
     if (btnTable) { btnTable.classList.toggle('notes-mode-active', mode === 'table'); }
     if (mode === 'word' && !_wordNoteLoaded) _loadWordNote();
-    if (mode === 'table') renderTableNotes();
+    if (mode === 'table') {
+        // Full spreadsheet via plantable.js — same engine as Plan tables
+        if (typeof loadPlanTables === 'function') loadPlanTables('ca_notes');
+    }
 }
 
 // ── Word Style Editor ─────────────────────────────────────────────────────────
@@ -280,61 +283,8 @@ function rtCmd(cmd, value) {
     _wordNoteChanged();
 }
 
-// ── Table Style Notes ─────────────────────────────────────────────────────────
-function getTableNotes() { return JSON.parse(localStorage.getItem('upsc_ca_table_notes') || '[]'); }
-function setTableNotes(notes) { localStorage.setItem('upsc_ca_table_notes', JSON.stringify(notes)); }
-
-function addTableNote() {
-    const notes = getTableNotes();
-    const colors = ['#6366f1','#10b981','#f59e0b','#ef4444','#8b5cf6','#3b82f6','#f472b6'];
-    notes.push({ id: Date.now().toString(), title: 'Note ' + (notes.length + 1), content: '', color: colors[notes.length % colors.length] });
-    setTableNotes(notes);
-    renderTableNotes();
-    // Focus the new note's title
-    setTimeout(function() {
-        const inputs = document.querySelectorAll('.ca-note-title-inp');
-        if (inputs.length) inputs[inputs.length - 1].focus();
-    }, 50);
-}
-
-function deleteTableNote(id) {
-    if (!confirm('Delete this note card?')) return;
-    const notes = getTableNotes().filter(n => n.id !== id);
-    setTableNotes(notes);
-    renderTableNotes();
-}
-
-function updateTableNoteTitle(id, title) {
-    const notes = getTableNotes();
-    const note = notes.find(n => n.id === id);
-    if (note) { note.title = title; setTableNotes(notes); }
-}
-
-function updateTableNoteContent(id, content) {
-    const notes = getTableNotes();
-    const note = notes.find(n => n.id === id);
-    if (note) { note.content = content; setTableNotes(notes); }
-}
-
-function renderTableNotes() {
-    const container = document.getElementById('ca-table-notes-grid');
-    if (!container) return;
-    const notes = getTableNotes();
-    if (!notes.length) {
-        container.innerHTML = '<p class="text-xs text-slate-400 text-center py-10 col-span-full">No note cards yet. Click \u201c\u2795 Add Note Card\u201d to create one.</p>';
-        return;
-    }
-    container.innerHTML = notes.map(n => `
-        <div class="ca-note-card" id="ca-notecard-${n.id}" style="--note-accent:${n.color || '#6366f1'}">
-            <div class="ca-note-card-header">
-                <span class="ca-note-card-dot"></span>
-                <input type="text" class="ca-note-title-inp" value="${(n.title || '').replace(/"/g, '&quot;')}"
-                    oninput="updateTableNoteTitle('${n.id}', this.value)" placeholder="Note title\u2026">
-                <button onclick="deleteTableNote('${n.id}')" class="ca-note-del" title="Delete">\xd7</button>
-            </div>
-            <textarea class="ca-note-body" oninput="updateTableNoteContent('${n.id}', this.value)"
-                placeholder="Write here\u2026">${(n.content || '').replace(/</g,'&lt;')}</textarea>
-        </div>
-    `).join('');
-}
+// ── Table Style Notes — delegated to plantable.js ─────────────────────────────
+// loadPlanTables('ca_notes') is called by switchNotesMode when 'table' is selected.
+// All spreadsheet features (rows, columns, rename, fullscreen, zoom, sheets, save)
+// come from js/plantable.js with planId = 'ca_notes'.
 
