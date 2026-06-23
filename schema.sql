@@ -162,3 +162,4 @@ CREATE POLICY "Users delete own focus sessions" ON upsc_focus_sessions
 -- ============================================================================
 ALTER TABLE upsc_custom_plans ADD COLUMN IF NOT EXISTS start_date DATE;
 ALTER TABLE upsc_custom_plans ADD COLUMN IF NOT EXISTS end_date DATE;
+ALTER TABLE upsc_custom_plans ADD COLUMN IF NOT EXISTS plan_subject TEXT;

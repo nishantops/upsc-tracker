@@ -370,3 +370,52 @@ function showFocusError() {
     var el = document.getElementById('focus-timer-display');
     if (el) { el.textContent = 'ERR'; setTimeout(function() { el.textContent = '00:00:00'; }, 2000); }
 }
+
+// ── Reset focus data ─────────────────────────────────────────────────────
+function confirmFocusReset() {
+    var btn = document.querySelector('#fp-reset-wrap button');
+    if (!btn) return;
+    // First click: show confirmation
+    if (btn.dataset.confirm !== '1') {
+        btn.dataset.confirm = '1';
+        btn.textContent = '⚠ Confirm Reset — click again';
+        btn.style.background = 'rgba(239,68,68,0.15)';
+        btn.style.color = '#f87171';
+        setTimeout(function() {
+            if (btn.dataset.confirm === '1') {
+                btn.dataset.confirm = '0';
+                btn.textContent = '✕ Reset All Focus Data';
+                btn.style.background = '';
+                btn.style.color = '';
+            }
+        }, 4000);
+        return;
+    }
+    btn.dataset.confirm = '0';
+    btn.textContent = '✕ Reset All Focus Data';
+    btn.style.background = '';
+    btn.style.color = '';
+    resetFocusData();
+}
+
+async function resetFocusData() {
+    // Stop any active session first
+    if (focusSessionId) await stopFocusMode();
+    // Clear localStorage
+    try { localStorage.removeItem(FOCUS_LS); } catch(e) {}
+    try { localStorage.removeItem(FOCUS_HIST_LS); } catch(e) {}
+    // Clear DB
+    if (dbClient && currentUserId) {
+        try {
+            await dbClient.from('upsc_focus_sessions').delete().eq('user_id', currentUserId);
+            await dbClient.from('upsc_focus_year_data').delete().eq('user_id', currentUserId);
+        } catch(e) { console.warn('[Focus] reset error:', e.message); }
+    }
+    // Reset display
+    displayTodayTotal(0);
+    var el2 = document.getElementById('fp-stat-last');  if (el2) el2.textContent = '—';
+    var el3 = document.getElementById('fp-stat-week');  if (el3) el3.textContent = '—';
+    var el4 = document.getElementById('fp-history-list');
+    if (el4) el4.innerHTML = '<div class="fp-empty">All focus data cleared.</div>';
+    if (typeof showToast === 'function') showToast('Focus data reset successfully', 'success', 2500);
+}

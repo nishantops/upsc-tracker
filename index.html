@@ -220,6 +220,9 @@
       </div>
 
       <div class="fp-divider"></div>
+      <div id="fp-reset-wrap" style="text-align:center;margin-bottom:0.5rem;">
+        <button onclick="confirmFocusReset()" style="background:none;border:1px solid rgba(239,68,68,0.3);color:#f87171;border-radius:0.5rem;padding:0.25rem 0.85rem;font-size:0.62rem;font-weight:800;font-family:var(--mono);text-transform:uppercase;letter-spacing:0.05em;cursor:pointer;" title="Clear all focus session history">&#10005; Reset All Focus Data</button>
+      </div>
       <div class="fp-section-title">Recent Sessions</div>
       <div id="fp-history-list"><div class="fp-empty">Loading…</div></div>
     </div>
@@ -767,7 +770,7 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5 font-mono">Category</label>
-                        <select id="modal-plan-category" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-medium text-slate-700 focus:outline-none focus:border-emerald-500">
+                        <select id="modal-plan-category" onchange="onPlanCategoryChange(this.value)" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-medium text-slate-700 focus:outline-none focus:border-emerald-500">
                             <option value="common">Common</option>
                             <option value="gs1">GS 1</option>
                             <option value="gs2">GS 2</option>
@@ -786,6 +789,15 @@
                             <option value="mains">Mains Only</option>
                         </select>
                     </div>
+                </div>
+                <!-- Subject field – shows for GS/Optional/Essay and Custom -->
+                <div id="modal-plan-subject-wrap" style="display:none;">
+                    <label id="modal-plan-subject-label" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5 font-mono">Subject / Topic</label>
+                    <input type="text" id="modal-plan-subject" placeholder="e.g., Indian History, Geography…" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-medium text-slate-700 focus:outline-none focus:border-emerald-500">
+                </div>
+                <div id="modal-plan-custom-name-wrap" style="display:none;">
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5 font-mono">Custom Category Name</label>
+                    <input type="text" id="modal-plan-custom-name" placeholder="e.g., Anthropology, Sociology…" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-medium text-slate-700 focus:outline-none focus:border-emerald-500">
                 </div>
                 <div class="flex items-center justify-between" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:0.75rem;padding:0.65rem 0.9rem;">
                     <span style="font-size:0.72rem;font-weight:700;color:#475569;">🔔 Plan notifications</span>

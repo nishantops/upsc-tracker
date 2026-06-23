@@ -11,9 +11,31 @@ function closePlannerModal() {
     var cat = document.getElementById('modal-plan-category');
     var div = document.getElementById('modal-plan-division');
     var notif = document.getElementById('modal-plan-notif');
-    if (cat) cat.value = 'common';
+    var subj = document.getElementById('modal-plan-subject');
+    var customName = document.getElementById('modal-plan-custom-name');
+    if (cat) { cat.value = 'common'; onPlanCategoryChange('common'); }
     if (div) div.value = 'both';
     if (notif) notif.checked = true;
+    if (subj) subj.value = '';
+    if (customName) customName.value = '';
+}
+
+function onPlanCategoryChange(val) {
+    var subjWrap   = document.getElementById('modal-plan-subject-wrap');
+    var customWrap = document.getElementById('modal-plan-custom-name-wrap');
+    var subjLabel  = document.getElementById('modal-plan-subject-label');
+    var gsLabels   = { gs1:'Subject in GS 1', gs2:'Subject in GS 2', gs3:'Subject in GS 3', gs4:'Subject in GS 4', essay:'Essay Topic / Niche', optional:'Optional Subject', common:'Focus Area (optional)' };
+    if (val === 'custom') {
+        if (subjWrap)   subjWrap.style.display   = 'none';
+        if (customWrap) customWrap.style.display = 'block';
+    } else if (['gs1','gs2','gs3','gs4','essay','optional','common'].includes(val)) {
+        if (subjWrap)   subjWrap.style.display   = 'block';
+        if (customWrap) customWrap.style.display = 'none';
+        if (subjLabel)  subjLabel.textContent    = gsLabels[val] || 'Subject / Topic';
+    } else {
+        if (subjWrap)   subjWrap.style.display   = 'none';
+        if (customWrap) customWrap.style.display = 'none';
+    }
 }
 
 async function executeCreatePlan() {
@@ -24,14 +46,19 @@ async function executeCreatePlan() {
     var catEl    = document.getElementById('modal-plan-category');
     var divEl    = document.getElementById('modal-plan-division');
     var notifEl  = document.getElementById('modal-plan-notif');
+    var subjEl   = document.getElementById('modal-plan-subject');
+    var customNameEl = document.getElementById('modal-plan-custom-name');
     var category = catEl ? catEl.value : 'common';
     var division = divEl ? divEl.value : 'both';
     var notifEnabled = notifEl ? notifEl.checked : true;
+    var planSubject  = subjEl && subjEl.value.trim() ? subjEl.value.trim() : '';
+    var customName   = customNameEl && customNameEl.value.trim() ? customNameEl.value.trim() : '';
+    if (category === 'custom' && customName) planSubject = customName;
 
     if (!title) { alert('Plan Title required'); return; }
 
     var encodedName = btoa(unescape(encodeURIComponent(title)));
-    buildPlanCardDOM(title, encodedName, type, startDate, endDate, category, division, notifEnabled);
+    buildPlanCardDOM(title, encodedName, type, startDate, endDate, category, division, notifEnabled, planSubject);
 
     if (dbClient) {
         await dbClient.from('upsc_custom_plans').upsert({
@@ -39,7 +66,8 @@ async function executeCreatePlan() {
             plan_title: title, plan_type: type,
             start_date: startDate, end_date: endDate,
             plan_category: category, plan_division: division,
-            notif_enabled: notifEnabled
+            notif_enabled: notifEnabled,
+            plan_subject: planSubject || null
         }, { onConflict: 'plan_id,user_id' });
     }
     closePlannerModal();
@@ -59,14 +87,13 @@ var PLAN_CAT_STYLES = {
 var PLAN_CAT_LABELS = { common:'Common', gs1:'GS 1', gs2:'GS 2', gs3:'GS 3', gs4:'GS 4', essay:'Essay', optional:'Optional', custom:'Custom' };
 var PLAN_DIV_LABELS = { prelims:'Prelims', mains:'Mains', both:'P + M' };
 
-function buildPlanCardDOM(title, encodedName, type, startDate, endDate, category, division, notifEnabled) {
+function buildPlanCardDOM(title, encodedName, type, startDate, endDate, category, division, notifEnabled, planSubject) {
     if (document.getElementById('plan_card_wrapper_' + encodedName)) return;
     category     = category || 'common';
     division     = division || 'both';
     notifEnabled = (notifEnabled === false) ? false : true;
 
-    var cs  = PLAN_CAT_STYLES[category] || PLAN_CAT_STYLES.custom;
-    var catLabel = PLAN_CAT_LABELS[category] || category;
+    var catLabel = planSubject ? planSubject : (PLAN_CAT_LABELS[category] || category);
     var divLabel = PLAN_DIV_LABELS[division]  || division;
 
     var dateBadge = '';
@@ -77,7 +104,7 @@ function buildPlanCardDOM(title, encodedName, type, startDate, endDate, category
             + (endDate   ? '<span class="plan-date-badge">&#127937; ' + formatPlanDate(endDate)   + '</span>' : '')
             + '</div>';
     }
-    var mutedBadge = !notifEnabled ? '<span style="font-size:0.65rem;background:rgba(107,114,128,0.12);color:#6b7280;border:1px solid rgba(107,114,128,0.2);padding:0.1rem 0.4rem;border-radius:0.35rem;font-family:var(--mono);">&#128277; muted</span>' : '';
+    var mutedBadge = !notifEnabled ? '<span class="plan-badge plan-muted-badge">&#128277; muted</span>' : '';
 
     var html = '<div id="plan_card_wrapper_' + encodedName + '" class="neo-card rounded-3xl p-6 border-l-4 border-emerald-500 shadow-sm relative group">'
         + '<button onclick="eraseCustomNode(\'plan_meta_' + encodedName + '\', this)" class="absolute right-4 top-4 opacity-0 group-hover:opacity-100 transition cursor-pointer" style="background:none;border:none;color:var(--t3);" title="Delete Plan">'
@@ -87,9 +114,9 @@ function buildPlanCardDOM(title, encodedName, type, startDate, endDate, category
         +   '<div>'
         +     '<h3 class="heading-font text-xl font-black" style="color:var(--t1);">' + title + '</h3>'
         +     '<div class="flex items-center gap-1.5 mt-1.5 flex-wrap">'
-        +       '<span style="font-size:0.65rem;font-weight:800;padding:0.15rem 0.55rem;border-radius:99px;text-transform:uppercase;letter-spacing:0.05em;font-family:var(--mono);background:rgba(16,185,129,0.12);color:#34d399;border:1px solid rgba(16,185,129,0.28);">' + type + '</span>'
-        +       '<span style="font-size:0.65rem;font-weight:800;padding:0.15rem 0.55rem;border-radius:99px;text-transform:uppercase;letter-spacing:0.05em;font-family:var(--mono);background:' + cs.bg + ';color:' + cs.text + ';border:1px solid ' + cs.bdr + ';">' + catLabel + '</span>'
-        +       '<span style="font-size:0.65rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:0.35rem;font-family:var(--mono);background:rgba(99,102,241,0.10);color:#a5b4fc;border:1px solid rgba(99,102,241,0.18);">' + divLabel + '</span>'
+        +       '<span class="plan-badge plan-type-badge">' + type + '</span>'
+        +       '<span class="plan-badge plan-cat-badge plan-cat-' + category + '">' + catLabel + '</span>'
+        +       '<span class="plan-badge plan-div-badge">' + divLabel + '</span>'
         +       mutedBadge
         +     '</div>'
         +     dateBadge
@@ -112,15 +139,15 @@ function buildPlanCardDOM(title, encodedName, type, startDate, endDate, category
 
         // Tasks pane
         + '<div id="plan-pane-tasks-' + encodedName + '" class="plan-pane">'
-        +   '<div id="target-list-' + encodedName + '" class="space-y-2 mb-3"></div>'
-        +   '<button onclick="addPlanTaskPrompt(\'' + encodedName + '\')" style="background:none;border:none;cursor:pointer;font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:#34d399;display:flex;align-items:center;gap:0.35rem;font-family:var(--mono);">'
+        +   '<div id="target-list-' + encodedName + '" class="space-y-2 mb-2"></div>'
+        +   '<button onclick="addPlanTaskPrompt(\'' + encodedName + '\')" class="ptask-add-btn" id="ptask-add-btn-' + encodedName + '">'
         +     '<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg> Add Sub-Target</button>'
         + '</div>'
 
         // Table pane (lazy loaded)
         + '<div id="plan-pane-table-' + encodedName + '" class="plan-pane hidden">'
         +   '<div id="plan-table-container-' + encodedName + '" class="pt-container">'
-        +     '<div class="pt-loading">Click to load table...</div>'
+        +     '<div class="pt-loading">Loading table…</div>'
         +   '</div>'
         + '</div>'
 
@@ -150,13 +177,53 @@ function switchPlanTab(encodedName, tab) {
     }
 }
 
+// ── Inline task entry (replaces prompt()) ──────────────────────────────────
 function addPlanTaskPrompt(planEncodedName) {
-    var taskName = prompt('Enter specific target or task:');
+    // If inline form already open, just focus it
+    var existing = document.getElementById('ptask-inline-' + planEncodedName);
+    if (existing) { existing.querySelector('input').focus(); return; }
+    // Hide the add button
+    var addBtn = document.getElementById('ptask-add-btn-' + planEncodedName);
+    if (addBtn) addBtn.style.display = 'none';
+    // Build inline form
+    var container = document.getElementById('target-list-' + planEncodedName);
+    if (!container) return;
+    var div = document.createElement('div');
+    div.id = 'ptask-inline-' + planEncodedName;
+    div.className = 'ptask-inline';
+    div.innerHTML = '<input type="text" id="ptask-inline-input-' + planEncodedName
+        + '" placeholder="Enter specific target or task…" class="ptask-inline-input">'
+        + '<div class="ptask-inline-btns">'
+        + '<button onclick="submitInlineTask(\'' + planEncodedName + '\')" class="ptask-submit">Add</button>'
+        + '<button onclick="cancelInlineTask(\'' + planEncodedName + '\')" class="ptask-cancel">Cancel</button>'
+        + '</div>';
+    container.appendChild(div);
+    var inp = document.getElementById('ptask-inline-input-' + planEncodedName);
+    if (inp) {
+        inp.focus();
+        inp.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter')  submitInlineTask(planEncodedName);
+            if (e.key === 'Escape') cancelInlineTask(planEncodedName);
+        });
+    }
+}
+
+function submitInlineTask(planEncodedName) {
+    var inp = document.getElementById('ptask-inline-input-' + planEncodedName);
+    var taskName = inp ? inp.value.trim() : '';
+    cancelInlineTask(planEncodedName);
     if (!taskName) return;
     var taskEncoded = btoa(unescape(encodeURIComponent(taskName)));
     var fullId = 'plan_task_' + planEncodedName + '_' + taskEncoded;
     buildPlanTaskDOM(planEncodedName, taskName, fullId, false, '');
     handleSyncAction(fullId);
+}
+
+function cancelInlineTask(planEncodedName) {
+    var el = document.getElementById('ptask-inline-' + planEncodedName);
+    if (el) el.remove();
+    var addBtn = document.getElementById('ptask-add-btn-' + planEncodedName);
+    if (addBtn) addBtn.style.display = '';
 }
 
 function buildPlanTaskDOM(planEncodedName, taskText, fullId, isChecked, noteText) {
