@@ -1645,7 +1645,7 @@ button:not([disabled]):active { transform: scale(0.95) !important; }
   box-shadow: 0 2px 8px rgba(251,146,60,0.1);
 }
 .sw-chip-weakness:hover { box-shadow: 0 4px 14px rgba(251,146,60,0.25); }
-.sw-chip-text { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sw-chip-text { max-width: 10rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sw-chip-edit, .sw-chip-del {
   background: none; border: none; cursor: pointer;
   font-size: 0.62rem; padding: 0; line-height: 1;
@@ -2151,35 +2151,17 @@ button:not([disabled]):active { transform: scale(0.95) !important; }
   overflow-x: hidden;
 }
 
-/* ── SW widget inline (below xl): cap width ────────────────── */
+/* ── SW widget: no overflow clipping on any viewport ───────── */
 @media (max-width: 1279px) {
-  #sw-widget {
-    max-width: 100%;
-    overflow-x: hidden;
-  }
+  #sw-widget { max-width: 100%; }
 }
 
-/* ── view-marathon sidebar: activate earlier on lg screens ─── */
-/* Promote to sidebar grid at lg (1024px) instead of xl (1280px)
-   for wider laptops that don't reach 1280px */
-@media (min-width: 1024px) and (max-width: 1279px) {
-  #view-marathon {
-    display: grid;
-    grid-template-columns: 1fr 16rem;
-    column-gap: 1.25rem;
-    row-gap: 1.75rem;
-    align-items: start;
-  }
-  #view-marathon > * { margin-top: 0 !important; grid-column: 1; }
-  #sw-widget {
-    grid-column: 2 !important;
-    grid-row: 1 / span 20;
-    position: sticky;
-    top: 5.5rem;
-    max-height: calc(100vh - 6.5rem);
-    overflow-y: auto;
-    margin: 0 !important;
-  }
+/* ── SW rails: single column when widget is in xl+ sidebar ─── */
+/* In the 17rem sidebar column, two rails are too narrow (~105px each).
+   Switch to one column so chips have the full ~228px available. */
+@media (min-width: 1280px) {
+  #sw-widget .sw-rails { grid-template-columns: 1fr !important; }
+  #sw-widget .sw-rail-divider { display: none !important; }
 }
 
 /* ── Profile modal: full-screen on small phones ─────────────── */
@@ -2225,7 +2207,7 @@ button:not([disabled]):active { transform: scale(0.95) !important; }
 
 /* ── General overflow guards ────────────────────────────────── */
 /* Ensure no child of view-marathon causes horizontal scroll */
-#view-marathon > * { max-width: 100%; overflow-x: hidden; }
+#view-marathon > * { max-width: 100%; }
 /* Tab panels */
 .root-pane-view, .root-pane-view * { max-width: 100%; }
 /* PYQ search row: allow wrapping on mobile */
