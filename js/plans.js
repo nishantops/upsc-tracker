@@ -1,105 +1,205 @@
-// =========================================================================
-// UPSC Tracker - Plans Module
+﻿// =========================================================================
+// UPSC Tracker - Plans Module (v2)
 // =========================================================================
 
 function openPlannerModal() { document.getElementById('plan-modal').classList.remove('hidden'); }
 function closePlannerModal() {
     document.getElementById('plan-modal').classList.add('hidden');
-    document.getElementById('modal-plan-title').value = "";
-    document.getElementById('modal-plan-start-date').value = "";
-    document.getElementById('modal-plan-end-date').value = "";
+    document.getElementById('modal-plan-title').value = '';
+    document.getElementById('modal-plan-start-date').value = '';
+    document.getElementById('modal-plan-end-date').value = '';
+    var cat = document.getElementById('modal-plan-category');
+    var div = document.getElementById('modal-plan-division');
+    var notif = document.getElementById('modal-plan-notif');
+    if (cat) cat.value = 'common';
+    if (div) div.value = 'both';
+    if (notif) notif.checked = true;
 }
 
 async function executeCreatePlan() {
-    const title = document.getElementById('modal-plan-title').value.trim();
-    const type = document.getElementById('modal-plan-type').value;
-    const startDate = document.getElementById('modal-plan-start-date').value || null;
-    const endDate = document.getElementById('modal-plan-end-date').value || null;
-    if(!title) return alert("Plan Title required");
+    var title    = document.getElementById('modal-plan-title').value.trim();
+    var type     = document.getElementById('modal-plan-type').value;
+    var startDate = document.getElementById('modal-plan-start-date').value || null;
+    var endDate   = document.getElementById('modal-plan-end-date').value || null;
+    var catEl    = document.getElementById('modal-plan-category');
+    var divEl    = document.getElementById('modal-plan-division');
+    var notifEl  = document.getElementById('modal-plan-notif');
+    var category = catEl ? catEl.value : 'common';
+    var division = divEl ? divEl.value : 'both';
+    var notifEnabled = notifEl ? notifEl.checked : true;
 
-    const encodedName = btoa(unescape(encodeURIComponent(title)));
-    buildPlanCardDOM(title, encodedName, type, startDate, endDate);
+    if (!title) { alert('Plan Title required'); return; }
 
-    if(dbClient) { await dbClient.from('upsc_custom_plans').upsert({ plan_id: encodedName, user_id: currentUserId, plan_title: title, plan_type: type, start_date: startDate, end_date: endDate }, { onConflict: 'plan_id,user_id' }); }
+    var encodedName = btoa(unescape(encodeURIComponent(title)));
+    buildPlanCardDOM(title, encodedName, type, startDate, endDate, category, division, notifEnabled);
+
+    if (dbClient) {
+        await dbClient.from('upsc_custom_plans').upsert({
+            plan_id: encodedName, user_id: currentUserId,
+            plan_title: title, plan_type: type,
+            start_date: startDate, end_date: endDate,
+            plan_category: category, plan_division: division,
+            notif_enabled: notifEnabled
+        }, { onConflict: 'plan_id,user_id' });
+    }
     closePlannerModal();
 }
 
-function buildPlanCardDOM(title, encodedName, type, startDate, endDate) {
-    if(document.getElementById(`plan_card_wrapper_${encodedName}`)) return;
-    const dateBadge = (startDate || endDate) ? `
-        <div class="flex items-center gap-1.5 mt-1.5 flex-wrap">
-            ${startDate ? `<span class="plan-date-badge">📅 ${formatPlanDate(startDate)}</span>` : ''}
-            ${startDate && endDate ? `<span class="text-[10px] text-slate-400">→</span>` : ''}
-            ${endDate ? `<span class="plan-date-badge">🏁 ${formatPlanDate(endDate)}</span>` : ''}
-        </div>` : '';
-    const html = `
-        <div id="plan_card_wrapper_${encodedName}" class="neo-card rounded-3xl p-6 border-l-4 border-emerald-500 shadow-sm relative group">
-            <button onclick="eraseCustomNode('plan_meta_${encodedName}', this)" class="absolute right-4 top-4 opacity-0 group-hover:opacity-100 text-slate-300 hover:text-rose-500 transition cursor-pointer" title="Delete Entire Plan"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg></button>
-            <div class="flex justify-between items-center mb-4 pr-6">
-                <div>
-                    <h3 class="heading-font text-xl font-black text-slate-900">${title}</h3>
-                    <span class="text-[10px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider font-mono">${type}</span>${dateBadge}
-                </div>
-                <div class="flex items-center gap-3">
-                    <div class="text-right"><div class="text-[10px] font-bold text-slate-400 font-mono tracking-wide uppercase">Completion</div><div id="lbl-plan-${encodedName}" class="text-sm font-black text-slate-800">0%</div></div>
-                    <div id="pie-plan-${encodedName}" class="pie-chart-frame bg-slate-200 w-10 h-10 border-emerald-500"></div>
-                </div>
-            </div>
-            <div class="mb-4"><textarea id="note-plan_card_${encodedName}" oninput="debouncedSync('plan_card_${encodedName}')" rows="2" placeholder="Master Strategy / Goals for this plan..." class="w-full bg-slate-50/50 border border-slate-200 rounded-xl p-3 text-xs sm:text-sm font-medium text-slate-600 focus:outline-none focus:border-emerald-400 focus:bg-white transition-all custom-scrollbar"></textarea></div>
-            <div id="target-list-${encodedName}" class="space-y-3 mb-4"></div>
-            <button onclick="addPlanTaskPrompt('${encodedName}')" class="cursor-pointer text-xs font-black uppercase tracking-wider text-emerald-600 hover:text-emerald-500 flex items-center gap-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg> Add Sub-Target</button>
-        </div>
-    `;
+// Category colour mapping
+var PLAN_CAT_STYLES = {
+    common:   { bg: 'rgba(99,102,241,0.15)',  text: '#818cf8', bdr: 'rgba(99,102,241,0.35)'  },
+    gs1:      { bg: 'rgba(245,158,11,0.15)',  text: '#fbbf24', bdr: 'rgba(245,158,11,0.35)'  },
+    gs2:      { bg: 'rgba(16,185,129,0.15)',  text: '#34d399', bdr: 'rgba(16,185,129,0.35)'  },
+    gs3:      { bg: 'rgba(59,130,246,0.15)',  text: '#60a5fa', bdr: 'rgba(59,130,246,0.35)'  },
+    gs4:      { bg: 'rgba(236,72,153,0.15)',  text: '#f472b6', bdr: 'rgba(236,72,153,0.35)'  },
+    essay:    { bg: 'rgba(139,92,246,0.15)',  text: '#a78bfa', bdr: 'rgba(139,92,246,0.35)'  },
+    optional: { bg: 'rgba(244,63,94,0.15)',   text: '#fb7185', bdr: 'rgba(244,63,94,0.35)'   },
+    custom:   { bg: 'rgba(156,163,175,0.15)', text: '#9ca3af', bdr: 'rgba(156,163,175,0.35)' }
+};
+var PLAN_CAT_LABELS = { common:'Common', gs1:'GS 1', gs2:'GS 2', gs3:'GS 3', gs4:'GS 4', essay:'Essay', optional:'Optional', custom:'Custom' };
+var PLAN_DIV_LABELS = { prelims:'Prelims', mains:'Mains', both:'P + M' };
+
+function buildPlanCardDOM(title, encodedName, type, startDate, endDate, category, division, notifEnabled) {
+    if (document.getElementById('plan_card_wrapper_' + encodedName)) return;
+    category     = category || 'common';
+    division     = division || 'both';
+    notifEnabled = (notifEnabled === false) ? false : true;
+
+    var cs  = PLAN_CAT_STYLES[category] || PLAN_CAT_STYLES.custom;
+    var catLabel = PLAN_CAT_LABELS[category] || category;
+    var divLabel = PLAN_DIV_LABELS[division]  || division;
+
+    var dateBadge = '';
+    if (startDate || endDate) {
+        dateBadge = '<div class="flex items-center gap-1.5 mt-1.5 flex-wrap">'
+            + (startDate ? '<span class="plan-date-badge">&#128197; ' + formatPlanDate(startDate) + '</span>' : '')
+            + (startDate && endDate ? '<span style="font-size:0.7rem;color:var(--t4);">&#8594;</span>' : '')
+            + (endDate   ? '<span class="plan-date-badge">&#127937; ' + formatPlanDate(endDate)   + '</span>' : '')
+            + '</div>';
+    }
+    var mutedBadge = !notifEnabled ? '<span style="font-size:0.65rem;background:rgba(107,114,128,0.12);color:#6b7280;border:1px solid rgba(107,114,128,0.2);padding:0.1rem 0.4rem;border-radius:0.35rem;font-family:var(--mono);">&#128277; muted</span>' : '';
+
+    var html = '<div id="plan_card_wrapper_' + encodedName + '" class="neo-card rounded-3xl p-6 border-l-4 border-emerald-500 shadow-sm relative group">'
+        + '<button onclick="eraseCustomNode(\'plan_meta_' + encodedName + '\', this)" class="absolute right-4 top-4 opacity-0 group-hover:opacity-100 transition cursor-pointer" style="background:none;border:none;color:var(--t3);" title="Delete Plan">'
+        + '<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>'
+
+        + '<div class="flex justify-between items-start mb-3 pr-6">'
+        +   '<div>'
+        +     '<h3 class="heading-font text-xl font-black" style="color:var(--t1);">' + title + '</h3>'
+        +     '<div class="flex items-center gap-1.5 mt-1.5 flex-wrap">'
+        +       '<span style="font-size:0.65rem;font-weight:800;padding:0.15rem 0.55rem;border-radius:99px;text-transform:uppercase;letter-spacing:0.05em;font-family:var(--mono);background:rgba(16,185,129,0.12);color:#34d399;border:1px solid rgba(16,185,129,0.28);">' + type + '</span>'
+        +       '<span style="font-size:0.65rem;font-weight:800;padding:0.15rem 0.55rem;border-radius:99px;text-transform:uppercase;letter-spacing:0.05em;font-family:var(--mono);background:' + cs.bg + ';color:' + cs.text + ';border:1px solid ' + cs.bdr + ';">' + catLabel + '</span>'
+        +       '<span style="font-size:0.65rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:0.35rem;font-family:var(--mono);background:rgba(99,102,241,0.10);color:#a5b4fc;border:1px solid rgba(99,102,241,0.18);">' + divLabel + '</span>'
+        +       mutedBadge
+        +     '</div>'
+        +     dateBadge
+        +   '</div>'
+        +   '<div class="flex items-center gap-3 ml-3 flex-shrink-0">'
+        +     '<div class="text-right"><div style="font-size:0.58rem;font-weight:800;font-family:var(--mono);text-transform:uppercase;letter-spacing:0.06em;color:var(--t3);">Done</div>'
+        +     '<div id="lbl-plan-' + encodedName + '" style="font-size:0.85rem;font-weight:900;color:var(--t1);">0%</div></div>'
+        +     '<div id="pie-plan-' + encodedName + '" class="pie-chart-frame w-10 h-10" style="background:var(--surf);"></div>'
+        +   '</div>'
+        + '</div>'
+
+        // Strategy note
+        + '<textarea id="note-plan_card_' + encodedName + '" oninput="debouncedSync(\'plan_card_' + encodedName + '\')" rows="2" placeholder="Master strategy / goals for this plan..." style="width:100%;background:var(--inp);border:1px solid var(--bdr);color:var(--t2);border-radius:0.75rem;padding:0.65rem 0.85rem;font-size:0.72rem;font-family:var(--mono);resize:none;outline:none;margin-bottom:0.75rem;" onfocus="this.style.borderColor=\'var(--bdr-h)\'" onblur="this.style.borderColor=\'var(--bdr)\'"></textarea>'
+
+        // Tab bar
+        + '<div class="plan-tabs" id="plan-tabs-' + encodedName + '">'
+        +   '<button class="plan-tab-btn active" onclick="switchPlanTab(\'' + encodedName + '\',\'tasks\')" id="plan-tab-tasks-' + encodedName + '">&#9776; Tasks</button>'
+        +   '<button class="plan-tab-btn" onclick="switchPlanTab(\'' + encodedName + '\',\'table\')" id="plan-tab-table-' + encodedName + '">&#9783; Table</button>'
+        + '</div>'
+
+        // Tasks pane
+        + '<div id="plan-pane-tasks-' + encodedName + '" class="plan-pane">'
+        +   '<div id="target-list-' + encodedName + '" class="space-y-2 mb-3"></div>'
+        +   '<button onclick="addPlanTaskPrompt(\'' + encodedName + '\')" style="background:none;border:none;cursor:pointer;font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:#34d399;display:flex;align-items:center;gap:0.35rem;font-family:var(--mono);">'
+        +     '<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg> Add Sub-Target</button>'
+        + '</div>'
+
+        // Table pane (lazy loaded)
+        + '<div id="plan-pane-table-' + encodedName + '" class="plan-pane hidden">'
+        +   '<div id="plan-table-container-' + encodedName + '" class="pt-container">'
+        +     '<div class="pt-loading">Click to load table...</div>'
+        +   '</div>'
+        + '</div>'
+
+        + '</div>';
+
     document.getElementById('planner-container').insertAdjacentHTML('afterbegin', html);
 }
 
+function switchPlanTab(encodedName, tab) {
+    var tasksPane = document.getElementById('plan-pane-tasks-' + encodedName);
+    var tablePane = document.getElementById('plan-pane-table-' + encodedName);
+    var tasksBtn  = document.getElementById('plan-tab-tasks-' + encodedName);
+    var tableBtn  = document.getElementById('plan-tab-table-' + encodedName);
+    if (!tasksPane || !tablePane) return;
+
+    if (tab === 'tasks') {
+        tasksPane.classList.remove('hidden');
+        tablePane.classList.add('hidden');
+        if (tasksBtn) tasksBtn.classList.add('active');
+        if (tableBtn) tableBtn.classList.remove('active');
+    } else {
+        tasksPane.classList.add('hidden');
+        tablePane.classList.remove('hidden');
+        if (tasksBtn) tasksBtn.classList.remove('active');
+        if (tableBtn) tableBtn.classList.add('active');
+        if (typeof loadPlanTables === 'function') loadPlanTables(encodedName);
+    }
+}
+
 function addPlanTaskPrompt(planEncodedName) {
-    const taskName = prompt("Enter specific target or task:");
-    if(!taskName) return;
-    const taskEncoded = btoa(unescape(encodeURIComponent(taskName)));
-    const fullId = `plan_task_${planEncodedName}_${taskEncoded}`;
-    buildPlanTaskDOM(planEncodedName, taskName, fullId, false, "");
+    var taskName = prompt('Enter specific target or task:');
+    if (!taskName) return;
+    var taskEncoded = btoa(unescape(encodeURIComponent(taskName)));
+    var fullId = 'plan_task_' + planEncodedName + '_' + taskEncoded;
+    buildPlanTaskDOM(planEncodedName, taskName, fullId, false, '');
     handleSyncAction(fullId);
 }
 
 function buildPlanTaskDOM(planEncodedName, taskText, fullId, isChecked, noteText) {
-    const container = document.getElementById(`target-list-${planEncodedName}`);
-    if(!container || document.getElementById(fullId)) return;
-    const checkAttr = isChecked ? 'checked' : '';
-    const htmlNode = `
-        <div class="task-row flex flex-col p-3 bg-white border border-slate-200 hover:border-emerald-300 rounded-xl transition group relative shadow-2xs">
-            <div class="flex justify-between items-start w-full">
-                <label for="${fullId}" class="flex items-start cursor-pointer w-full text-xs sm:text-sm font-bold tracking-tight select-none">
-                    <input type="checkbox" id="${fullId}" onchange="handleSyncAction('${fullId}')" class="plan-task-box-${planEncodedName} mt-0.5 mr-3 h-4 w-4 rounded border-slate-300 text-emerald-500 cursor-pointer" ${checkAttr}>
-                    <span class="text-slate-700 group-has-[:checked]:text-slate-400 group-has-[:checked]:line-through break-words font-medium transition-all">${taskText}</span>
-                </label>
-                <button onclick="eraseCustomNode('${fullId}', this)" class="opacity-0 group-hover:opacity-100 text-slate-300 hover:text-rose-500 transition cursor-pointer ml-4"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg></button>
-            </div>
-            <div class="mt-2 ml-7 w-[calc(100%-1.75rem)]">
-                <input type="text" id="note-${fullId}" oninput="debouncedSync('${fullId}')" value="${noteText || ''}" placeholder="Task note..." class="w-full bg-slate-50 border border-slate-100 rounded-md p-1.5 text-[10px] font-mono text-slate-500 focus:outline-none focus:border-emerald-300 focus:bg-white transition-all placeholder-slate-300 ${isChecked ? 'locked-note' : ''}" ${isChecked ? 'readonly' : ''}>
-            </div>
-        </div>`;
+    var container = document.getElementById('target-list-' + planEncodedName);
+    if (!container || document.getElementById(fullId)) return;
+    var checkAttr = isChecked ? 'checked' : '';
+    var lockedAttr = isChecked ? 'readonly' : '';
+    var lockedClass = isChecked ? 'locked-note' : '';
+    var htmlNode = '<div class="task-row flex flex-col p-3 rounded-xl transition group relative" style="background:var(--surf);border:1px solid var(--bdr);margin-bottom:0.35rem;">'
+        + '<div class="flex justify-between items-start w-full">'
+        + '<label for="' + fullId + '" class="flex items-start cursor-pointer w-full text-xs sm:text-sm font-bold select-none">'
+        + '<input type="checkbox" id="' + fullId + '" onchange="handleSyncAction(\'' + fullId + '\')" class="plan-task-box-' + planEncodedName + ' mt-0.5 mr-3 flex-shrink-0 cursor-pointer" ' + checkAttr + '>'
+        + '<span style="color:var(--t1);" class="break-words font-medium transition-all">' + taskText + '</span>'
+        + '</label>'
+        + '<button onclick="eraseCustomNode(\'' + fullId + '\', this)" class="opacity-0 group-hover:opacity-100 transition cursor-pointer ml-3 flex-shrink-0" style="background:none;border:none;color:var(--t3);">'
+        + '<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>'
+        + '</button></div>'
+        + '<div class="mt-2" style="padding-left:1.65rem;">'
+        + '<input type="text" id="note-' + fullId + '" oninput="debouncedSync(\'' + fullId + '\')" value="' + (noteText || '') + '" placeholder="Task note..." '
+        + 'style="width:100%;background:var(--inp);border:1px solid var(--bdr);color:var(--t2);border-radius:0.4rem;padding:0.3rem 0.6rem;font-size:0.65rem;font-family:var(--mono);outline:none;" '
+        + 'class="' + lockedClass + '" ' + lockedAttr + '>'
+        + '</div></div>';
     container.insertAdjacentHTML('beforeend', htmlNode);
     calculatePlanPies();
 }
 
 function calculatePlanPies() {
-    document.querySelectorAll('[id^="pie-plan-"]').forEach(pieEl => {
-        const encodedName = pieEl.id.replace('pie-plan-', '');
-        const taskBoxes = document.querySelectorAll(`.plan-task-box-${encodedName}`);
-        const lblEl = document.getElementById(`lbl-plan-${encodedName}`);
-        let sTotal = taskBoxes.length, sChecked = 0;
-        taskBoxes.forEach(b => { if(b.checked) sChecked++; });
-        const sPct = sTotal > 0 ? Math.round((sChecked / sTotal) * 100) : 0;
-        if (lblEl) lblEl.innerText = sPct + "%";
-        pieEl.style.background = `conic-gradient(#10b981 ${sPct}%, rgba(51,65,85,0.6) 0%)`;
+    document.querySelectorAll('[id^="pie-plan-"]').forEach(function(pieEl) {
+        var encodedName = pieEl.id.replace('pie-plan-', '');
+        var taskBoxes = document.querySelectorAll('.plan-task-box-' + encodedName);
+        var lblEl = document.getElementById('lbl-plan-' + encodedName);
+        var sTotal = taskBoxes.length, sChecked = 0;
+        taskBoxes.forEach(function(b) { if (b.checked) sChecked++; });
+        var sPct = sTotal > 0 ? Math.round((sChecked / sTotal) * 100) : 0;
+        if (lblEl) lblEl.innerText = sPct + '%';
+        pieEl.style.background = 'conic-gradient(#10b981 ' + sPct + '%, rgba(51,65,85,0.6) 0%)';
     });
 }
 
 function formatPlanDate(dateStr) {
     if (!dateStr) return '';
     try {
-        const d = new Date(dateStr + 'T00:00:00');
+        var d = new Date(dateStr + 'T00:00:00');
         return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
     } catch(e) { return dateStr; }
 }

@@ -36,6 +36,7 @@ async function showApp(knownEmail) {
         updateSessionActivity();
         startSessionBadge();
         initFocusMode();
+        setTimeout(function() { if (typeof initNotifications === 'function') initNotifications(); }, 2000);
         return;
     }
 
@@ -52,6 +53,7 @@ async function showApp(knownEmail) {
         updateSessionActivity();
         startSessionBadge();
         initFocusMode();
+        setTimeout(function() { if (typeof initNotifications === 'function') initNotifications(); }, 2000);
         return;
     }
 
@@ -72,6 +74,7 @@ async function showApp(knownEmail) {
     updateSessionActivity();
     startSessionBadge();
     initFocusMode();
+    setTimeout(function() { if (typeof initNotifications === 'function') initNotifications(); }, 2000);
 }
 
 function applyProfileToUI(profile) {
@@ -88,6 +91,17 @@ function applyProfileToUI(profile) {
     if (profile.attempt) {
         document.getElementById('user-attempt-text').textContent = profile.attempt;
         document.getElementById('user-attempt-badge').style.display = 'flex';
+    }
+    var optBadge = document.getElementById('user-optional-badge');
+    if (optBadge) {
+        var optText = profile.optional_subject_custom || profile.optional_subject || '';
+        if (optText && optText !== 'none') {
+            optBadge.style.display = 'flex';
+            var optSpan = optBadge.querySelector('.optional-badge-chip');
+            if (optSpan) optSpan.textContent = optText;
+        } else {
+            optBadge.style.display = 'none';
+        }
     }
 }
 
@@ -123,12 +137,17 @@ function handleProfileSetup() {
 
     if (hasError) return;
 
+    var optEl     = document.getElementById('setup-optional');
+    var optCustEl = document.getElementById('setup-optional-custom');
+    var optSubject = optEl ? optEl.value : 'none';
+    var optCustom  = (optSubject === 'custom' && optCustEl) ? optCustEl.value.trim() : '';
+
     const btn = document.getElementById('setup-submit-btn');
     btn.style.opacity = '0.6';
     btn.textContent = '✨ Setting up...';
 
-    saveUserProfile(name, age, attempt).then(() => {
-        const profile = { display_name: name, age, attempt };
+    saveUserProfile(name, age, attempt, optSubject, optCustom).then(() => {
+        const profile = { display_name: name, age, attempt, optional_subject: optSubject, optional_subject_custom: optCustom };
         localStorage.setItem('upsc_profile_' + currentUserId, JSON.stringify(profile));
         applyProfileToUI(profile);
         document.getElementById('profile-setup-screen').style.display = 'none';
@@ -149,7 +168,7 @@ async function getUserProfile() {
     return null;
 }
 
-async function saveUserProfile(name, age, attempt) {
+async function saveUserProfile(name, age, attempt, optSubject, optCustom) {
     if (!dbClient || !currentUserId) return;
     try {
         const { data: { session } } = await dbClient.auth.getSession();
@@ -159,7 +178,9 @@ async function saveUserProfile(name, age, attempt) {
             display_name: name,
             age: age,
             attempt: attempt,
-            email: email
+            email: email,
+            optional_subject: optSubject || 'none',
+            optional_subject_custom: optCustom || ''
         }, { onConflict: 'user_id' });
     } catch(e) { console.error('Failed to save profile:', e); }
 }

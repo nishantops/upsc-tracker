@@ -88,6 +88,25 @@
                 <div class="field-error" id="err-attempt">Attempt must be between 1 and 10</div>
             </div>
 
+            <div class="setup-field-group">
+                <label><span class="field-icon">📖</span> Optional Subject <span style="font-size:0.65rem;font-weight:600;color:#94a3b8;">(optional)</span></label>
+                <select id="setup-optional" onchange="var v=this.value;var c=document.getElementById('setup-optional-custom-wrap');if(c)c.style.display=v==='custom'?'block':'none';">
+                    <option value="none">-- Select Optional Subject --</option>
+                    <option value="Anthropology">Anthropology</option>
+                    <option value="Geography">Geography</option>
+                    <option value="Public Administration">Public Administration</option>
+                    <option value="Sociology">Sociology</option>
+                    <option value="History">History</option>
+                    <option value="Political Science & IR">Political Science &amp; IR</option>
+                    <option value="Philosophy">Philosophy</option>
+                    <option value="Law">Law</option>
+                    <option value="custom">Other / Custom...</option>
+                </select>
+                <div id="setup-optional-custom-wrap" style="display:none;margin-top:0.5rem;">
+                    <input type="text" id="setup-optional-custom" placeholder="Enter your optional subject name" style="width:100%;">
+                </div>
+            </div>
+
             <button onclick="handleProfileSetup()" id="setup-submit-btn" class="btn-vibrant" style="width:100%;padding:1rem;background:linear-gradient(135deg,#6366f1,#8b5cf6,#a855f7);color:white;border:none;border-radius:1rem;font-size:0.85rem;font-weight:800;cursor:pointer;text-transform:uppercase;letter-spacing:0.08em;box-shadow:0 8px 25px -5px rgba(139,92,246,0.5);transition:all 0.3s cubic-bezier(0.4,0,0.2,1);margin-top:0.5rem;">
                 🚀 Launch My Command Center
             </button>
@@ -109,6 +128,7 @@
                     <div class="flex items-center gap-2 mt-0.5 flex-wrap">
                         <span id="user-age-badge" class="header-stat" style="display:none;">🎂 <span id="user-age-text">--</span> yrs</span>
                         <span id="user-attempt-badge" class="header-stat" style="display:none;">🎯 Attempt <span id="user-attempt-text">--</span></span>
+                        <span id="user-optional-badge" style="display:none;">📖 <span class="optional-badge-chip"></span></span>
                         <span class="flex items-center gap-1.5">
                             <span id="sync-status-indicator" class="inline-block w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span> 
                             <span id="sync-status-text" class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">SYSTEM BOOTING...</span>
@@ -119,6 +139,7 @@
                 <!-- Profile dropdown menu -->
                 <div id="profile-menu" class="profile-menu hidden" style="position:absolute; top:70px; left:16px;">
                     <button onclick="openProfileEdit()">✏️ Update Profile</button>
+                    <button onclick="openNotifSettings()">🔔 Notification Settings</button>
                     <button onclick="handleLogout()">⏻ Sign Out</button>
                 </div>
             </div>
@@ -136,6 +157,20 @@
                     </button>
                     <span id="focus-timer-display" class="px-2 py-0.5 bg-slate-900/60 rounded-md text-slate-300 text-[10px] font-mono" style="min-width:5.5ch;text-align:center;">00:00:00</span>
                     <span id="focus-today-total" class="text-[9px] text-emerald-400/70 font-bold hidden md:inline"></span>
+                </div>
+                <!-- Notification Bell -->
+                <div style="position:relative;">
+                    <button id="notif-bell" onclick="toggleNotifPanel()" title="Notifications" style="position:relative;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);color:#a5b4fc;border-radius:0.6rem;padding:0.45rem 0.6rem;cursor:pointer;font-size:1rem;line-height:1;">
+                        🔔
+                        <span class="notif-count" style="display:none;"></span>
+                    </button>
+                    <div id="notif-panel" class="hidden" style="position:absolute;top:calc(100% + 0.5rem);right:0;width:300px;z-index:200;">
+                        <div class="notif-header">
+                            <span class="notif-title">🔔 Alerts</span>
+                            <button class="notif-settings-link" onclick="toggleNotifPanel();openNotifSettings();">Settings</button>
+                        </div>
+                        <div id="notif-list"><div class="notif-empty">No alerts</div></div>
+                    </div>
                 </div>
                 <button id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode"><span id="theme-toggle-icon">☀️</span></button>
                 <button onclick="handleLogout()" class="cursor-pointer bg-gradient-to-r from-rose-500/10 to-pink-500/10 hover:from-rose-500/20 hover:to-pink-500/20 text-rose-400 text-[10px] font-bold px-3.5 py-2 rounded-lg transition-all border border-rose-500/30 shadow-sm" title="Sign Out">⏻ LOGOUT</button>
@@ -725,6 +760,36 @@
                         <input type="date" id="modal-plan-end-date" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs sm:text-sm font-medium text-slate-700 focus:outline-none focus:border-emerald-500 cursor-pointer">
                     </div>
                 </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5 font-mono">Category</label>
+                        <select id="modal-plan-category" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-medium text-slate-700 focus:outline-none focus:border-emerald-500">
+                            <option value="common">Common</option>
+                            <option value="gs1">GS 1</option>
+                            <option value="gs2">GS 2</option>
+                            <option value="gs3">GS 3</option>
+                            <option value="gs4">GS 4</option>
+                            <option value="essay">Essay</option>
+                            <option value="optional">Optional</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5 font-mono">Division</label>
+                        <select id="modal-plan-division" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-medium text-slate-700 focus:outline-none focus:border-emerald-500">
+                            <option value="both">Prelims + Mains</option>
+                            <option value="prelims">Prelims Only</option>
+                            <option value="mains">Mains Only</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:0.75rem;padding:0.65rem 0.9rem;">
+                    <span style="font-size:0.72rem;font-weight:700;color:#475569;">🔔 Plan notifications</span>
+                    <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;">
+                        <input type="checkbox" id="modal-plan-notif" checked style="width:1rem;height:1rem;accent-color:#6366f1;cursor:pointer;">
+                        <span style="font-size:0.68rem;font-weight:700;color:#64748b;font-family:monospace;">Enable</span>
+                    </label>
+                </div>
             </div>
             <div class="mt-6 flex justify-end gap-2 text-xs font-bold font-mono">
                 <button onclick="closePlannerModal()" class="cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-3 rounded-xl">Cancel</button>
@@ -789,13 +854,59 @@
     <script src="js/pyq.js?v=3"></script>
     <script src="js/trends.js?v=1"></script>
     <script src="js/profile.js?v=1"></script>
-    <script src="js/focus.js?v=4"></script>
+    <script src="js/plantable.js?v=1"></script>
+    <script src="js/notifications.js?v=1"></script>
+    <script src="js/focus.js?v=5"></script>
     <script src="js/auth.js?v=2"></script>
 
     </div><!-- END app-container -->
     <div id="ai-chat-fab" onclick="AI_CHAT.toggle()" title="AI Study Assistant">🤖</div>
     <!-- Toast notification container -->
     <!-- Clear Progress Confirm Modal -->
+    <!-- NOTIFICATION SETTINGS MODAL -->
+    <div id="notif-settings-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="ns-card">
+            <div class="ns-title">&#128276; Notification Settings</div>
+            <div class="ns-row">
+                <div class="ns-label">Enable Notifications<div class="ns-sub">Master switch for all alerts</div></div>
+                <label class="ns-toggle"><input type="checkbox" id="ns-enabled"><span class="ns-slider"></span></label>
+            </div>
+            <div class="ns-row">
+                <div class="ns-label">Plan Start Alert<div class="ns-sub">Days before start date</div></div>
+                <div style="display:flex;align-items:center;gap:0.5rem;">
+                    <label class="ns-toggle"><input type="checkbox" id="ns-plan-start"><span class="ns-slider"></span></label>
+                    <input type="number" id="ns-start-days" min="0" max="14" value="1" class="ns-input" style="width:3.5rem;">
+                </div>
+            </div>
+            <div class="ns-row">
+                <div class="ns-label">Plan End Alert<div class="ns-sub">Days before end date</div></div>
+                <div style="display:flex;align-items:center;gap:0.5rem;">
+                    <label class="ns-toggle"><input type="checkbox" id="ns-plan-end"><span class="ns-slider"></span></label>
+                    <input type="number" id="ns-end-days" min="0" max="14" value="2" class="ns-input" style="width:3.5rem;">
+                </div>
+            </div>
+            <div class="ns-row">
+                <div class="ns-label">Overdue Alert<div class="ns-sub">Flag plans past end date</div></div>
+                <label class="ns-toggle"><input type="checkbox" id="ns-overdue"><span class="ns-slider"></span></label>
+            </div>
+            <div class="ns-row">
+                <div class="ns-label">Browser Push<div class="ns-sub">OS-level notifications</div></div>
+                <label class="ns-toggle"><input type="checkbox" id="ns-browser-push"><span class="ns-slider"></span></label>
+            </div>
+            <div class="ns-row">
+                <div class="ns-label">Daily Reminder<div class="ns-sub">Morning nudge</div></div>
+                <div style="display:flex;align-items:center;gap:0.5rem;">
+                    <label class="ns-toggle"><input type="checkbox" id="ns-daily"><span class="ns-slider"></span></label>
+                    <input type="time" id="ns-daily-time" value="09:00" class="ns-input">
+                </div>
+            </div>
+            <div style="display:flex;gap:0.75rem;justify-content:flex-end;margin-top:1.25rem;">
+                <button onclick="closeNotifSettings()" style="background:rgba(100,116,139,0.15);border:1px solid rgba(100,116,139,0.25);color:var(--t2);border-radius:0.65rem;padding:0.55rem 1.1rem;font-size:0.72rem;font-weight:700;cursor:pointer;font-family:var(--mono);">Cancel</button>
+                <button onclick="saveNotifSettings()" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;color:white;border-radius:0.65rem;padding:0.55rem 1.3rem;font-size:0.72rem;font-weight:700;cursor:pointer;">Save</button>
+            </div>
+        </div>
+    </div>
+
     <div id="clear-progress-modal" class="hidden">
       <div class="modal-backdrop" onclick="closeClearModal()"></div>
       <div class="modal-card">
