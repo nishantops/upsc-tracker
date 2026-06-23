@@ -119,12 +119,17 @@ function activateCATab(tab) {
     document.querySelectorAll('.sub-tab-ca').forEach(btn => {
         btn.className = 'sub-tab-ca inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all text-slate-300 hover:text-white hover:bg-white/10 border border-transparent';
     });
+    const activeClass = 'sub-tab-ca inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all bg-indigo-600 text-white shadow-sm border border-indigo-500';
     if (tab === 'tracker') {
         document.getElementById('panel-ca-tracker').classList.remove('hidden');
-        document.getElementById('btn-ca-tab-tracker').className = 'sub-tab-ca inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all bg-indigo-600 text-white shadow-sm border border-indigo-500';
+        document.getElementById('btn-ca-tab-tracker').className = activeClass;
+    } else if (tab === 'notes') {
+        document.getElementById('panel-ca-notes').classList.remove('hidden');
+        document.getElementById('btn-ca-tab-notes').className = activeClass;
+        _initNotesPane();
     } else {
         document.getElementById('panel-ca-links').classList.remove('hidden');
-        document.getElementById('btn-ca-tab-links').className = 'sub-tab-ca inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all bg-indigo-600 text-white shadow-sm border border-indigo-500';
+        document.getElementById('btn-ca-tab-links').className = activeClass;
     }
     if (tab === 'links') renderCALinks();
 }
@@ -202,3 +207,134 @@ if (!localStorage.getItem('upsc_ca_links')) {
     ]);
 }
 renderCADynamicLinks();
+
+// ── CA Notes ─────────────────────────────────────────────────────────────────
+var _notesMode = 'word';
+var _wordNoteTimer = null;
+var _wordNoteLoaded = false;
+
+function _initNotesPane() {
+    switchNotesMode(_notesMode);
+    if (!_wordNoteLoaded && _notesMode === 'word') _loadWordNote();
+}
+
+function switchNotesMode(mode) {
+    _notesMode = mode;
+    var wordPane  = document.getElementById('ca-notes-word-pane');
+    var tablePane = document.getElementById('ca-notes-table-pane');
+    var btnWord   = document.getElementById('btn-notes-mode-word');
+    var btnTable  = document.getElementById('btn-notes-mode-table');
+    if (wordPane)  wordPane.classList.toggle('hidden', mode !== 'word');
+    if (tablePane) tablePane.classList.toggle('hidden', mode !== 'table');
+    if (btnWord)  { btnWord.classList.toggle('notes-mode-active', mode === 'word'); }
+    if (btnTable) { btnTable.classList.toggle('notes-mode-active', mode === 'table'); }
+    if (mode === 'word' && !_wordNoteLoaded) _loadWordNote();
+    if (mode === 'table') renderTableNotes();
+}
+
+// ── Word Style Editor ─────────────────────────────────────────────────────────
+async function _loadWordNote() {
+    if (!dbClient || !currentUserId) return;
+    try {
+        const { data } = await dbClient.from('upsc_tracker_progress')
+            .select('topic_note')
+            .eq('id', 'ca_note_word_doc')
+            .eq('user_id', currentUserId)
+            .maybeSingle();
+        const editor = document.getElementById('ca-word-editor');
+        if (editor && data && data.topic_note) {
+            editor.innerHTML = data.topic_note;
+        }
+        _wordNoteLoaded = true;
+    } catch(e) {}
+}
+
+function _wordNoteChanged() {
+    clearTimeout(_wordNoteTimer);
+    _setRteStatus('saving\u2026');
+    _wordNoteTimer = setTimeout(_saveWordNote, 1200);
+}
+
+async function _saveWordNote() {
+    const editor = document.getElementById('ca-word-editor');
+    if (!editor || !dbClient || !currentUserId) return;
+    try {
+        await dbClient.from('upsc_tracker_progress').upsert(
+            { id: 'ca_note_word_doc', user_id: currentUserId, is_checked: false, topic_note: editor.innerHTML, updated_at: new Date().toISOString() },
+            { onConflict: 'id,user_id' }
+        );
+        _setRteStatus('\u2713 Saved');
+        setTimeout(function() { _setRteStatus(''); }, 2000);
+    } catch(e) { _setRteStatus('Save failed'); }
+}
+
+function _setRteStatus(msg) {
+    var el = document.getElementById('ca-rte-status');
+    if (el) el.textContent = msg;
+}
+
+function rtCmd(cmd, value) {
+    document.execCommand(cmd, false, value !== undefined ? value : null);
+    var editor = document.getElementById('ca-word-editor');
+    if (editor) editor.focus();
+    _wordNoteChanged();
+}
+
+// ── Table Style Notes ─────────────────────────────────────────────────────────
+function getTableNotes() { return JSON.parse(localStorage.getItem('upsc_ca_table_notes') || '[]'); }
+function setTableNotes(notes) { localStorage.setItem('upsc_ca_table_notes', JSON.stringify(notes)); }
+
+function addTableNote() {
+    const notes = getTableNotes();
+    const colors = ['#6366f1','#10b981','#f59e0b','#ef4444','#8b5cf6','#3b82f6','#f472b6'];
+    notes.push({ id: Date.now().toString(), title: 'Note ' + (notes.length + 1), content: '', color: colors[notes.length % colors.length] });
+    setTableNotes(notes);
+    renderTableNotes();
+    // Focus the new note's title
+    setTimeout(function() {
+        const inputs = document.querySelectorAll('.ca-note-title-inp');
+        if (inputs.length) inputs[inputs.length - 1].focus();
+    }, 50);
+}
+
+function deleteTableNote(id) {
+    if (!confirm('Delete this note card?')) return;
+    const notes = getTableNotes().filter(n => n.id !== id);
+    setTableNotes(notes);
+    renderTableNotes();
+}
+
+function updateTableNoteTitle(id, title) {
+    const notes = getTableNotes();
+    const note = notes.find(n => n.id === id);
+    if (note) { note.title = title; setTableNotes(notes); }
+}
+
+function updateTableNoteContent(id, content) {
+    const notes = getTableNotes();
+    const note = notes.find(n => n.id === id);
+    if (note) { note.content = content; setTableNotes(notes); }
+}
+
+function renderTableNotes() {
+    const container = document.getElementById('ca-table-notes-grid');
+    if (!container) return;
+    const notes = getTableNotes();
+    if (!notes.length) {
+        container.innerHTML = '<p class="text-xs text-slate-400 text-center py-10 col-span-full">No note cards yet. Click \u201c\u2795 Add Note Card\u201d to create one.</p>';
+        return;
+    }
+    container.innerHTML = notes.map(n => `
+        <div class="ca-note-card" id="ca-notecard-${n.id}" style="--note-accent:${n.color || '#6366f1'}">
+            <div class="ca-note-card-header">
+                <span class="ca-note-card-dot"></span>
+                <input type="text" class="ca-note-title-inp" value="${(n.title || '').replace(/"/g, '&quot;')}"
+                    oninput="updateTableNoteTitle('${n.id}', this.value)" placeholder="Note title\u2026">
+                <button onclick="deleteTableNote('${n.id}')" class="ca-note-del" title="Delete">\xd7</button>
+            </div>
+            <textarea class="ca-note-body" oninput="updateTableNoteContent('${n.id}', this.value)"
+                placeholder="Write here\u2026">${(n.content || '').replace(/</g,'&lt;')}</textarea>
+        </div>
+    `).join('');
+}
+

@@ -418,6 +418,7 @@
                 <div class="flex flex-row gap-2 overflow-x-auto whitespace-nowrap scrollbar-none bg-slate-800/50 p-1.5 rounded-xl border border-violet-500/20">
                     <button onclick="activateCATab('tracker')" id="btn-ca-tab-tracker" class="sub-tab-ca inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all bg-indigo-600 text-white shadow-sm border border-indigo-500">Monthly Tracker</button>
                     <button onclick="activateCATab('links')" id="btn-ca-tab-links" class="sub-tab-ca inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all text-slate-300 hover:text-white hover:bg-white/10 border border-transparent">My CA Links</button>
+                    <button onclick="activateCATab('notes')" id="btn-ca-tab-notes" class="sub-tab-ca inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all text-slate-300 hover:text-white hover:bg-white/10 border border-transparent">📝 My Notes</button>
                 </div>
 
                 <!-- CA Tracker Panel -->
@@ -460,7 +461,76 @@
                 </div>
             </div>
 
-            <!-- TRACK 3: PYQ TRACKER -->
+                <!-- CA Notes Panel -->
+                <div id="panel-ca-notes" class="ca-pane hidden">
+                    <div class="neo-card rounded-3xl p-6">
+                        <!-- Header with mode toggle -->
+                        <div class="flex flex-wrap justify-between items-center border-b border-violet-500/20 pb-3 mb-4 gap-3">
+                            <h2 class="heading-font text-xl font-black">📝 My Notes</h2>
+                            <div class="flex gap-1 p-1 rounded-xl border border-violet-500/20" style="background:var(--bg2);">
+                                <button id="btn-notes-mode-word" onclick="switchNotesMode('word')" class="notes-mode-btn notes-mode-active">📄 Word Style</button>
+                                <button id="btn-notes-mode-table" onclick="switchNotesMode('table')" class="notes-mode-btn">⊞ Table Style</button>
+                            </div>
+                        </div>
+
+                        <!-- Word Style Editor -->
+                        <div id="ca-notes-word-pane">
+                            <!-- Formatting Toolbar -->
+                            <div class="ca-rte-toolbar" id="ca-rte-toolbar">
+                                <div class="ca-rte-group">
+                                    <button class="ca-rte-btn" onmousedown="event.preventDefault();rtCmd('bold')" title="Bold (Ctrl+B)"><b>B</b></button>
+                                    <button class="ca-rte-btn ca-rte-italic" onmousedown="event.preventDefault();rtCmd('italic')" title="Italic (Ctrl+I)"><i>I</i></button>
+                                    <button class="ca-rte-btn ca-rte-underline" onmousedown="event.preventDefault();rtCmd('underline')" title="Underline (Ctrl+U)"><u>U</u></button>
+                                    <button class="ca-rte-btn" onmousedown="event.preventDefault();rtCmd('strikeThrough')" title="Strikethrough"><s>S</s></button>
+                                </div>
+                                <div class="ca-rte-sep"></div>
+                                <div class="ca-rte-group">
+                                    <button class="ca-rte-btn" onmousedown="event.preventDefault();rtCmd('insertUnorderedList')" title="Bullet list">• List</button>
+                                    <button class="ca-rte-btn" onmousedown="event.preventDefault();rtCmd('insertOrderedList')" title="Numbered list">1. List</button>
+                                </div>
+                                <div class="ca-rte-sep"></div>
+                                <div class="ca-rte-group">
+                                    <button class="ca-rte-btn" onmousedown="event.preventDefault();rtCmd('justifyLeft')" title="Align left">↤</button>
+                                    <button class="ca-rte-btn" onmousedown="event.preventDefault();rtCmd('justifyCenter')" title="Center">⇹</button>
+                                    <button class="ca-rte-btn" onmousedown="event.preventDefault();rtCmd('justifyRight')" title="Align right">↦</button>
+                                </div>
+                                <div class="ca-rte-sep"></div>
+                                <div class="ca-rte-group ca-rte-colors">
+                                    <button class="ca-rte-clr" style="background:#ef4444" onmousedown="event.preventDefault();rtCmd('foreColor','#ef4444')" title="Red"></button>
+                                    <button class="ca-rte-clr" style="background:#f59e0b" onmousedown="event.preventDefault();rtCmd('foreColor','#f59e0b')" title="Amber"></button>
+                                    <button class="ca-rte-clr" style="background:#10b981" onmousedown="event.preventDefault();rtCmd('foreColor','#10b981')" title="Green"></button>
+                                    <button class="ca-rte-clr" style="background:#3b82f6" onmousedown="event.preventDefault();rtCmd('foreColor','#3b82f6')" title="Blue"></button>
+                                    <button class="ca-rte-clr" style="background:#8b5cf6" onmousedown="event.preventDefault();rtCmd('foreColor','#8b5cf6')" title="Purple"></button>
+                                    <button class="ca-rte-clr" style="background:#f472b6" onmousedown="event.preventDefault();rtCmd('foreColor','#f472b6')" title="Pink"></button>
+                                    <label class="ca-rte-clr ca-rte-clr-custom" title="Custom color">
+                                        <span>🎨</span>
+                                        <input type="color" id="ca-rte-color-picker" oninput="rtCmd('foreColor',this.value)" tabindex="-1">
+                                    </label>
+                                </div>
+                                <div class="ca-rte-sep"></div>
+                                <div class="ca-rte-group">
+                                    <button class="ca-rte-btn" onmousedown="event.preventDefault();rtCmd('removeFormat')" title="Clear formatting">⊘ Clear</button>
+                                </div>
+                                <span id="ca-rte-status" class="ca-rte-status"></span>
+                            </div>
+                            <!-- Editor -->
+                            <div id="ca-word-editor" class="ca-word-editor" contenteditable="true" oninput="_wordNoteChanged()" spellcheck="true" data-placeholder="Start writing your notes here...
+
+Ctrl+B → Bold · Ctrl+I → Italic · Ctrl+U → Underline
+Use the toolbar above for bullets, colors and more."></div>
+                        </div>
+
+                        <!-- Table Style Notes Grid -->
+                        <div id="ca-notes-table-pane" class="hidden">
+                            <div class="flex justify-end mb-4">
+                                <button onclick="addTableNote()" class="cursor-pointer bg-gradient-to-r from-indigo-500 to-violet-600 hover:opacity-90 text-white text-[10px] font-bold px-3 py-2 rounded-lg shadow-sm font-mono">➕ Add Note Card</button>
+                            </div>
+                            <div id="ca-table-notes-grid" class="ca-table-notes-grid"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
             <div id="master-pyq" class="master-pane-view hidden space-y-6">
                 <div class="flex flex-row gap-1 overflow-x-auto whitespace-nowrap scrollbar-none">
                     <button onclick="activateStageTab_PYQ('prelims')" id="btn-pyq-stage-prelims" class="cursor-pointer flex-1 text-center py-3.5 px-6 rounded-xl font-black text-xs uppercase tracking-wider transition-all bg-indigo-600 text-white shadow-md heading-font">Stage I: Prelims</button>
