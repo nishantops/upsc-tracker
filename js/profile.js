@@ -2,6 +2,11 @@
 // UPSC Tracker - Profile Module
 // =========================================================================
 
+// In-memory mirror of what's currently displayed on the homepage.
+// Always kept in sync via applyProfileToUI(); used by openProfileModal()
+// so the edit form always shows exactly what the UI shows.
+var _activeProfile = {};
+
 function openProfileEdit() {
     document.getElementById('profile-menu').classList.add('hidden');
     openProfileModal();
@@ -11,12 +16,15 @@ function openProfileModal() {
     var modal = document.getElementById('profile-modal-full');
     if (!modal) return;
 
-    // Load from cache
-    var profile = {};
-    try {
-        var cached = currentUserId ? localStorage.getItem('upsc_profile_' + currentUserId) : null;
-        if (cached) profile = JSON.parse(cached);
-    } catch(e) {}
+    // Use the in-memory profile that mirrors the live homepage UI.
+    // Fall back to localStorage only if _activeProfile is empty (edge case).
+    var profile = Object.keys(_activeProfile).length > 0 ? Object.assign({}, _activeProfile) : {};
+    if (!Object.keys(profile).length) {
+        try {
+            var cached = currentUserId ? localStorage.getItem('upsc_profile_' + currentUserId) : null;
+            if (cached) profile = JSON.parse(cached);
+        } catch(e) {}
+    }
 
     // Fill personal fields
     document.getElementById('pm-name').value = profile.display_name || '';
@@ -169,7 +177,24 @@ async function showApp(knownEmail) {
 
     // Superuser bypasses profile setup entirely
     if (isSuperuser(userEmail)) {
-        applyProfileToUI({ display_name: 'Sanit', age: null, attempt: null, features_enabled: SUPERUSER_FEATURES });
+        // Load actual saved profile (not hardcoded name) so homepage + modal stay in sync
+        var spFallback = { display_name: 'Sanit', age: null, attempt: null, features_enabled: SUPERUSER_FEATURES };
+        var spCached = currentUserId ? localStorage.getItem('upsc_profile_' + currentUserId) : null;
+        if (spCached) {
+            try {
+                var spParsed = JSON.parse(spCached);
+                spFallback = Object.assign({}, spParsed, { features_enabled: SUPERUSER_FEATURES });
+            } catch(e) {}
+        }
+        applyProfileToUI(spFallback);
+        // Also fetch latest from DB in background and update
+        getUserProfile().then(function(p) {
+            if (p) {
+                var merged = Object.assign({}, p, { features_enabled: SUPERUSER_FEATURES });
+                if (currentUserId) localStorage.setItem('upsc_profile_' + currentUserId, JSON.stringify(merged));
+                applyProfileToUI(merged);
+            }
+        }).catch(function() {});
         document.getElementById('auth-screen').style.display = 'none';
         document.getElementById('profile-setup-screen').style.display = 'none';
         document.getElementById('app-container').classList.remove('hidden');
@@ -224,6 +249,8 @@ async function showApp(knownEmail) {
 }
 
 function applyProfileToUI(profile) {
+    // Keep in-memory mirror in sync so openProfileModal always shows current data
+    _activeProfile = Object.assign({}, profile);
     const name = profile.display_name || 'User';
     document.getElementById('user-display-name').textContent = name;
     const initials = name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();

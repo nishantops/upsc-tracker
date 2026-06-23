@@ -60,11 +60,24 @@ function renderSWWidget() {
     var widget = document.getElementById('sw-widget');
     if (!widget) return;
 
-    // Visibility
-    if (!_swData.show_sw || (_swData.strengths.length === 0 && _swData.weaknesses.length === 0)) {
-        widget.classList.add('hidden');
-    } else {
-        widget.classList.remove('hidden');
+    // Never fully hide the widget — keeps the layout stable and the toggle always accessible.
+    // Just dim the rails when show_sw is false.
+    widget.classList.remove('hidden');
+
+    // Toggle checkbox sync
+    var toggle = document.getElementById('sw-homepage-toggle');
+    if (toggle) toggle.checked = !!_swData.show_sw;
+
+    // Dim rails when hidden from homepage; re-enable when visible
+    var rails = widget.querySelector('.sw-rails');
+    if (rails) {
+        if (!_swData.show_sw) {
+            rails.style.opacity = '0.35';
+            rails.style.pointerEvents = 'none';
+        } else {
+            rails.style.opacity = '';
+            rails.style.pointerEvents = '';
+        }
     }
 
     // Strengths chips
@@ -86,10 +99,6 @@ function renderSWWidget() {
             + '<button class="sw-chip-del" onclick="swDeleteItem(\'' + escSW(item.id) + '\',\'weakness\')" title="Remove">✕</button>'
             + '</div>';
     }).join('') + '<button class="sw-chip-add" onclick="openSWManager(\'weakness\')">+ Add</button>';
-
-    // Update toggle label
-    var toggle = document.getElementById('sw-homepage-toggle');
-    if (toggle) toggle.checked = !!_swData.show_sw;
 }
 
 // ── Generic list renderer (used by both manager modal and profile modal) ─────
