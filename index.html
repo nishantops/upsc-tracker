@@ -523,8 +523,8 @@
                         <button onclick="activateSubTab_PYQ('mains', 'panel-pyq-gs3', this)" class="sub-tab-pyq-mains inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all text-slate-300 hover:text-white hover:bg-white/10 border border-transparent">GS-III</button>
                         <button onclick="activateSubTab_PYQ('mains', 'panel-pyq-gs4', this)" class="sub-tab-pyq-mains inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all text-slate-300 hover:text-white hover:bg-white/10 border border-transparent">GS-IV</button>
                         <button onclick="activateSubTab_PYQ('mains', 'panel-pyq-essay', this)" class="sub-tab-pyq-mains inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all text-slate-300 hover:text-white hover:bg-white/10 border border-transparent">Essay</button>
-                        <button onclick="activateSubTab_PYQ('mains', 'panel-pyq-a1', this)" class="sub-tab-pyq-mains inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all text-slate-300 hover:text-white hover:bg-white/10 border border-transparent">Anthro P1</button>
-                        <button onclick="activateSubTab_PYQ('mains', 'panel-pyq-a2', this)" class="sub-tab-pyq-mains inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all text-slate-300 hover:text-white hover:bg-white/10 border border-transparent">Anthro P2</button>
+                        <button onclick="activateSubTab_PYQ('mains', 'panel-pyq-a1', this)" id="pyq-tab-opt-p1" class="sub-tab-pyq-mains inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all text-slate-300 hover:text-white hover:bg-white/10 border border-transparent">Anthro P1</button>
+                        <button onclick="activateSubTab_PYQ('mains', 'panel-pyq-a2', this)" id="pyq-tab-opt-p2" class="sub-tab-pyq-mains inline-block py-2.5 px-5 rounded-lg font-bold text-xs uppercase transition-all text-slate-300 hover:text-white hover:bg-white/10 border border-transparent">Anthro P2</button>
                     </div>
                     <div id="panel-pyq-gs1" class="sub-pane-pyq-mains block neo-card rounded-3xl p-6">
                         <div class="flex justify-between items-center border-b border-violet-500/20 pb-3 mb-4">
@@ -598,7 +598,7 @@
                     </div>
                     <div id="panel-pyq-a1" class="sub-pane-pyq-mains hidden neo-card rounded-3xl p-6">
                         <div class="flex justify-between items-center border-b border-violet-500/20 pb-3 mb-4">
-                            <h2 class="heading-font text-xl font-black">PYQ: Anthro Paper I</h2>
+                            <h2 id="pyq-opt-p1-heading" class="heading-font text-xl font-black">PYQ: Anthro Paper I</h2>
                             <span class="text-[10px] font-mono font-bold text-slate-400">TOTAL: <span id="anthro-p1-total-count" class="text-violet-600">0</span> Questions</span>
                         </div>
                         <div class="mb-4 flex flex-wrap gap-2 items-center">
@@ -616,7 +616,7 @@
                     </div>
                     <div id="panel-pyq-a2" class="sub-pane-pyq-mains hidden neo-card rounded-3xl p-6">
                         <div class="flex justify-between items-center border-b border-violet-500/20 pb-3 mb-4">
-                            <h2 class="heading-font text-xl font-black">PYQ: Anthro Paper II</h2>
+                            <h2 id="pyq-opt-p2-heading" class="heading-font text-xl font-black">PYQ: Anthro Paper II</h2>
                             <span class="text-[10px] font-mono font-bold text-slate-400">TOTAL: <span id="anthro-p2-total-count" class="text-violet-600">0</span> Questions</span>
                         </div>
                         <div class="mb-4 flex flex-wrap gap-2 items-center">

@@ -300,20 +300,50 @@ function applyOptionalSubjectLabels(optText) {
         });
     }
 
+    // PYQ tab buttons + panel headings
+    var pyqT1 = document.getElementById('pyq-tab-opt-p1');
+    if (pyqT1) pyqT1.textContent = shortName + ' P1';
+    var pyqT2 = document.getElementById('pyq-tab-opt-p2');
+    if (pyqT2) pyqT2.textContent = shortName + ' P2';
+    var pyqH1 = document.getElementById('pyq-opt-p1-heading');
+    if (pyqH1) pyqH1.textContent = 'PYQ: ' + optText + ' Paper I';
+    var pyqH2 = document.getElementById('pyq-opt-p2-heading');
+    if (pyqH2) pyqH2.textContent = 'PYQ: ' + optText + ' Paper II';
+
     // If NOT Anthropology, clear pre-populated Anthro syllabus topics
-    // and show a setup guide so users can add their own topics
+    // and show a setup guide with inline Add Topic button
     if (optText && optText !== 'Anthropology' && optText !== 'Optional') {
         var b1 = document.getElementById('box-anthro-p1');
         var b2 = document.getElementById('box-anthro-p2');
-        var guide = function(label) {
+        var guide = function(label, boxId) {
             return '<div style="text-align:center;padding:2rem 1.5rem;color:var(--t3);border:1px dashed var(--bdr);border-radius:1rem;margin-bottom:0.75rem;">'
                 + '<div style="font-size:1.5rem;margin-bottom:0.5rem">📚</div>'
                 + '<div style="font-size:0.8rem;font-weight:700;color:var(--t2);margin-bottom:0.35rem">' + label + ' — Custom Setup</div>'
-                + '<div style="font-size:0.72rem;line-height:1.6">Add your ' + optText + ' ' + label + ' topics below.<br>Click <strong>+ Custom Topic</strong> to start building your syllabus.</div>'
+                + '<div style="font-size:0.72rem;line-height:1.7;margin-bottom:1rem;">Add your ' + optText + ' ' + label + ' syllabus topics here.</div>'
+                + '<button onclick="openCustomTopicModalForPanel(\'' + boxId + '\')" style="background:linear-gradient(135deg,#7c3aed,#6366f1);border:none;color:#fff;border-radius:0.6rem;padding:0.5rem 1.25rem;font-size:0.75rem;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(99,102,241,0.35);">➕ Add ' + label + ' Topic</button>'
                 + '</div>';
         };
-        if (b1) b1.innerHTML = guide('Paper I');
-        if (b2) b2.innerHTML = guide('Paper II');
+        if (b1) b1.innerHTML = guide('Paper I', 'box-anthro-p1');
+        if (b2) b2.innerHTML = guide('Paper II', 'box-anthro-p2');
+
+        // PYQ panels for non-Anthro: replace Anthro PYQ data with custom add interface
+        var pq1 = document.getElementById('anthro-p1-topics-container');
+        var pq2 = document.getElementById('anthro-p2-topics-container');
+        var pyqGuide = function(label, panelId) {
+            return '<div style="text-align:center;padding:2.5rem 1.5rem;color:var(--t3);border:1px dashed rgba(139,92,246,0.25);border-radius:1rem;">'
+                + '<div style="font-size:1.5rem;margin-bottom:0.5rem">📝</div>'
+                + '<div style="font-size:0.82rem;font-weight:700;color:var(--t2);margin-bottom:0.4rem">No pre-loaded PYQ for ' + optText + ' ' + label + '</div>'
+                + '<div style="font-size:0.72rem;line-height:1.7;margin-bottom:1rem;">Add your own PYQ questions as custom topics to track practice.</div>'
+                + '<button onclick="openCustomTopicModalForPanel(\'' + panelId + '\')" style="background:linear-gradient(135deg,#7c3aed,#6366f1);border:none;color:#fff;border-radius:0.6rem;padding:0.5rem 1.25rem;font-size:0.75rem;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(99,102,241,0.35);">➕ Add ' + optText + ' ' + label + ' PYQ</button>'
+                + '</div>';
+        };
+        if (pq1) pq1.innerHTML = pyqGuide('Paper I', 'box-anthro-p1');
+        if (pq2) pq2.innerHTML = pyqGuide('Paper II', 'box-anthro-p2');
+        // Update PYQ total count to 0 for non-Anthro
+        var tc1 = document.getElementById('anthro-p1-total-count');
+        var tc2 = document.getElementById('anthro-p2-total-count');
+        if (tc1) tc1.textContent = '0';
+        if (tc2) tc2.textContent = '0';
     }
 }
 

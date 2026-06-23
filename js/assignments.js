@@ -8,6 +8,13 @@ function openCustomTopicModal() {
     document.getElementById("modal-title-display").innerText = "📂 Add Custom Entry";
     document.getElementById("custom-modal").classList.remove('hidden');
 }
+function openCustomTopicModalForPanel(panelId) {
+    document.getElementById('modal-target-wrapper').classList.remove('hidden');
+    document.getElementById('modal-asn-fields').classList.add('hidden');
+    document.getElementById("modal-title-display").innerText = "📂 Add Custom Entry";
+    document.getElementById("custom-modal").classList.remove('hidden');
+    if (panelId) document.getElementById('modal-select-panel').value = panelId;
+}
 function openAssignmentModal() {
     document.getElementById('modal-select-panel').value = 'box-anthro-asn';
     document.getElementById('modal-target-wrapper').classList.add('hidden');
