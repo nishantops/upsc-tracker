@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="env.js?v=2"></script>
     <script src="pyq_data.js?v=6" defer></script>
-    <link rel="stylesheet" href="css/main.css?v=3">
+    <link rel="stylesheet" href="css/main.css?v=4">
     <link rel="stylesheet" href="css/ai-chat.css?v=3">
 </head>
 <body class="text-slate-800 antialiased min-h-screen flex flex-col custom-scrollbar">
@@ -129,7 +129,7 @@
                     <span id="live-date-hud" class="px-2.5 py-1 bg-slate-900/60 rounded-lg text-indigo-200 shadow-xs">---</span>
                 </div>
                 <!-- Focus Mode Widget -->
-                <div id="focus-mode-widget" class="flex items-center gap-2 bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl px-3 py-1.5 border border-slate-600/30 cursor-pointer" onclick="toggleFocusMode()" title="Toggle Focus Mode — tracks your study time across devices">
+                <div id="focus-mode-widget" class="flex items-center gap-2 bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl px-3 py-1.5 border border-slate-600/30 cursor-pointer" onclick="openFocusPanel()" title="Focus Mode — click to open study tracker panel">
                     <button id="focus-mode-btn" type="button" class="flex items-center gap-1.5 text-slate-300" style="background:none;border:none;padding:0;cursor:pointer;">
                         <span class="focus-dot"></span>
                         <span id="focus-status-label" class="text-[10px] font-black uppercase tracking-widest">FOCUS</span>
@@ -137,10 +137,55 @@
                     <span id="focus-timer-display" class="px-2 py-0.5 bg-slate-900/60 rounded-md text-slate-300 text-[10px] font-mono" style="min-width:5.5ch;text-align:center;">00:00:00</span>
                     <span id="focus-today-total" class="text-[9px] text-emerald-400/70 font-bold hidden md:inline"></span>
                 </div>
+                <button id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode"><span id="theme-toggle-icon">☀️</span></button>
                 <button onclick="handleLogout()" class="cursor-pointer bg-gradient-to-r from-rose-500/10 to-pink-500/10 hover:from-rose-500/20 hover:to-pink-500/20 text-rose-400 text-[10px] font-bold px-3.5 py-2 rounded-lg transition-all border border-rose-500/30 shadow-sm" title="Sign Out">⏻ LOGOUT</button>
             </div>
         </div>
     </header>
+
+    <!-- Focus Panel -->
+    <div id="focus-panel" class="hidden">
+      <!-- Header row -->
+      <div class="fp-status-row" style="margin-bottom:0.8rem;">
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <span style="font-size:1rem;">🎯</span>
+          <span style="font-weight:800;font-size:0.8rem;color:var(--t1);">Focus Mode</span>
+          <span id="fp-db-badge" class="fp-db-badge">● Cloud sync</span>
+        </div>
+        <button class="fp-close-btn" onclick="closeFocusPanel()">✕</button>
+      </div>
+
+      <!-- Status badge -->
+      <div style="margin-bottom:0.6rem;">
+        <span id="fp-status-badge" class="fp-status-badge">○ IDLE</span>
+      </div>
+
+      <!-- Big timer -->
+      <div id="fp-big-timer" class="fp-big-timer">00:00:00</div>
+
+      <!-- Start/Stop button -->
+      <button id="fp-toggle-btn" class="fp-start-btn" onclick="toggleFocusMode()">▶ START SESSION</button>
+
+      <!-- Stats grid -->
+      <div class="fp-stat-grid">
+        <div class="fp-stat">
+          <div class="fp-stat-label">Today</div>
+          <div id="fp-stat-today" class="fp-stat-value">—</div>
+        </div>
+        <div class="fp-stat">
+          <div class="fp-stat-label">Last session</div>
+          <div id="fp-stat-last" class="fp-stat-value">—</div>
+        </div>
+        <div class="fp-stat">
+          <div class="fp-stat-label">7-day total</div>
+          <div id="fp-stat-week" class="fp-stat-value">—</div>
+        </div>
+      </div>
+
+      <div class="fp-divider"></div>
+      <div class="fp-section-title">Recent Sessions</div>
+      <div id="fp-history-list"><div class="fp-empty">Loading…</div></div>
+    </div>
 
     <main class="max-w-7xl mx-auto px-4 lg:px-8 py-8 flex-1 w-full space-y-8">
         
@@ -721,7 +766,7 @@
     </div>
 
     <!-- Modular JS (order matters: app.js defines globals, then modules use them) -->
-    <script src="js/app.js?v=3"></script>
+    <script src="js/app.js?v=4"></script>
     <script src="js/tracker.js?v=3"></script>
     <script src="js/plans.js?v=2"></script>
     <script src="js/assignments.js?v=3"></script>
@@ -730,7 +775,7 @@
     <script src="js/pyq.js?v=3"></script>
     <script src="js/trends.js?v=1"></script>
     <script src="js/profile.js?v=1"></script>
-    <script src="js/focus.js?v=2"></script>
+    <script src="js/focus.js?v=4"></script>
     <script src="js/auth.js?v=2"></script>
 
     </div><!-- END app-container -->

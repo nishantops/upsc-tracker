@@ -32,6 +32,25 @@ let dbClient = null;
 let currentUserId = null;
 
 // =========================================================================
+// THEME SYSTEM
+// =========================================================================
+function toggleTheme() {
+    const html  = document.documentElement;
+    const next  = (html.getAttribute('data-theme') || 'dark') === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('upsc_theme', next);
+    const icon = document.getElementById('theme-toggle-icon');
+    if (icon) icon.textContent = next === 'dark' ? '☀️' : '🌙';
+}
+function initTheme() {
+    const saved = localStorage.getItem('upsc_theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', saved);
+    const icon = document.getElementById('theme-toggle-icon');
+    if (icon) icon.textContent = saved === 'dark' ? '☀️' : '🌙';
+}
+document.addEventListener('DOMContentLoaded', initTheme);
+
+// =========================================================================
 // SYLLABUS DATA ARRAYS
 // =========================================================================
 const dataP1 = ["Current Events: Current events of national and international importance.", "History of India and Indian National Movement: Social, economic, and political aspects of ancient, medieval, and modern Indian history; structural phases of the national freedom struggle.", "Indian and World Geography: Physical, social, and economic geography of India and the global domains.", "Indian Polity and Governance: Constitution, political system, Panchayati Raj, public policy, rights issues, statutory frameworks, and structural governance architectures.", "Economic and Social Development: Sustainable development, poverty inclusion dynamics, demographics, social sector initiatives, fiscal policies, and macroeconomic foundations.", "General Issues on Environmental Ecology, Bio-diversity, and Climate Change: Global environmental challenges, conservation paradigms, ecosystem parameters (that do not require specialized academic domain expertise).", "General Science: Foundational scientific vectors encompassing physics, chemistry, biology, and contemporary technological advancements."];
