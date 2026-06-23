@@ -248,7 +248,7 @@ function switchDrawerTab(tab) {
 }
 
 function _updateDrawerProgress(enc) {
-    var boxes = document.querySelectorAll('.plan-task-box-' + enc);
+    var boxes = document.querySelectorAll('.plan-task-box-' + CSS.escape(enc));
     var total = boxes.length, done = 0;
     boxes.forEach(function(b) { if (b.checked) done++; });
     var pct = total > 0 ? Math.round((done / total) * 100) : 0;
@@ -288,16 +288,16 @@ function closePlanDrawer() {
 function renderMasterAggregate() {
     var el = document.getElementById('master-aggregate');
     if (!el) return;
-    var plans = Object.values(_planDataStore || {});
-    if (!plans.length) { el.innerHTML = ''; return; }
+    var entries = Object.entries(_planDataStore || {});
+    if (!entries.length) { el.innerHTML = ''; return; }
 
-    // Gather task stats per plan
-    var stats = plans.map(function(p) {
-        var enc = encodeURIComponent(p.plan_name || p.title || 'Plan');
-        var boxes = document.querySelectorAll('.plan-task-box-' + enc);
+    // Gather task stats per plan (enc is the btoa key used as class suffix)
+    var stats = entries.map(function(kv) {
+        var enc = kv[0], p = kv[1];
+        var boxes = document.querySelectorAll('.plan-task-box-' + CSS.escape(enc));
         var total = boxes.length, done = 0;
         boxes.forEach(function(b) { if (b.checked) done++; });
-        return { title: p.plan_name || p.title || 'Plan', total: total, done: done, color: p._color || '#818cf8' };
+        return { title: p.title || 'Plan', total: total, done: done, color: p._color || '#818cf8' };
     }).filter(function(s) { return s.total > 0; });
 
     if (!stats.length) { el.innerHTML = '<p style="font-size:0.7rem;color:var(--t3);font-family:var(--mono);text-align:center;padding:1rem 0;">No task data yet — add tasks in plan cards.</p>'; return; }
@@ -395,7 +395,7 @@ function renderGanttTimeline(viewMode) {
         var enc = entry[0], plan = entry[1];
         var catStyle = PLAN_CAT_STYLES[plan.category] || PLAN_CAT_STYLES.custom;
         var catLabel = plan.planSubject || PLAN_CAT_LABELS[plan.category] || plan.category;
-        var boxes = document.querySelectorAll('.plan-task-box-' + enc);
+        var boxes = document.querySelectorAll('.plan-task-box-' + CSS.escape(enc));
         var total = boxes.length, done = 0;
         boxes.forEach(function(b) { if (b.checked) done++; });
         var pct = total > 0 ? Math.round((done / total) * 100) : -1;
@@ -762,7 +762,7 @@ function generateAutoTasks(enc, mode) {
 function calculatePlanPies() {
     document.querySelectorAll('[id^="pie-plan-"]').forEach(function(pieEl) {
         var encodedName = pieEl.id.replace('pie-plan-', '');
-        var taskBoxes = document.querySelectorAll('.plan-task-box-' + encodedName);
+        var taskBoxes = document.querySelectorAll('.plan-task-box-' + CSS.escape(encodedName));
         var lblEl  = document.getElementById('lbl-plan-' + encodedName);
         var pbarEl = document.getElementById('pbar-plan-' + encodedName);
         var sTotal = taskBoxes.length, sChecked = 0;

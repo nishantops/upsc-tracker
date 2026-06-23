@@ -235,7 +235,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('auth-error').textContent = 'Supabase script blocked. Check network.';
         return;
     }
-    dbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    if (!dbClient) dbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const { data: { session } } = await dbClient.auth.getSession();
     if (session) {
         currentUserId = session.user.id;
