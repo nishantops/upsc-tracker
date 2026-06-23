@@ -33,6 +33,24 @@ async function handleLogin() {
         const { data, error } = await dbClient.auth.signInWithPassword({ email, password });
         if (error) throw error;
         currentUserId = data.user.id;
+
+        // Check if account is locked
+        const lockCheck = await dbClient.from('upsc_user_profiles')
+            .select('is_locked,locked_reason,is_admin').eq('user_id', currentUserId).maybeSingle();
+        if (lockCheck.data && lockCheck.data.is_locked) {
+            await dbClient.auth.signOut();
+            currentUserId = null;
+            btn.style.opacity = '1'; btn.textContent = 'SIGN IN';
+            errEl.style.display = 'block';
+            errEl.textContent = '🔒 Account locked' + (lockCheck.data.locked_reason ? ': ' + lockCheck.data.locked_reason : '. Contact admin.');
+            return;
+        }
+        // Admin users go to the admin console instead
+        if (lockCheck.data && lockCheck.data.is_admin) {
+            window.location.href = 'admin.html';
+            return;
+        }
+
         await recordSession(data.user.email);
         showApp(data.user.email);
     } catch(e) {
@@ -75,6 +93,13 @@ async function handleSignup() {
         errEl.style.color = '#e11d48';
         errEl.textContent = e.message || 'Signup failed.';
     }
+}
+
+function togglePasswordVisibility(inputId, btn) {
+    var inp = document.getElementById(inputId);
+    if (!inp) return;
+    if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
+    else { inp.type = 'password'; btn.textContent = '👁'; }
 }
 
 async function handleGoogleLogin() {
@@ -168,12 +193,15 @@ async function updateSessionActivity() {
     try {
         const { data: { session } } = await dbClient.auth.getSession();
         if (!session) return;
+        const now = new Date().toISOString();
         await dbClient.from('upsc_user_sessions').upsert({
             user_id: currentUserId,
             email: session.user.email,
             is_superuser: isSuperuser(session.user.email),
-            last_active: new Date().toISOString()
+            last_active: now
         }, { onConflict: 'user_id' });
+        // Also update last_active in profile for admin dashboard
+        await dbClient.from('upsc_user_profiles').update({ last_active: now }).eq('user_id', currentUserId);
     } catch(e) { /* non-critical */ }
 }
 

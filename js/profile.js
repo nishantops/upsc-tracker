@@ -103,6 +103,27 @@ function applyProfileToUI(profile) {
             optBadge.style.display = 'none';
         }
     }
+    // Apply feature toggles from admin RBAC
+    applyFeatureGates(profile.features_enabled);
+}
+
+function applyFeatureGates(features) {
+    if (!features) return;
+    // Focus mode
+    var focusWidget = document.getElementById('focus-mode-widget');
+    if (focusWidget) focusWidget.style.display = features.focus === false ? 'none' : '';
+    // Plans tab
+    var plansTab = document.querySelector('[onclick*="plans"]');
+    if (plansTab) plansTab.style.display = features.plans === false ? 'none' : '';
+    // AI Chat
+    var aiFab = document.getElementById('ai-chat-fab');
+    if (aiFab) aiFab.style.display = features.ai_chat === false ? 'none' : '';
+    // PYQ tab
+    var pyqTab = document.querySelector('[onclick*="pyq"]');
+    if (pyqTab) pyqTab.style.display = features.pyq === false ? 'none' : '';
+    // Sources tab
+    var srcTab = document.querySelector('[onclick*="sources"]');
+    if (srcTab) srcTab.style.display = features.sources === false ? 'none' : '';
 }
 
 function handleProfileSetup() {

@@ -40,7 +40,10 @@
                 </div>
                 <div style="margin-top:0.75rem;">
                     <label style="font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:#475569;">Password</label>
-                    <input type="password" id="auth-password" placeholder="••••••••" autocomplete="current-password">
+                    <div style="position:relative;">
+                        <input type="password" id="auth-password" placeholder="••••••••" autocomplete="current-password" style="padding-right:2.8rem;">
+                        <button type="button" onclick="togglePasswordVisibility('auth-password',this)" title="Show/hide password" style="position:absolute;right:0.7rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1rem;color:#94a3b8;padding:0;line-height:1;">👁</button>
+                    </div>
                 </div>
                 <div style="display:flex; gap:0.5rem; margin-top:1.25rem;">
                     <button id="auth-login-btn" onclick="handleLogin()" style="flex:1; padding:0.8rem; background:linear-gradient(135deg,#6366f1,#8b5cf6,#a855f7); color:white; border:none; border-radius:0.75rem; font-size:0.75rem; font-weight:800; cursor:pointer; text-transform:uppercase; letter-spacing:0.05em; box-shadow:0 4px 15px -3px rgba(139,92,246,0.5); transition: all 0.2s;">Sign In</button>
@@ -50,6 +53,7 @@
             </div>
 
             <div id="auth-error"></div>
+            <p style="font-size:0.58rem;color:#64748b;text-align:center;margin-top:0.5rem;">Admin? <a href="admin.html" style="color:#818cf8;font-weight:700;text-decoration:none;">Admin Console →</a></p>
         </div>
     </div>
 

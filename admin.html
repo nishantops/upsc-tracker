@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UPSC Admin Console</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="env.js"></script>
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════════ LOGIN ═══════════════════════════════ -->
+<div id="admin-login-screen">
+  <div class="aln-card">
+    <div class="aln-logo">⚙️</div>
+    <div class="aln-title">Admin Console</div>
+    <div class="aln-sub">UPSC Tracker — Superuser Access</div>
+    <div class="aln-field">
+      <label>Email</label>
+      <input type="email" id="aln-email" placeholder="admin@domain.com" autocomplete="email">
+    </div>
+    <div class="aln-field">
+      <label>Password</label>
+      <div class="aln-pw-wrap">
+        <input type="password" id="aln-password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')adminLogin()">
+        <button class="aln-eye" onclick="adminTogglePw(this)" title="Show/hide password" type="button">👁</button>
+      </div>
+    </div>
+    <div id="aln-error" class="aln-error" style="display:none;"></div>
+    <button class="aln-btn" onclick="adminLogin()" id="aln-btn">Sign In</button>
+    <div class="aln-back"><a href="index.html">← Back to App</a></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ DASHBOARD ═══════════════════════════ -->
+<div id="admin-dashboard" class="hidden">
+
+  <!-- Sidebar -->
+  <nav id="admin-sidebar">
+    <div class="asb-brand">
+      <span class="asb-icon">⚙️</span>
+      <div>
+        <div class="asb-title">Admin Console</div>
+        <div class="asb-sub">UPSC Tracker</div>
+      </div>
+    </div>
+    <div class="asb-admin-badge" id="asb-admin-name">Loading...</div>
+    <div class="asb-nav">
+      <button class="asb-link active" onclick="adminNav('overview')" id="anav-overview">📊 Overview</button>
+      <button class="asb-link" onclick="adminNav('users')" id="anav-users">👥 Users</button>
+      <button class="asb-link" onclick="adminNav('focus')" id="anav-focus">⏱ Focus Analytics</button>
+      <button class="asb-link" onclick="adminNav('audit')" id="anav-audit">📋 Audit Log</button>
+    </div>
+    <button class="asb-logout" onclick="adminLogout()">⏻ Sign Out</button>
+  </nav>
+
+  <!-- Main content -->
+  <main id="admin-main">
+
+    <!-- ── OVERVIEW ───────────────────────────────────────────────────── -->
+    <section id="sec-overview" class="admin-section">
+      <div class="asec-header">
+        <h1 class="asec-title">Overview</h1>
+        <div class="asec-subtitle" id="last-refresh-ts"></div>
+      </div>
+      <div class="aov-grid" id="aov-metrics">
+        <div class="aov-card"><div class="aov-num" id="m-total-users">—</div><div class="aov-lbl">Total Users</div></div>
+        <div class="aov-card"><div class="aov-num" id="m-active-7d">—</div><div class="aov-lbl">Active (7 days)</div></div>
+        <div class="aov-card"><div class="aov-num" id="m-total-hours">—</div><div class="aov-lbl">Total Study Hours</div></div>
+        <div class="aov-card"><div class="aov-num" id="m-total-plans">—</div><div class="aov-lbl">Plans Created</div></div>
+        <div class="aov-card"><div class="aov-num" id="m-locked">—</div><div class="aov-lbl">Locked Users</div></div>
+        <div class="aov-card"><div class="aov-num" id="m-new-month">—</div><div class="aov-lbl">New This Month</div></div>
+      </div>
+      <h2 class="asec-sub2">Top Studiers (all time)</h2>
+      <div id="top-studiers-list" class="atop-list"></div>
+    </section>
+
+    <!-- ── USERS ──────────────────────────────────────────────────────── -->
+    <section id="sec-users" class="admin-section hidden">
+      <div class="asec-header">
+        <h1 class="asec-title">Users</h1>
+        <div class="asec-actions">
+          <input type="text" id="user-search" placeholder="Search name / email..." class="a-search" oninput="filterUsersTable()">
+          <button class="a-btn-sm" onclick="loadUsersTable()">↺ Refresh</button>
+        </div>
+      </div>
+      <div class="a-table-wrap">
+        <table class="a-table" id="users-table">
+          <thead>
+            <tr>
+              <th>User</th><th>Email</th><th>Joined</th><th>Last Active</th>
+              <th>Study Hrs</th><th>Plans</th><th>Optional</th><th>Status</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="users-tbody">
+            <tr><td colspan="9" class="a-empty">Loading users...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── FOCUS ANALYTICS ────────────────────────────────────────────── -->
+    <section id="sec-focus" class="admin-section hidden">
+      <div class="asec-header">
+        <h1 class="asec-title">Focus Analytics</h1>
+      </div>
+      <div class="aov-grid" id="focus-metrics">
+        <div class="aov-card"><div class="aov-num" id="fa-today">—</div><div class="aov-lbl">Hours Today (all users)</div></div>
+        <div class="aov-card"><div class="aov-num" id="fa-week">—</div><div class="aov-lbl">Hours This Week</div></div>
+        <div class="aov-card"><div class="aov-num" id="fa-month">—</div><div class="aov-lbl">Hours This Month</div></div>
+        <div class="aov-card"><div class="aov-num" id="fa-avg-daily">—</div><div class="aov-lbl">Avg hrs/day/user</div></div>
+      </div>
+      <h2 class="asec-sub2">Per-User Study Summary (current year)</h2>
+      <div id="focus-user-grid" class="focus-user-grid"></div>
+    </section>
+
+    <!-- ── AUDIT LOG ──────────────────────────────────────────────────── -->
+    <section id="sec-audit" class="admin-section hidden">
+      <div class="asec-header">
+        <h1 class="asec-title">Audit Log</h1>
+        <button class="a-btn-sm" onclick="loadAuditLog()">↺ Refresh</button>
+      </div>
+      <div class="a-table-wrap">
+        <table class="a-table">
+          <thead><tr><th>Time</th><th>Action</th><th>Target User</th><th>Details</th></tr></thead>
+          <tbody id="audit-tbody"><tr><td colspan="4" class="a-empty">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ═══════════════════════════════ USER MODAL ═══════════════════════════ -->
+<div id="user-modal" class="hidden a-modal-overlay" onclick="if(event.target===this)closeUserModal()">
+  <div class="a-modal-card">
+    <div class="a-modal-header">
+      <div class="a-modal-avatar" id="um-avatar">?</div>
+      <div>
+        <div class="a-modal-name" id="um-name">—</div>
+        <div class="a-modal-email" id="um-email">—</div>
+      </div>
+      <button class="a-modal-close" onclick="closeUserModal()">✕</button>
+    </div>
+    <div class="a-modal-body">
+      <!-- Profile info -->
+      <div class="um-section">
+        <div class="um-sec-title">Profile</div>
+        <div class="um-grid">
+          <div class="um-stat"><div class="um-stat-lbl">Age</div><div class="um-stat-val" id="um-age">—</div></div>
+          <div class="um-stat"><div class="um-stat-lbl">Attempt</div><div class="um-stat-val" id="um-attempt">—</div></div>
+          <div class="um-stat"><div class="um-stat-lbl">Optional</div><div class="um-stat-val" id="um-optional">—</div></div>
+          <div class="um-stat"><div class="um-stat-lbl">Joined</div><div class="um-stat-val" id="um-joined">—</div></div>
+          <div class="um-stat"><div class="um-stat-lbl">Last Active</div><div class="um-stat-val" id="um-last-active">—</div></div>
+          <div class="um-stat"><div class="um-stat-lbl">Study Hrs</div><div class="um-stat-val" id="um-study-hrs">—</div></div>
+        </div>
+      </div>
+      <!-- Feature toggles -->
+      <div class="um-section">
+        <div class="um-sec-title">Feature Access</div>
+        <div class="um-features" id="um-features"></div>
+      </div>
+      <!-- Account controls -->
+      <div class="um-section">
+        <div class="um-sec-title">Account Control</div>
+        <div class="um-controls">
+          <div class="um-control-row">
+            <div>
+              <div class="um-ctrl-label">Lock Account</div>
+              <div class="um-ctrl-sub" id="um-lock-status">User is currently active</div>
+            </div>
+            <div style="display:flex;gap:0.5rem;align-items:center;">
+              <input type="text" id="um-lock-reason" placeholder="Reason (optional)" class="a-input" style="width:160px;">
+              <button id="um-lock-btn" class="a-btn-danger" onclick="adminToggleLock()">Lock</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Recent plans -->
+      <div class="um-section">
+        <div class="um-sec-title">Plans (<span id="um-plan-count">0</span>)</div>
+        <div id="um-plans-list" class="um-plans-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/admin.js"></script>
+</body>
+</html>

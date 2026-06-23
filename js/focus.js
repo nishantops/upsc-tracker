@@ -156,6 +156,8 @@ async function stopFocusMode() {
                 .update({ ended_at: endTime.toISOString(), duration_seconds: durationSeconds })
                 .eq('id', sid).eq('user_id', currentUserId);
         } catch(e) { /* non-critical - saved locally */ }
+        // Also update the compact year cache
+        try { await updateFocusYearCache(currentUserId, startIso.slice(0, 10), durationSeconds); } catch(e) {}
     }
     await updateFocusTotals();
     await updateFocusLastSession();
@@ -228,6 +230,24 @@ function updateFocusPanelDisplay() {
 }
 
 // -- Totals (only completed sessions with duration > 0) -------------------
+// ── Year cache (compact JSONB per-day storage for admin analytics) ─────────
+async function updateFocusYearCache(userId, dateStr, addedSeconds) {
+    if (!dbClient || !userId || addedSeconds <= 0 || !dateStr) return;
+    var year = parseInt(dateStr.slice(0, 4));
+    try {
+        var res = await dbClient.from('upsc_focus_year_data')
+            .select('data').eq('user_id', userId).eq('year', year).maybeSingle();
+        var existing = (res.data && res.data.data) ? res.data.data : {};
+        var prev = existing[dateStr] || { h: 0, m: 0 };
+        var totalMins = prev.h * 60 + prev.m + Math.floor(addedSeconds / 60);
+        existing[dateStr] = { h: Math.floor(totalMins / 60), m: totalMins % 60 };
+        await dbClient.from('upsc_focus_year_data').upsert(
+            { user_id: userId, year: year, data: existing, updated_at: new Date().toISOString() },
+            { onConflict: 'user_id,year' }
+        );
+    } catch(e) { console.warn('[Focus] year cache update:', e.message); }
+}
+
 async function updateFocusTotals() {
     if (!dbClient || !currentUserId || !focusDbAvailable) { updateFocusTotalsLocal(); return; }
     try {
