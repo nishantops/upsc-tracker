@@ -9,7 +9,7 @@ var _allUsersCache  = [];
 
 // ── Boot ─────────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', async function() {
-    adminClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    adminClient = window.supabase.createClient(ENV.SUPABASE_URL, ENV.SUPABASE_ANON_KEY);
 
     // Check existing session
     var sess = await adminClient.auth.getSession();

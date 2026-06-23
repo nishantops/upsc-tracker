@@ -59,6 +59,7 @@ async function syncLatestCloudState() {
         document.getElementById("sync-status-text").innerText = "CLOUD SYNCED ACROSS DEVICES";
         document.getElementById("sync-status-indicator").className = "inline-block w-2.5 h-2.5 rounded-full bg-emerald-500";
         calculateMetricsHUD(); calculatePlanPies();
+        if (typeof checkPlanNotifications === 'function') checkPlanNotifications();
     } catch(e) {
         document.getElementById("sync-status-text").innerText = "OFFLINE: DB CONNECTION REJECTED";
         document.getElementById("sync-status-indicator").className = "inline-block w-2.5 h-2.5 rounded-full bg-rose-500";

@@ -1211,14 +1211,15 @@ tr:hover .pt-td-del button { opacity: 1; }
    ══════════════════════════════════════════════════════════ */
 .pt-fs-overlay {
   display: none; position: fixed; inset: 0; z-index: 9998;
-  background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);
-  align-items: center; justify-content: center; padding: 1.5rem;
+  background: rgba(0,0,0,0.75); backdrop-filter: blur(8px);
+  align-items: center; justify-content: center; padding: 0.5rem;
 }
 .pt-fs-inner {
   background: var(--card); border: 1px solid var(--bdr);
-  border-radius: 1rem; width: 100%; max-width: 96vw; max-height: 90vh;
+  border-radius: 1rem; width: 100%; max-width: 99vw; height: 96vh;
   display: flex; flex-direction: column; overflow: hidden;
   box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+  animation: dropIn 0.25s cubic-bezier(0.34,1.56,0.64,1);
 }
 .pt-fs-header {
   display: flex; justify-content: space-between; align-items: center;
@@ -1293,4 +1294,127 @@ tr:hover .pt-td-del button { opacity: 1; }
    FOCUS PANEL – RESET BUTTON
    ══════════════════════════════════════════════════════════ */
 [data-theme="light"] #fp-reset-wrap button { border-color: rgba(239,68,68,0.4) !important; color: #dc2626 !important; }
+
+/* ══════════════════════════════════════════════════════════
+   LIGHT MODE – COMPREHENSIVE ELEMENT FIXES
+   ══════════════════════════════════════════════════════════ */
+/* Section headers and sub-headers in tracker cards */
+[data-theme="light"] .neo-card h3,
+[data-theme="light"] .neo-card h4 { color: #1e1248 !important; }
+[data-theme="light"] .neo-card::before { background: linear-gradient(135deg, rgba(109,40,217,0.06) 0%, transparent 55%); }
+[data-theme="light"] .neo-card { border-color: rgba(109,40,217,0.18) !important; }
+[data-theme="light"] .neo-card:hover { box-shadow: 0 18px 50px rgba(80,50,200,0.15), 0 0 0 1px rgba(109,40,217,0.12) inset !important; border-color: rgba(109,40,217,0.42) !important; }
+/* Progress bars */
+[data-theme="light"] .progress-bar-fill,
+[data-theme="light"] [class*="bg-emerald"][class*="rounded-full"] { filter: saturate(1.2); }
+/* Section label text */
+[data-theme="light"] .fp-label { color: #6b5ea8 !important; }
+[data-theme="light"] .fp-stat-label { color: #6b5ea8 !important; }
+[data-theme="light"] .fp-stat-value { color: #4338ca !important; }
+[data-theme="light"] .fp-hist-date { color: #1e1248 !important; }
+[data-theme="light"] .fp-hist-dur  { color: #4338ca !important; }
+[data-theme="light"] .fp-hist-ago  { color: #6b5ea8 !important; }
+/* Plan task row add button */
+[data-theme="light"] .ptask-add-btn { color: #047857 !important; }
+[data-theme="light"] .ptask-inline { background: rgba(238,233,255,0.7) !important; border-color: rgba(109,40,217,0.3) !important; }
+[data-theme="light"] .ptask-inline-input { background: white !important; color: #1e1248 !important; border-color: rgba(109,40,217,0.25) !important; }
+[data-theme="light"] .ptask-cancel { background: rgba(238,233,255,0.7) !important; color: #4a3f7a !important; border-color: rgba(109,40,217,0.25) !important; }
+/* Stage/step buttons */
+[data-theme="light"] .stage-btn { background: rgba(234,228,255,0.7) !important; color: #4a3f7a !important; border-color: rgba(109,40,217,0.22) !important; }
+[data-theme="light"] .stage-btn.active { background: rgba(99,102,241,0.18) !important; color: #4338ca !important; }
+/* Sub topic buttons */
+[data-theme="light"] .sub-topic-btn { color: #3a2b78 !important; }
+[data-theme="light"] .sub-topic-btn:hover { background: rgba(109,40,217,0.1) !important; }
+/* Source/assignment search */
+[data-theme="light"] #src-search,
+[data-theme="light"] #asn-search { background: white !important; color: #1e1248 !important; border-color: rgba(109,40,217,0.25) !important; }
+/* Profile menu in light */
+[data-theme="light"] .profile-menu { background: white !important; border-color: rgba(109,40,217,0.25) !important; }
+[data-theme="light"] .profile-menu button { color: #3a2b78 !important; }
+[data-theme="light"] .profile-menu button:hover { background: rgba(109,40,217,0.08) !important; color: #1e1248 !important; }
+/* Modal overlays */
+[data-theme="light"] .modal-backdrop { background: rgba(100,80,200,0.35) !important; }
+/* Trend/chart areas */
+[data-theme="light"] #trends-panel { background: rgba(255,255,255,0.92) !important; }
+/* PYQ filter buttons */
+[data-theme="light"] .pyq-filter-btn { background: rgba(238,233,255,0.7) !important; color: #4a3f7a !important; border-color: rgba(109,40,217,0.22) !important; }
+[data-theme="light"] .pyq-filter-btn.active { background: rgba(99,102,241,0.18) !important; color: #4338ca !important; border-color: rgba(99,102,241,0.4) !important; }
+/* Locked notes */
+[data-theme="light"] .note-locked { background: rgba(248,245,255,0.9) !important; color: #4a3f7a !important; }
+/* Date badge in light */
+[data-theme="light"] .plan-date-badge { color: #047857 !important; background: rgba(5,150,105,0.1) !important; border-color: rgba(5,150,105,0.35) !important; }
+/* Focus reset button */
+[data-theme="light"] .fp-reset-confirm { color: #dc2626 !important; }
+/* General link/muted text */
+[data-theme="light"] .text-muted,
+[data-theme="light"] small { color: #6b5ea8 !important; }
+
+/* ══════════════════════════════════════════════════════════
+   LIVELY ANIMATIONS – BUTTON & INTERACTIVE ELEMENTS
+   ══════════════════════════════════════════════════════════ */
+/* Universal button press effect */
+button:not([disabled]):active { transform: scale(0.95) !important; }
+
+/* Bounce spring for main action buttons */
+.fp-start-btn, .ptask-submit, #clear-progress-btn,
+.pt-tb-btn, .pt-zoom-btn, .pt-save-btn, .pt-fs-close {
+  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1) !important;
+}
+.fp-start-btn:hover   { transform: translateY(-3px) scale(1.02); }
+.ptask-submit:hover   { transform: translateY(-2px) scale(1.03); box-shadow: 0 6px 18px rgba(16,185,129,0.35); }
+.pt-tb-btn:hover      { transform: translateY(-1px); }
+.pt-zoom-btn:hover    { transform: scale(1.08); }
+.pt-save-btn:hover    { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(16,185,129,0.2); }
+.pt-fs-close:hover    { transform: scale(1.06); }
+
+/* Task row hover lift */
+.task-row {
+  transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1), background 0.15s, border-color 0.15s, box-shadow 0.18s !important;
+}
+.task-row:hover { box-shadow: 0 4px 16px rgba(109,40,217,0.12); }
+
+/* Plan badge entrance */
+.plan-badge {
+  animation: badgeEntrance 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+@keyframes badgeEntrance { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+/* Notification bell wiggle when count appears */
+.notif-count:not([style*='none']) {
+  animation: bellWiggle 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes bellWiggle { 0%,100% { transform: rotate(0); } 25% { transform: rotate(-18deg) scale(1.2); } 75% { transform: rotate(14deg) scale(1.1); } }
+
+/* Plan card staggered entrance */
+[id^="plan_card_wrapper_"] {
+  animation: slideIn 0.55s cubic-bezier(0.16,1,0.3,1) both;
+}
+
+/* Smooth tab transitions */
+.plan-tab-btn, .asb-link, .pyq-filter-btn, .stage-btn {
+  transition: all 0.18s cubic-bezier(0.34,1.56,0.64,1);
+}
+.plan-tab-btn:hover { transform: translateY(-1px); }
+
+/* Sheet tab hover */
+.pt-sheet-tab {
+  transition: all 0.15s cubic-bezier(0.34,1.56,0.64,1);
+}
+.pt-sheet-tab:hover { transform: translateY(-1px); }
+
+/* Pulsing glow on sync indicator when saving */
+#sync-status-indicator.animate-pulse { animation: syncPulse 0.8s ease-in-out infinite alternate; }
+@keyframes syncPulse { from { opacity: 0.5; transform: scale(0.85); } to { opacity: 1; transform: scale(1.25); } }
+
+/* Gradient accent line on focused inputs */
+#app-container input[type="text"]:focus,
+#app-container textarea:focus,
+#app-container input[type="date"]:focus {
+  transition: border-color 0.2s, box-shadow 0.25s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+/* Smooth card hover across all neo-cards */
+.neo-card {
+  transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.28s, border-color 0.25s !important;
+}
 
