@@ -25,7 +25,7 @@ function activatePlannerTab(id) {
     if (id === 'master' && typeof renderGanttTimeline === 'function') {
         renderGanttTimeline('month');
         if (typeof renderMasterAggregate === 'function') renderMasterAggregate();
-        if (typeof renderPlanTableUI === 'function') renderPlanTableUI('master_sheet');
+        if (typeof buildMasterAggSheet === 'function') buildMasterAggSheet();
         if (typeof renderPlannerCal === 'function') renderPlannerCal();
     }
 }

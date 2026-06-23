@@ -327,6 +327,29 @@ function renderMasterAggregate() {
         +   ' stroke-dasharray="'+dash+' 282.7" stroke-linecap="round"/>'
         + '</svg>';
 
+    // Histogram (vertical stacked bar chart — tasks per plan)
+    var maxTotal = Math.max.apply(null, stats.map(function(s) { return s.total; })) || 1;
+    var barW = Math.min(38, Math.max(18, Math.floor(240 / stats.length) - 6));
+    var chartH = 72;
+    var svgW = stats.length * (barW + 8) + 20;
+    var histBars = stats.map(function(s, i) {
+        var totalH = Math.round(s.total / maxTotal * chartH);
+        var doneH  = s.total ? Math.round(s.done / s.total * totalH) : 0;
+        var pendH  = totalH - doneH;
+        var x = i * (barW + 8) + 10;
+        var shortName = s.title.length > 9 ? s.title.substring(0, 8) + '\u2026' : s.title;
+        return '<g>'
+            + (pendH > 0 ? '<rect x="' + x + '" y="' + (chartH - totalH) + '" width="' + barW + '" height="' + pendH + '" rx="2" fill="rgba(148,163,184,0.2)"/>' : '')
+            + (doneH > 0 ? '<rect x="' + x + '" y="' + (chartH - doneH) + '" width="' + barW + '" height="' + doneH + '" rx="2" fill="' + s.color + '" opacity="0.82"/>' : '')
+            + (totalH === 0 ? '<rect x="' + x + '" y="' + (chartH - 3) + '" width="' + barW + '" height="3" rx="1" fill="rgba(148,163,184,0.15)"/>' : '')
+            + '<text x="' + (x + barW / 2) + '" y="' + (chartH + 11) + '" text-anchor="middle" font-size="6.5" fill="var(--t3)" font-family="monospace">' + shortName + '</text>'
+            + '<text x="' + (x + barW / 2) + '" y="' + (chartH - totalH - 3) + '" text-anchor="middle" font-size="7" fill="var(--t2)" font-family="monospace">' + s.total + '</text>'
+            + '</g>';
+    }).join('');
+    var histSvg = '<svg width="' + svgW + '" height="' + (chartH + 18) + '" style="overflow:visible;display:block;">'
+        + '<line x1="0" y1="' + chartH + '" x2="' + svgW + '" y2="' + chartH + '" stroke="var(--bdr)" stroke-width="1"/>'
+        + histBars + '</svg>';
+
     el.innerHTML = '<div style="display:flex;align-items:flex-start;gap:1.5rem;flex-wrap:wrap;">'
         + '<div style="flex:1;min-width:240px;">'
         +   '<div style="font-size:0.72rem;font-weight:800;color:var(--t1);font-family:var(--mono);margin-bottom:0.6rem;text-transform:uppercase;letter-spacing:0.06em;">&#9642; Task Completion by Plan</div>'
@@ -339,7 +362,92 @@ function renderMasterAggregate() {
         +   '</div>'
         +   '<div style="font-size:0.6rem;color:var(--t3);font-family:var(--mono);text-align:center;">Overall<br>'+doneTasks+'/'+totalTasks+' tasks</div>'
         + '</div>'
+        + '</div>'
+        + '<div style="margin-top:1rem;border-top:1px solid var(--bdr);padding-top:0.9rem;">'
+        +   '<div style="font-size:0.72rem;font-weight:800;color:var(--t1);font-family:var(--mono);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.06em;">&#9636; Tasks per Plan <span style=\'font-size:0.58rem;color:var(--t3);font-weight:500;\'>(&#9646;&nbsp;done &nbsp;&#9647;&nbsp;pending)</span></div>'
+        +   '<div style="overflow-x:auto;">' + histSvg + '</div>'
         + '</div>';
+}
+
+// ── Master Aggregate Spreadsheet Builder ────────────────────────────────────
+function buildMasterAggSheet() {
+    var entries = Object.entries(_planDataStore || {});
+    if (typeof _ptZoom !== 'undefined' && _ptZoom['master_sheet'] === undefined) _ptZoom['master_sheet'] = 1.0;
+
+    if (!entries.length) {
+        if (!_ptCache['master_sheet']) {
+            _ptCache['master_sheet'] = [_buildEmptyMasterSheet()];
+        }
+        if (typeof renderPlanTableUI === 'function') renderPlanTableUI('master_sheet');
+        return;
+    }
+
+    var allCols = [
+        { id: 'c_task',   name: 'Task',   width: 220 },
+        { id: 'c_status', name: 'Status', width: 100 },
+        { id: 'c_note',   name: 'Note',   width: 200 },
+        { id: 'c_plan',   name: 'Plan',   width: 150 }
+    ];
+
+    // Build "All Tasks" summary sheet
+    var allRows = [];
+    entries.forEach(function(kv) {
+        var enc = kv[0], plan = kv[1];
+        var planTitle = plan.title || 'Plan';
+        var boxes = document.querySelectorAll('.plan-task-box-' + CSS.escape(enc));
+        boxes.forEach(function(cb) {
+            var lbl = document.querySelector('label[for="' + cb.id + '"]');
+            var txt = lbl ? lbl.textContent.trim() : cb.id;
+            var noteEl = document.getElementById('note-' + cb.id);
+            var note = noteEl ? noteEl.value.trim() : '';
+            allRows.push({ id: 'rall_' + cb.id, cells: {
+                c_task:   { v: txt },
+                c_status: { v: cb.checked ? '\u2713 Done' : '\u25cb Pending', fg: cb.checked ? '#10b981' : '#f59e0b' },
+                c_note:   { v: note },
+                c_plan:   { v: planTitle }
+            }});
+        });
+    });
+    if (!allRows.length) allRows.push({ id: 'r_empty_all', cells: { c_task: { v: '(add tasks to plans)' }, c_status: { v: '' }, c_note: { v: '' }, c_plan: { v: '' } } });
+
+    var sheets = [{ id: null, plan_id: 'master_sheet', sheet_name: '\u2605 All Tasks', columns_data: allCols, rows_data: allRows, sort_order: 0 }];
+
+    // One sheet per plan
+    entries.forEach(function(kv, idx) {
+        var enc = kv[0], plan = kv[1];
+        var planTitle = plan.title || 'Plan ' + (idx + 1);
+        var boxes = document.querySelectorAll('.plan-task-box-' + CSS.escape(enc));
+        var rows = [];
+        boxes.forEach(function(cb) {
+            var lbl = document.querySelector('label[for="' + cb.id + '"]');
+            var txt = lbl ? lbl.textContent.trim() : cb.id;
+            var noteEl = document.getElementById('note-' + cb.id);
+            var note = noteEl ? noteEl.value.trim() : '';
+            var isSub = cb.id.indexOf('sub_') !== -1;
+            rows.push({ id: 'r_' + cb.id, cells: {
+                c_task:   { v: (isSub ? '  \u21b3 ' : '') + txt },
+                c_status: { v: cb.checked ? '\u2713 Done' : '\u25cb Pending', fg: cb.checked ? '#10b981' : '#f59e0b' },
+                c_note:   { v: note },
+                c_plan:   { v: planTitle }
+            }});
+        });
+        if (!rows.length) rows.push({ id: 'r_empty_' + enc, cells: { c_task: { v: '(no tasks yet)' }, c_status: { v: '' }, c_note: { v: '' }, c_plan: { v: planTitle } } });
+        var shortName = planTitle.length > 15 ? planTitle.substring(0, 13) + '\u2026' : planTitle;
+        sheets.push({ id: null, plan_id: 'master_sheet', sheet_name: shortName, columns_data: allCols.map(function(c) { return Object.assign({}, c); }), rows_data: rows, sort_order: idx + 1 });
+    });
+
+    _ptCache['master_sheet'] = sheets;
+    if (typeof renderPlanTableUI === 'function') renderPlanTableUI('master_sheet');
+}
+
+function _buildEmptyMasterSheet() {
+    var cols = [
+        { id: 'c_task', name: 'Task', width: 220 }, { id: 'c_status', name: 'Status', width: 100 },
+        { id: 'c_note', name: 'Note', width: 200 },  { id: 'c_plan',   name: 'Plan',   width: 150 }
+    ];
+    var rows = [];
+    for (var i = 0; i < 6; i++) { var cells = {}; cols.forEach(function(c) { cells[c.id] = { v: '' }; }); rows.push({ id: 'r_' + i, cells: cells }); }
+    return { id: null, plan_id: 'master_sheet', sheet_name: '\u2605 All Tasks', columns_data: cols, rows_data: rows, sort_order: 0 };
 }
 
 // ── Gantt Timeline ──────────────────────────────────────────────────────────
