@@ -2776,55 +2776,63 @@ button:not([disabled]):active { transform: scale(0.95) !important; }
 .planner-cal-wrap {
   background: var(--card);
   border: 1px solid var(--bdr);
-  border-radius: 1rem;
-  padding: 0.85rem 1rem 0.75rem;
-  margin-bottom: 1.5rem;
-  max-width: 360px;
+  border-radius: 0.75rem;
+  padding: 0.45rem 0.6rem 0.5rem;
+  margin-bottom: 1.25rem;
+  max-width: 224px;
+  display: inline-block;
+  vertical-align: top;
 }
+.planner-cal-collapsed .planner-cal-grid,
+.planner-cal-collapsed .planner-cal-body { display: none; }
 .planner-cal-header {
-  display: flex; align-items: center; gap: 0.4rem;
-  margin-bottom: 0.6rem;
+  display: flex; align-items: center; gap: 0.25rem;
+  margin-bottom: 0.35rem;
 }
+.planner-cal-header.collapsed { margin-bottom: 0; }
 .planner-cal-title {
-  flex: 1; text-align: center; font-size: 0.78rem; font-weight: 900;
-  font-family: var(--heading); color: var(--t1); text-transform: uppercase; letter-spacing: 0.05em;
+  flex: 1; text-align: center; font-size: 0.62rem; font-weight: 900;
+  font-family: var(--mono); color: var(--t2); letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+.planner-cal-toggle {
+  background: none; border: none; color: var(--t3); font-size: 0.6rem;
+  cursor: pointer; padding: 0 0.15rem; line-height: 1;
 }
 .planner-cal-nav {
-  background: none; border: 1px solid var(--bdr); color: var(--t2);
-  border-radius: 0.35rem; width: 1.7rem; height: 1.7rem; font-size: 1rem;
+  background: none; border: 1px solid var(--bdr); color: var(--t3);
+  border-radius: 0.25rem; width: 1.2rem; height: 1.2rem; font-size: 0.7rem;
   cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1;
+  flex-shrink: 0;
 }
-.planner-cal-nav:hover { background: var(--surf); }
+.planner-cal-nav:hover { background: var(--surf); color: var(--t1); }
 .planner-cal-today {
-  background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.25);
-  color: #818cf8; border-radius: 0.35rem; padding: 0.2rem 0.55rem;
-  font-size: 0.62rem; font-weight: 700; cursor: pointer; font-family: var(--mono);
+  background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.2);
+  color: #818cf8; border-radius: 0.25rem; padding: 0.08rem 0.3rem;
+  font-size: 0.55rem; font-weight: 700; cursor: pointer; font-family: var(--mono); white-space: nowrap;
 }
-.planner-cal-today:hover { background: rgba(99,102,241,0.22); }
+.planner-cal-today:hover { background: rgba(99,102,241,0.2); }
 .planner-cal-grid {
-  display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px;
+  display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px;
 }
 .planner-cal-day-hdr {
-  text-align: center; font-size: 0.58rem; font-weight: 700;
-  color: var(--t3); font-family: var(--mono); padding: 0.2rem 0;
-  text-transform: uppercase;
+  text-align: center; font-size: 0.48rem; font-weight: 700;
+  color: var(--t4); font-family: var(--mono); padding: 0.1rem 0;
 }
 .planner-cal-cell {
-  text-align: center; font-size: 0.65rem; font-family: var(--mono);
-  color: var(--t2); padding: 0.3rem 0.1rem; border-radius: 0.35rem;
-  cursor: default; line-height: 1.3;
-  transition: background 0.1s;
+  text-align: center; font-size: 0.56rem; font-family: var(--mono);
+  color: var(--t2); padding: 0.2rem 0.05rem; border-radius: 0.2rem;
+  cursor: default; line-height: 1.2; transition: background 0.1s;
 }
 .planner-cal-cell.other-month { color: var(--t4); }
 .planner-cal-cell.today {
-  background: rgba(99,102,241,0.18);
-  color: #818cf8; font-weight: 900;
-  box-shadow: inset 0 0 0 1.5px rgba(99,102,241,0.5);
+  background: rgba(99,102,241,0.18); color: #818cf8; font-weight: 900;
+  box-shadow: inset 0 0 0 1px rgba(99,102,241,0.45);
 }
-.planner-cal-cell.has-plan { font-weight: 700; color: #34d399; }
+.planner-cal-cell.has-plan { color: #34d399; font-weight: 700; }
 .planner-cal-cell.has-plan::after {
-  content: ''; display: block; width: 4px; height: 4px;
-  background: #34d399; border-radius: 50%; margin: 1px auto 0;
+  content: ''; display: block; width: 3px; height: 3px;
+  background: #34d399; border-radius: 50%; margin: 0 auto;
 }
 .planner-cal-cell:hover:not(.other-month) { background: var(--surf); }
 

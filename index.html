@@ -755,13 +755,14 @@ Use the toolbar above for bullets, colors and more."></div>
             <div id="planner-tab-master" class="planner-subtab hidden">
                 <!-- Mini Calendar -->
                 <div id="planner-cal-wrap" class="planner-cal-wrap">
-                    <div class="planner-cal-header">
+                    <div class="planner-cal-header" id="planner-cal-header">
+                        <button class="planner-cal-toggle" onclick="plannerCalToggle()" id="planner-cal-toggle-btn" title="Collapse">&#9660;</button>
                         <button class="planner-cal-nav" onclick="plannerCalMove(-1)">&#8249;</button>
                         <span id="planner-cal-title" class="planner-cal-title"></span>
                         <button class="planner-cal-nav" onclick="plannerCalMove(1)">&#8250;</button>
                         <button class="planner-cal-today" onclick="plannerCalToday()">Today</button>
                     </div>
-                    <div class="planner-cal-grid" id="planner-cal-grid"></div>
+                    <div id="planner-cal-grid" class="planner-cal-grid"></div>
                 </div>
                 <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
                     <h2 class="heading-font text-2xl font-black" style="color:var(--t1);">Mission Timeline</h2>
