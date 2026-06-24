@@ -1,14 +1,212 @@
 -- ============================================================================
--- UPSC TRACKER: Multi-Table Schema v2
--- Run this ENTIRE script in Supabase Dashboard → SQL Editor → New Query → Run
+-- UPSC TRACKER: SOLID Schema v5
+-- Design: Single Responsibility per table, CASCADE deletes, full RLS,
+--         updated_at triggers, indexes on all FK + query columns.
+-- SAFE TO RUN on existing DB: all migrations use IF NOT EXISTS / IF EXISTS.
 -- ============================================================================
 
--- ⚠️ This will DROP old tables. Skip DROPs if you want to preserve data.
-DROP TABLE IF EXISTS upsc_custom_plans CASCADE;
-DROP TABLE IF EXISTS upsc_tracker_progress CASCADE;
-DROP TABLE IF EXISTS upsc_user_sessions CASCADE;
-DROP TABLE IF EXISTS upsc_user_profiles CASCADE;
-DROP TABLE IF EXISTS nishant_upsc_tracker CASCADE;
+-- ── FRESH INSTALL: Drop + recreate (comment out if upgrading existing DB) ────
+-- DROP TABLE IF EXISTS upsc_plan_tables     CASCADE;
+-- DROP TABLE IF EXISTS upsc_focus_sessions  CASCADE;
+-- DROP TABLE IF EXISTS upsc_user_sources    CASCADE;
+-- DROP TABLE IF EXISTS upsc_custom_plans    CASCADE;
+-- DROP TABLE IF EXISTS upsc_tracker_progress CASCADE;
+-- DROP TABLE IF EXISTS upsc_user_sessions   CASCADE;
+-- DROP TABLE IF EXISTS upsc_user_profiles   CASCADE;
+
+-- ============================================================================
+-- TABLE 1: User Profiles — identity, preferences, S&W data
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS upsc_user_profiles (
+    user_id      UUID        PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    display_name TEXT        NOT NULL DEFAULT 'User',
+    email        TEXT,
+    phone        TEXT,
+    age          INTEGER,
+    attempt      INTEGER     DEFAULT 1,
+    profile_data JSONB       DEFAULT '{}',  -- stores: {strengths, weaknesses, show_sw, optional_subject}
+    created_at   TIMESTAMPTZ DEFAULT now(),
+    updated_at   TIMESTAMPTZ DEFAULT now()
+);
+ALTER TABLE upsc_user_profiles ADD COLUMN IF NOT EXISTS phone        TEXT;
+ALTER TABLE upsc_user_profiles ADD COLUMN IF NOT EXISTS profile_data JSONB DEFAULT '{}';
+ALTER TABLE upsc_user_profiles ADD COLUMN IF NOT EXISTS updated_at   TIMESTAMPTZ DEFAULT now();
+
+ALTER TABLE upsc_user_profiles ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users read own profile"   ON upsc_user_profiles;
+DROP POLICY IF EXISTS "Users insert own profile" ON upsc_user_profiles;
+DROP POLICY IF EXISTS "Users update own profile" ON upsc_user_profiles;
+CREATE POLICY "Users read own profile"   ON upsc_user_profiles FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users insert own profile" ON upsc_user_profiles FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users update own profile" ON upsc_user_profiles FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+-- ============================================================================
+-- TABLE 2: User Sessions — login tracking
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS upsc_user_sessions (
+    user_id      UUID        PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    email        TEXT,
+    is_superuser BOOLEAN     DEFAULT FALSE,
+    login_at     TIMESTAMPTZ DEFAULT now(),
+    last_active  TIMESTAMPTZ DEFAULT now()
+);
+ALTER TABLE upsc_user_sessions ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users read own session"   ON upsc_user_sessions;
+DROP POLICY IF EXISTS "Users insert own session" ON upsc_user_sessions;
+DROP POLICY IF EXISTS "Users update own session" ON upsc_user_sessions;
+CREATE POLICY "Users read own session"   ON upsc_user_sessions FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users insert own session" ON upsc_user_sessions FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users update own session" ON upsc_user_sessions FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+-- ============================================================================
+-- TABLE 3: Tracker Progress — checkbox + notes for ALL tracker items
+--   id patterns: 'custom_{box}_{enc}', 'plan_task_{enc}_{taskB64}', etc.
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS upsc_tracker_progress (
+    id          TEXT        NOT NULL,
+    user_id     UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    is_checked  BOOLEAN     NOT NULL DEFAULT FALSE,
+    topic_note  TEXT        DEFAULT '',
+    updated_at  TIMESTAMPTZ DEFAULT now(),
+    PRIMARY KEY (id, user_id)
+);
+ALTER TABLE upsc_tracker_progress ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT now();
+CREATE INDEX IF NOT EXISTS idx_progress_user_id  ON upsc_tracker_progress(user_id);
+CREATE INDEX IF NOT EXISTS idx_progress_updated  ON upsc_tracker_progress(user_id, updated_at DESC);
+ALTER TABLE upsc_tracker_progress ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users read own progress"   ON upsc_tracker_progress;
+DROP POLICY IF EXISTS "Users insert own progress" ON upsc_tracker_progress;
+DROP POLICY IF EXISTS "Users update own progress" ON upsc_tracker_progress;
+DROP POLICY IF EXISTS "Users delete own progress" ON upsc_tracker_progress;
+CREATE POLICY "Users read own progress"   ON upsc_tracker_progress FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users insert own progress" ON upsc_tracker_progress FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users update own progress" ON upsc_tracker_progress FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users delete own progress" ON upsc_tracker_progress FOR DELETE USING (auth.uid() = user_id);
+
+-- ============================================================================
+-- TABLE 4: Custom Study Plans
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS upsc_custom_plans (
+    plan_id       TEXT        NOT NULL,   -- btoa-encoded title (stable ID)
+    user_id       UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    plan_title    TEXT        NOT NULL,
+    plan_type     TEXT        DEFAULT 'weekly',
+    plan_category TEXT        DEFAULT 'common',
+    plan_division TEXT        DEFAULT 'both',
+    plan_subject  TEXT,
+    plan_note     TEXT        DEFAULT '',
+    content_type  TEXT        DEFAULT 'both',
+    notif_enabled BOOLEAN     DEFAULT TRUE,
+    start_date    DATE,
+    end_date      DATE,
+    created_at    TIMESTAMPTZ DEFAULT now(),
+    updated_at    TIMESTAMPTZ DEFAULT now(),
+    PRIMARY KEY (plan_id, user_id)
+);
+ALTER TABLE upsc_custom_plans ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT now();
+CREATE INDEX IF NOT EXISTS idx_plans_user_id  ON upsc_custom_plans(user_id);
+CREATE INDEX IF NOT EXISTS idx_plans_category ON upsc_custom_plans(user_id, plan_category);
+ALTER TABLE upsc_custom_plans ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users read own plans"   ON upsc_custom_plans;
+DROP POLICY IF EXISTS "Users insert own plans" ON upsc_custom_plans;
+DROP POLICY IF EXISTS "Users update own plans" ON upsc_custom_plans;
+DROP POLICY IF EXISTS "Users delete own plans" ON upsc_custom_plans;
+CREATE POLICY "Users read own plans"   ON upsc_custom_plans FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users insert own plans" ON upsc_custom_plans FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users update own plans" ON upsc_custom_plans FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users delete own plans" ON upsc_custom_plans FOR DELETE USING (auth.uid() = user_id);
+
+-- ============================================================================
+-- TABLE 5: Plan Spreadsheet Sheets (plantable.js data)
+--   Cascades from auth.users. plan_id references upsc_custom_plans logically.
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS upsc_plan_tables (
+    id           UUID        DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id      UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    plan_id      TEXT        NOT NULL,
+    sheet_name   TEXT        NOT NULL DEFAULT 'Sheet 1',
+    columns_data JSONB       NOT NULL DEFAULT '[]',
+    rows_data    JSONB       NOT NULL DEFAULT '[]',
+    sort_order   INTEGER     DEFAULT 0,
+    updated_at   TIMESTAMPTZ DEFAULT now(),
+    created_at   TIMESTAMPTZ DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_plan_tables_user  ON upsc_plan_tables(user_id);
+CREATE INDEX IF NOT EXISTS idx_plan_tables_plan  ON upsc_plan_tables(user_id, plan_id);
+CREATE INDEX IF NOT EXISTS idx_plan_tables_order ON upsc_plan_tables(user_id, plan_id, sort_order);
+ALTER TABLE upsc_plan_tables ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users read own plan tables"   ON upsc_plan_tables;
+DROP POLICY IF EXISTS "Users insert own plan tables" ON upsc_plan_tables;
+DROP POLICY IF EXISTS "Users update own plan tables" ON upsc_plan_tables;
+DROP POLICY IF EXISTS "Users delete own plan tables" ON upsc_plan_tables;
+CREATE POLICY "Users read own plan tables"   ON upsc_plan_tables FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users insert own plan tables" ON upsc_plan_tables FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users update own plan tables" ON upsc_plan_tables FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users delete own plan tables" ON upsc_plan_tables FOR DELETE USING (auth.uid() = user_id);
+
+-- ============================================================================
+-- TABLE 6: User Sources & Reference Links
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS upsc_user_sources (
+    source_id  TEXT        NOT NULL,
+    user_id    UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    title      TEXT        NOT NULL,
+    link       TEXT,
+    topic      TEXT        DEFAULT 'General',
+    notes      TEXT,
+    created_at TIMESTAMPTZ DEFAULT now(),
+    PRIMARY KEY (source_id, user_id)
+);
+CREATE INDEX IF NOT EXISTS idx_sources_user_id ON upsc_user_sources(user_id);
+ALTER TABLE upsc_user_sources ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users read own sources"   ON upsc_user_sources;
+DROP POLICY IF EXISTS "Users insert own sources" ON upsc_user_sources;
+DROP POLICY IF EXISTS "Users update own sources" ON upsc_user_sources;
+DROP POLICY IF EXISTS "Users delete own sources" ON upsc_user_sources;
+CREATE POLICY "Users read own sources"   ON upsc_user_sources FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users insert own sources" ON upsc_user_sources FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users update own sources" ON upsc_user_sources FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users delete own sources" ON upsc_user_sources FOR DELETE USING (auth.uid() = user_id);
+
+-- ============================================================================
+-- TABLE 7: Focus Sessions — cross-device study time tracking
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS upsc_focus_sessions (
+    id               UUID        DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id          UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    started_at       TIMESTAMPTZ NOT NULL DEFAULT now(),
+    ended_at         TIMESTAMPTZ,
+    duration_seconds INTEGER     DEFAULT 0,
+    created_at       TIMESTAMPTZ DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_focus_user_id ON upsc_focus_sessions(user_id);
+CREATE INDEX IF NOT EXISTS idx_focus_started ON upsc_focus_sessions(user_id, started_at DESC);
+ALTER TABLE upsc_focus_sessions ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users read own focus sessions"   ON upsc_focus_sessions;
+DROP POLICY IF EXISTS "Users insert own focus sessions" ON upsc_focus_sessions;
+DROP POLICY IF EXISTS "Users update own focus sessions" ON upsc_focus_sessions;
+DROP POLICY IF EXISTS "Users delete own focus sessions" ON upsc_focus_sessions;
+CREATE POLICY "Users read own focus sessions"   ON upsc_focus_sessions FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users insert own focus sessions" ON upsc_focus_sessions FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users update own focus sessions" ON upsc_focus_sessions FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users delete own focus sessions" ON upsc_focus_sessions FOR DELETE USING (auth.uid() = user_id);
+
+-- ============================================================================
+-- TRIGGERS: auto-update updated_at on all mutable tables
+-- ============================================================================
+CREATE OR REPLACE FUNCTION _upsc_set_updated_at()
+RETURNS TRIGGER LANGUAGE plpgsql AS $$
+BEGIN NEW.updated_at = now(); RETURN NEW; END; $$;
+
+DROP TRIGGER IF EXISTS trg_profiles_updated_at     ON upsc_user_profiles;
+DROP TRIGGER IF EXISTS trg_progress_updated_at     ON upsc_tracker_progress;
+DROP TRIGGER IF EXISTS trg_custom_plans_updated_at ON upsc_custom_plans;
+DROP TRIGGER IF EXISTS trg_plan_tables_updated_at  ON upsc_plan_tables;
+
+CREATE TRIGGER trg_profiles_updated_at     BEFORE UPDATE ON upsc_user_profiles     FOR EACH ROW EXECUTE PROCEDURE _upsc_set_updated_at();
+CREATE TRIGGER trg_progress_updated_at     BEFORE UPDATE ON upsc_tracker_progress   FOR EACH ROW EXECUTE PROCEDURE _upsc_set_updated_at();
+CREATE TRIGGER trg_custom_plans_updated_at BEFORE UPDATE ON upsc_custom_plans       FOR EACH ROW EXECUTE PROCEDURE _upsc_set_updated_at();
+CREATE TRIGGER trg_plan_tables_updated_at  BEFORE UPDATE ON upsc_plan_tables        FOR EACH ROW EXECUTE PROCEDURE _upsc_set_updated_at();
 
 -- ============================================================================
 -- TABLE 1: User Profiles (display name, preferences)

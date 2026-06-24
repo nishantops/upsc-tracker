@@ -859,7 +859,7 @@ var PLAN_CAT_STYLES = {
     optional: { bg: 'rgba(244,63,94,0.15)',   text: '#fb7185', bdr: 'rgba(244,63,94,0.35)'   },
     custom:   { bg: 'rgba(156,163,175,0.15)', text: '#9ca3af', bdr: 'rgba(156,163,175,0.35)' }
 };
-var PLAN_CAT_ORDER = { gs1:1, gs2:2, gs3:3, gs4:4, essay:5, optional:6, common:7, custom:8 };
+var PLAN_CAT_ORDER  = { gs1:1, gs2:2, gs3:3, gs4:4, essay:5, optional:6, common:7, custom:8 };
 
 function sortPlanCards() {
     var grid = document.getElementById('planner-grid');
@@ -877,7 +877,6 @@ function sortPlanCards() {
 }
 
 var PLAN_DIV_LABELS = { prelims:'Prelims', mains:'Mains', both:'P + M' };
-
 // ── Inline task entry ───────────────────────────────────────────────────────
 function addPlanTaskPrompt(planEncodedName) {
     // If inline form already open, just focus it
