@@ -339,9 +339,11 @@ function openPlanDrawer(encodedName) {
         }
     }
 
-    // Default to Tasks tab; if contentType is 'tables' start on Tables tab
+    // Always default to Tables tab; hide Tasks tab for 'tables' contentType
     var ct = plan.contentType || 'both';
-    switchDrawerTab(ct === 'tables' ? 'table' : 'tasks');
+    var _tasksBtn = document.getElementById('pdt-tasks');
+    if (_tasksBtn) _tasksBtn.style.display = ct === 'tasks' ? '' : 'none';
+    switchDrawerTab('table');
 
     _updateDrawerProgress(encodedName);
 
