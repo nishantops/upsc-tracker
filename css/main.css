@@ -1020,6 +1020,13 @@ tr:hover .pt-td-del button { opacity: 1; }
   border-radius: 0.4rem; padding: 0.28rem 0.65rem; font-size: 0.62rem;
   font-weight: 800; cursor: pointer; font-family: var(--mono); white-space: nowrap;
 }
+.pt-sheet-del {
+  background: none; border: none; color: var(--t4); font-size: 0.6rem;
+  cursor: pointer; padding: 0 0 0 0.3rem; line-height: 1; vertical-align: middle;
+  opacity: 0.6;
+}
+.pt-sheet-tab:hover .pt-sheet-del,
+.pt-sheet-tab.active .pt-sheet-del { opacity: 1; color: #f87171; }
 .pt-sheet-rename-input {
   background: var(--inp); border: 1px solid var(--bdr-h); color: var(--t1);
   border-radius: 0.25rem; padding: 0.1rem 0.25rem; font-size: 0.63rem;
