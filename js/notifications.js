@@ -355,7 +355,30 @@ function openNotifSettings() {
         var w = document.getElementById('ns-custom-wrap');
         if (w) w.style.display = this.checked ? 'flex' : 'none';
     };
+
+    // Master toggle wires up enable/disable of all other controls
+    _applyMasterToggle(!!p.enabled);
+    var masterEl = document.getElementById('ns-enabled');
+    if (masterEl) masterEl.onchange = function() { _applyMasterToggle(this.checked); };
+
     modal.classList.remove('hidden');
+}
+
+// Visually enables/disables all sub-settings based on master toggle
+function _applyMasterToggle(enabled) {
+    var body = document.getElementById('ns-settings-body');
+    if (!body) return;
+    var controls = body.querySelectorAll('input, select, button');
+    controls.forEach(function(el) {
+        if (el.id === 'ns-enabled') return; // never disable master itself
+        el.disabled = !enabled;
+    });
+    body.style.opacity  = enabled ? '1' : '0.45';
+    body.style.pointerEvents = enabled ? '' : 'none';
+    // Re-enable the master toggle row so it stays clickable
+    var masterEl = document.getElementById('ns-enabled');
+    if (masterEl) { masterEl.disabled = false; masterEl.closest && masterEl.closest('.ns-row') && (masterEl.closest('.ns-row').style.pointerEvents = ''); }
+    if (masterEl) masterEl.parentElement.style.pointerEvents = '';
 }
 
 function closeNotifSettings() {
@@ -365,9 +388,15 @@ function closeNotifSettings() {
 
 async function saveNotifSettings() {
     var g = function(id) { return document.getElementById(id) || { checked: false, value: '' }; };
+    var masterEnabled = g('ns-enabled').checked;
+    // Re-enable all controls temporarily to read their true values before saving
+    var body = document.getElementById('ns-settings-body');
+    if (body && !masterEnabled) {
+        body.querySelectorAll('input,select').forEach(function(el){ el.disabled = false; });
+    }
     var prefs = {
         user_id:              typeof currentUserId !== 'undefined' ? currentUserId : null,
-        enabled:              g('ns-enabled').checked,
+        enabled:              masterEnabled,
         notify_plan_start:    g('ns-plan-start').checked,
         notify_start_days:    parseInt(g('ns-start-days').value) || 1,
         notify_plan_end:      g('ns-plan-end').checked,
