@@ -461,3 +461,161 @@ body {
   color: var(--emerald-l) !important;
   font-size: 0.7rem !important;
 }
+
+/* ── Profile badges ──────────────────────────────────────────────────────── */
+.profile-badges {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 1rem 0 0.5rem;
+}
+
+.info-badge {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--t2);
+  background: var(--surf);
+  border: 1px solid var(--bdr);
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+}
+
+/* ── Form extras ─────────────────────────────────────────────────────────── */
+.field-label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--t3);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.3rem;
+}
+
+.field-error {
+  margin: 0.25rem 0 0;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: #f87171;
+}
+
+.input-error {
+  border-color: #f87171 !important;
+}
+
+.form-row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.form-row .auth-field {
+  flex: 1;
+}
+
+select.auth-input {
+  appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23a08ed8' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2rem;
+}
+
+/* ── Modal ────────────────────────────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  padding: 1rem;
+}
+
+.modal-card {
+  background: var(--card-h);
+  border: 1px solid var(--bdr);
+  border-radius: var(--r);
+  padding: 2rem;
+  width: 100%;
+  max-width: 440px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.modal-avatar {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--indigo), var(--accent));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+
+.modal-title {
+  margin: 0;
+  font-family: var(--heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--t1);
+}
+
+.modal-subtitle {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--t3);
+}
+
+.modal-close {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: var(--t3);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+/* ── Dropdown extras ─────────────────────────────────────────────────────── */
+.dropdown-name {
+  margin: 0;
+  padding: 0 0.75rem 0.25rem;
+  font-family: var(--heading);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--t1);
+}
+
+.dropdown-meta {
+  margin: 0;
+  padding: 0 0.75rem 0.4rem;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--t4);
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: var(--bdr);
+  margin: 0.25rem 0;
+}
+
+.dropdown-logout {
+  color: var(--rose-l) !important;
+}

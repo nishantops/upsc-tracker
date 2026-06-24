@@ -1,11 +1,14 @@
 import { useAuth } from './context/AuthContext';
+import { useProfile } from './hooks/useProfile';
 import { AuthGate } from './components/AuthGate';
+import { ProfileSetup } from './components/ProfileSetup';
 import { Layout } from './components/Layout';
 
 export default function App() {
-  const { user, loading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
+  const { loading: profileLoading, isComplete, isSuperuser } = useProfile();
 
-  if (loading) {
+  if (authLoading || (user && profileLoading)) {
     return (
       <div className="loading-screen">
         <div className="loading-spinner" />
@@ -14,5 +17,7 @@ export default function App() {
     );
   }
 
-  return user ? <Layout /> : <AuthGate />;
+  if (!user) return <AuthGate />;
+  if (!isComplete && !isSuperuser) return <ProfileSetup />;
+  return <Layout />;
 }
