@@ -188,6 +188,7 @@ ALTER TABLE upsc_custom_plans ADD COLUMN IF NOT EXISTS content_type TEXT DEFAULT
 
 -- ============================================================================
 -- TABLE 7: Plan Spreadsheet Sheets (plantable.js — CRITICAL for auto-save)
+-- Safe to re-run: preserves all existing data
 -- ============================================================================
 CREATE TABLE IF NOT EXISTS upsc_plan_tables (
     id           UUID        DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -205,21 +206,27 @@ CREATE INDEX IF NOT EXISTS idx_plan_tables_user ON upsc_plan_tables(user_id);
 CREATE INDEX IF NOT EXISTS idx_plan_tables_plan ON upsc_plan_tables(user_id, plan_id);
 ALTER TABLE upsc_plan_tables ENABLE ROW LEVEL SECURITY;
 
+-- DROP before CREATE (policies have no IF NOT EXISTS)
+DROP POLICY IF EXISTS "Users read own plan tables"   ON upsc_plan_tables;
+DROP POLICY IF EXISTS "Users insert own plan tables" ON upsc_plan_tables;
+DROP POLICY IF EXISTS "Users update own plan tables" ON upsc_plan_tables;
+DROP POLICY IF EXISTS "Users delete own plan tables" ON upsc_plan_tables;
+
 CREATE POLICY "Users read own plan tables"   ON upsc_plan_tables FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Users insert own plan tables" ON upsc_plan_tables FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users update own plan tables" ON upsc_plan_tables FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users delete own plan tables" ON upsc_plan_tables FOR DELETE USING (auth.uid() = user_id);
 
 -- ============================================================================
--- MIGRATIONS v4+ (run these to upgrade existing databases)
+-- MIGRATIONS v4+ — Idempotent, preserves all data. Safe to re-run.
 -- ============================================================================
 
--- v4: profile extras — phone, profile_data (S&W), updated_at
+-- v4: profile extras — phone, profile_data (S&W / misc), updated_at
 ALTER TABLE upsc_user_profiles ADD COLUMN IF NOT EXISTS phone        TEXT;
 ALTER TABLE upsc_user_profiles ADD COLUMN IF NOT EXISTS profile_data JSONB DEFAULT '{}'::jsonb;
 ALTER TABLE upsc_user_profiles ADD COLUMN IF NOT EXISTS updated_at   TIMESTAMPTZ DEFAULT now();
 
--- v4: updated_at auto-trigger (idempotent)
+-- v4: auto updated_at trigger (CREATE OR REPLACE = idempotent)
 CREATE OR REPLACE FUNCTION _upsc_set_updated_at()
 RETURNS TRIGGER LANGUAGE plpgsql AS $$
 BEGIN NEW.updated_at = now(); RETURN NEW; END; $$;
