@@ -36,7 +36,8 @@ ALTER TABLE upsc_user_profiles ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Users read own profile"   ON upsc_user_profiles;
 DROP POLICY IF EXISTS "Users insert own profile" ON upsc_user_profiles;
 DROP POLICY IF EXISTS "Users update own profile" ON upsc_user_profiles;
-CREATE POLICY "Users read own profile"   ON upsc_user_profiles FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users read own profile"   ON upsc_user_profiles FOR SELECT
+  USING (auth.uid() = user_id OR (auth.jwt() ->> 'email') = 'admin@upsc-nishant.me');
 CREATE POLICY "Users insert own profile" ON upsc_user_profiles FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users update own profile" ON upsc_user_profiles FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
