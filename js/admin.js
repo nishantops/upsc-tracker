@@ -46,9 +46,20 @@ async function adminLogin() {
 
 async function checkAdminRole(userId) {
     try {
+        // 1. Check upsc_user_sessions.is_superuser (fastest, primary)
         var r = await adminClient.from('upsc_user_sessions').select('is_superuser').eq('user_id', userId).maybeSingle();
-        return r.data && r.data.is_superuser === true;
-    } catch(e) { return false; }
+        if (r.data && r.data.is_superuser === true) return true;
+
+        // 2. Upsert session as superuser if this is the known admin
+        //    (first-time setup: run "UPDATE upsc_user_sessions SET is_superuser=true WHERE user_id='...'" in Supabase)
+        // 3. Check Supabase app_metadata (set via Supabase Dashboard → Users → Edit)
+        var gu = await adminClient.auth.getUser();
+        if (gu.data && gu.data.user) {
+            var meta = gu.data.user.app_metadata || {};
+            if (meta.is_admin === true || meta.role === 'admin') return true;
+        }
+        return false;
+    } catch(e) { console.warn('[Admin] checkAdminRole error:', e.message); return false; }
 }
 
 function showAdminError(msg) {
