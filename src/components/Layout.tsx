@@ -9,6 +9,7 @@ import { PlansGrid } from './plans/PlansGrid';
 import { SourcesView } from './sources/SourcesView';
 import { PYQBrowser } from './pyq/PYQBrowser';
 import { FocusWidget } from './focus/FocusWidget';
+import { TestSeriesView } from './testseries/TestSeriesView';
 import { ENV } from '../lib/env';
 import {
   DEFAULT_NAV,
@@ -176,7 +177,7 @@ export function Layout() {
 
           {nav.marathon === 'testseries' && (
             <main className="app-main">
-              <Placeholder label="Test Series" phase={9} />
+              <TestSeriesView />
             </main>
           )}
         </>
