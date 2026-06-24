@@ -30,7 +30,7 @@ const ENV = Object.freeze({
     MSG_UNREAD_POLL_MS:      120000, // How often to check for unread messages (ms)
 
     // ── Table (spreadsheet) ─────────────────────────────────────────────────
-    PT_DEBOUNCE_MS:  2000,           // Autosave debounce in ms
+    PT_DEBOUNCE_MS:  500,           // Autosave debounce in ms
     PT_MAX_ZOOM:     2.0,
     PT_MIN_ZOOM:     0.4,
 

@@ -214,13 +214,15 @@ async function submitMonthlyFeedback() {
 
     try {
         if (typeof dbClient === 'undefined' || !currentUserId) throw new Error('Not logged in');
-        var res = await dbClient.from('upsc_feedback').insert({
+        // Refresh session to ensure valid JWT (fixes RLS failure after idle)
+        await dbClient.auth.getSession();
+        var res = await dbClient.from('upsc_feedback').upsert({
             user_id: currentUserId,
             display_name: name,
             content: (inp && inp.value.trim()) || '(no message)',
             month_key: monthKey,
             rating: _fbStarValue
-        });
+        }, { onConflict: 'user_id,month_key' });
         if (res.error) throw res.error;
         if (status) { status.textContent = '✓ Feedback submitted for ' + monthKey + '!'; status.style.color = '#10b981'; }
         _loadFeedbackStatus();
@@ -324,7 +326,8 @@ async function submitPromptFeedback() {
     var name = (window._userProfile && window._userProfile.display_name)||'User';
     if (st) { st.textContent = 'Submitting…'; st.style.color='var(--t3)'; }
     try {
-        var res = await dbClient.from('upsc_feedback').insert({
+        await dbClient.auth.getSession();
+        var res = await dbClient.from('upsc_feedback').upsert({
             user_id: currentUserId, display_name: name,
             content: txt || '(no message)', month_key: mk, rating: _promptStarVal
         });

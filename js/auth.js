@@ -220,9 +220,20 @@ async function checkAutoLogout() {
     } catch(e) { /* non-critical */ }
 }
 
-// Update activity every 5 minutes, check auto-logout every minute
-setInterval(updateSessionActivity, 5 * 60 * 1000);
-setInterval(checkAutoLogout, 60 * 1000);
+// ── Activity-based session timeout ──
+// Only update last_active on real user interaction (not a background timer)
+var _lastActivityTs = Date.now();
+function _onUserActivity() { _lastActivityTs = Date.now(); }
+['mousemove','mousedown','keydown','touchstart','scroll'].forEach(function(ev) {
+    document.addEventListener(ev, _onUserActivity, { passive: true, capture: true });
+});
+// Every 2 min: if user was active since last check → update DB. If idle > AUTO_LOGOUT_MS → logout.
+setInterval(function() {
+    var idle = Date.now() - _lastActivityTs;
+    if (idle > AUTO_LOGOUT_MS) { handleLogout(true); return; }
+    // User was active — update DB
+    updateSessionActivity();
+}, 2 * 60 * 1000);
 
 // Allow Enter key to submit login
 document.getElementById('auth-password').addEventListener('keydown', (e) => { if (e.key === 'Enter') handleLogin(); });

@@ -125,6 +125,8 @@ CREATE TABLE IF NOT EXISTS upsc_plan_tables (
     id           UUID        DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id      UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     plan_id      TEXT        NOT NULL,
+    plan_title   TEXT,                          -- human-readable (decoded from plan_id)
+    table_type   TEXT        DEFAULT 'plan',    -- 'plan' or 'master'
     sheet_name   TEXT        NOT NULL DEFAULT 'Sheet 1',
     columns_data JSONB       NOT NULL DEFAULT '[]',
     rows_data    JSONB       NOT NULL DEFAULT '[]',
@@ -135,6 +137,7 @@ CREATE TABLE IF NOT EXISTS upsc_plan_tables (
 CREATE INDEX IF NOT EXISTS idx_plan_tables_user  ON upsc_plan_tables(user_id);
 CREATE INDEX IF NOT EXISTS idx_plan_tables_plan  ON upsc_plan_tables(user_id, plan_id);
 CREATE INDEX IF NOT EXISTS idx_plan_tables_order ON upsc_plan_tables(user_id, plan_id, sort_order);
+CREATE INDEX IF NOT EXISTS idx_plan_tables_title ON upsc_plan_tables(plan_title);
 ALTER TABLE upsc_plan_tables ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Users read own plan tables"   ON upsc_plan_tables;
 DROP POLICY IF EXISTS "Users insert own plan tables" ON upsc_plan_tables;
