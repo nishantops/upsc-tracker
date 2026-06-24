@@ -1043,6 +1043,18 @@ tr:hover .pt-td-del button { opacity: 1; }
   font-family: var(--mono); font-size: 0.72rem; padding: 0.3rem 0.4rem;
   color: var(--t1); border-bottom: 1.5px solid var(--accent1);
 }
+/* Sort + Filter UI */
+.pt-sort-btn {
+  background: none; border: none; color: var(--t4); font-size: 0.6rem;
+  cursor: pointer; padding: 0 0.25rem; opacity: 0.6; line-height: 1;
+}
+.pt-sort-btn:hover { opacity: 1; color: var(--accent-l); }
+.pt-th:hover .pt-sort-btn { opacity: 1; }
+.pt-filter-btn { font-size: 0.6rem !important; }
+.pt-filter-row th { background: var(--inp); padding: 0.15rem 0.2rem; border-bottom: 2px solid var(--accent1); }
+.pt-filter-cell input { width: 100%; background: var(--inp); border: 1px solid var(--bdr); border-radius: 0.25rem; padding: 0.2rem 0.4rem; font-size: 0.6rem; color: var(--t1); font-family: var(--mono); }
+.pt-filter-cell input:focus { outline: none; border-color: var(--accent-l); }
+[data-theme="light"] .pt-filter-cell input { background: #f8f5ff; color: #1e1248; }
 .pt-sheet-rename-input {
   background: var(--inp); border: 1px solid var(--bdr-h); color: var(--t1);
   border-radius: 0.25rem; padding: 0.1rem 0.25rem; font-size: 0.63rem;
