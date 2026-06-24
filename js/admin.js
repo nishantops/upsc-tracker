@@ -46,8 +46,8 @@ async function adminLogin() {
 
 async function checkAdminRole(userId) {
     try {
-        var r = await adminClient.from('upsc_user_profiles').select('is_admin').eq('user_id', userId).maybeSingle();
-        return r.data && r.data.is_admin === true;
+        var r = await adminClient.from('upsc_user_sessions').select('is_superuser').eq('user_id', userId).maybeSingle();
+        return r.data && r.data.is_superuser === true;
     } catch(e) { return false; }
 }
 
@@ -81,7 +81,7 @@ function showAdminDashboard(email) {
 }
 
 function adminNav(section) {
-    var sections = ['overview', 'users', 'focus', 'audit'];
+    var sections = ['overview', 'users', 'focus', 'audit', 'inbox'];
     sections.forEach(function(s) {
         var sec = document.getElementById('sec-' + s);
         var btn = document.getElementById('anav-' + s);
@@ -92,6 +92,7 @@ function adminNav(section) {
     if (section === 'users')    loadUsersTable();
     if (section === 'focus')    loadFocusAnalytics();
     if (section === 'audit')    loadAuditLog();
+    if (section === 'inbox')    loadInbox();
 }
 
 // ── Overview ─────────────────────────────────────────────────────────────
@@ -461,3 +462,115 @@ function showAdminToast(msg, type) {
     if (_adminToastTimer) clearTimeout(_adminToastTimer);
     _adminToastTimer = setTimeout(function() { el.style.display = 'none'; }, 3000);
 }
+
+// ── Inbox: Messages & Monthly Feedback ───────────────────────────────────
+
+// Repository pattern: cached inbox data with TTL
+var _inboxCache = { msgs: null, feedback: null, ts: 0 };
+var INBOX_TTL = 60000; // 1 min cache
+
+async function loadInbox() {
+    var el = document.getElementById('inbox-content');
+    if (!el) el = document.getElementById('sec-inbox');
+    if (!el) return;
+    el.innerHTML = '<div style="color:var(--t3);font-family:var(--mono);font-size:0.72rem;padding:1rem;">Loading inbox…</div>';
+
+    var now = Date.now();
+    if (_inboxCache.ts && (now - _inboxCache.ts) < INBOX_TTL && _inboxCache.msgs) {
+        _renderInbox(_inboxCache.msgs, _inboxCache.feedback);
+        return;
+    }
+
+    try {
+        var [msgsRes, fbRes] = await Promise.all([
+            adminClient.from('upsc_messages').select('*').order('created_at', { ascending: false }),
+            adminClient.from('upsc_feedback').select('*').order('created_at', { ascending: false })
+        ]);
+        var msgs = msgsRes.data || [];
+        var feedback = fbRes.data || [];
+        _inboxCache = { msgs, feedback, ts: Date.now() };
+        _renderInbox(msgs, feedback);
+    } catch(e) {
+        if (el) el.innerHTML = '<div style="color:#f87171;font-family:var(--mono);font-size:0.72rem;padding:1rem;">Error: ' + (e.message||'Could not load') + '</div>';
+    }
+}
+
+function _renderInbox(msgs, feedback) {
+    var el = document.getElementById('inbox-content');
+    if (!el) el = document.getElementById('sec-inbox');
+    if (!el) return;
+
+    // Group messages by user
+    var byUser = {};
+    msgs.forEach(function(m) {
+        if (!byUser[m.user_id]) byUser[m.user_id] = { name: m.display_name||'User', msgs: [] };
+        byUser[m.user_id].msgs.push(m);
+    });
+
+    // Group feedback by month
+    var byMonth = {};
+    feedback.forEach(function(f) {
+        if (!byMonth[f.month_key]) byMonth[f.month_key] = [];
+        byMonth[f.month_key].push(f);
+    });
+
+    function fmtDate(d) { return d ? new Date(d).toLocaleString('en-IN', { dateStyle:'medium', timeStyle:'short' }) : ''; }
+
+    // Messages section
+    var msgHtml = '<div style="margin-bottom:1.5rem;">';
+    msgHtml += '<h3 style="font-size:0.8rem;font-weight:800;color:var(--t1);margin-bottom:0.75rem;font-family:var(--mono);">💬 User Messages (' + msgs.length + ')</h3>';
+
+    if (!msgs.length) {
+        msgHtml += '<p style="color:var(--t3);font-size:0.7rem;font-family:var(--mono);">No messages yet.</p>';
+    } else {
+        // User-wise accordion
+        Object.keys(byUser).forEach(function(uid) {
+            var u = byUser[uid];
+            msgHtml += '<div style="border:1px solid var(--bdr);border-radius:0.7rem;margin-bottom:0.6rem;overflow:hidden;">';
+            msgHtml += '<div style="background:var(--surf);padding:0.5rem 0.85rem;display:flex;align-items:center;justify-content:space-between;">';
+            msgHtml += '<span style="font-size:0.72rem;font-weight:700;color:var(--t1);font-family:var(--mono);">👤 ' + _adminEsc(u.name) + '</span>';
+            msgHtml += '<span style="font-size:0.62rem;color:var(--t3);font-family:var(--mono);">' + u.msgs.length + ' message(s)</span></div>';
+            u.msgs.forEach(function(m) {
+                msgHtml += '<div style="padding:0.6rem 0.85rem;border-top:1px solid var(--bdr);">';
+                msgHtml += '<div style="font-size:0.62rem;color:var(--t3);font-family:var(--mono);margin-bottom:0.25rem;">' + fmtDate(m.created_at) + '</div>';
+                msgHtml += '<div style="font-size:0.72rem;color:var(--t2);white-space:pre-wrap;line-height:1.5;">' + _adminEsc(m.content) + '</div>';
+                msgHtml += '</div>';
+            });
+            msgHtml += '</div>';
+        });
+    }
+    msgHtml += '</div>';
+
+    // Feedback section — month-wise, then user-wise within
+    var fbHtml = '<div>';
+    fbHtml += '<h3 style="font-size:0.8rem;font-weight:800;color:var(--t1);margin-bottom:0.75rem;font-family:var(--mono);">📝 Monthly Feedback (' + feedback.length + ')</h3>';
+
+    if (!feedback.length) {
+        fbHtml += '<p style="color:var(--t3);font-size:0.7rem;font-family:var(--mono);">No feedback submitted yet.</p>';
+    } else {
+        var sortedMonths = Object.keys(byMonth).sort().reverse();
+        sortedMonths.forEach(function(mkey) {
+            var entries = byMonth[mkey];
+            fbHtml += '<div style="border:1px solid var(--bdr);border-radius:0.7rem;margin-bottom:0.6rem;overflow:hidden;">';
+            fbHtml += '<div style="background:var(--surf);padding:0.5rem 0.85rem;display:flex;align-items:center;justify-content:space-between;">';
+            fbHtml += '<span style="font-size:0.72rem;font-weight:700;color:var(--accent-l);font-family:var(--mono);">📅 ' + mkey + '</span>';
+            fbHtml += '<span style="font-size:0.62rem;color:var(--t3);font-family:var(--mono);">' + entries.length + ' submission(s)</span></div>';
+            entries.forEach(function(f) {
+                fbHtml += '<div style="padding:0.6rem 0.85rem;border-top:1px solid var(--bdr);">';
+                fbHtml += '<div style="display:flex;justify-content:space-between;margin-bottom:0.2rem;">';
+                fbHtml += '<span style="font-size:0.68rem;font-weight:700;color:var(--t1);font-family:var(--mono);">👤 ' + _adminEsc(f.display_name||'User') + '</span>';
+                fbHtml += '<span style="font-size:0.6rem;color:var(--t3);font-family:var(--mono);">' + fmtDate(f.created_at) + '</span></div>';
+                fbHtml += '<div style="font-size:0.72rem;color:var(--t2);white-space:pre-wrap;line-height:1.5;">' + _adminEsc(f.content) + '</div>';
+                fbHtml += '</div>';
+            });
+            fbHtml += '</div>';
+        });
+    }
+    fbHtml += '</div>';
+
+    var refreshBtn = '<button onclick="_inboxCache.ts=0;loadInbox()" style="float:right;background:var(--surf);border:1px solid var(--bdr);color:var(--t2);border-radius:0.4rem;padding:0.25rem 0.75rem;font-size:0.62rem;font-family:var(--mono);cursor:pointer;margin-bottom:0.75rem;">⟳ Refresh</button>';
+
+    el.innerHTML = '<div style="padding:1rem 0;">' + refreshBtn + '<div style="clear:both;"></div>' + msgHtml + fbHtml + '</div>';
+}
+
+function _adminEsc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
