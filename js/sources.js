@@ -132,9 +132,28 @@ async function loadSources() {
                             ${notesHtml}
                         </div>
                     </div>
+                    <!-- Spreadsheet table toggle -->
+                    <div style="margin-top:0.65rem;border-top:1px solid rgba(0,0,0,0.06);padding-top:0.5rem;display:flex;align-items:center;justify-content:space-between;">
+                        <button onclick="toggleSourceTable('${src.source_id}')" id="src-tbl-btn-${src.source_id}" style="font-size:0.62rem;font-weight:700;font-family:var(--mono);background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);color:#6366f1;border-radius:0.35rem;padding:0.2rem 0.6rem;cursor:pointer;">⊞ Table</button>
+                    </div>
+                    <div id="src-tbl-${src.source_id}" style="display:none;margin-top:0.5rem;">
+                        <div id="plan-table-container-${src.source_id}" class="pt-container"></div>
+                    </div>
                 </div>`;
         });
     } catch(e) {
         console.error('Load sources error:', e);
+    }
+}
+
+function toggleSourceTable(sourceId) {
+    var wrap = document.getElementById('src-tbl-' + sourceId);
+    var btn  = document.getElementById('src-tbl-btn-' + sourceId);
+    if (!wrap) return;
+    var isOpen = wrap.style.display !== 'none';
+    wrap.style.display = isOpen ? 'none' : 'block';
+    if (btn) btn.textContent = isOpen ? '⊞ Table' : '⊟ Hide Table';
+    if (!isOpen && typeof loadPlanTables === 'function') {
+        loadPlanTables(sourceId);
     }
 }

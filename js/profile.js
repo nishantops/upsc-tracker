@@ -206,6 +206,9 @@ async function showApp(knownEmail) {
         setTimeout(function() { if (typeof initNotifications === 'function') initNotifications(); }, 2000);
         setTimeout(function() { if (typeof loadSWData === 'function') loadSWData(); }, 800);
         setTimeout(function() { if (typeof checkWeeklyFeedbackPrompt === 'function') checkWeeklyFeedbackPrompt(); }, 8000);
+        setTimeout(function() { if (typeof refreshUnreadBadge === 'function') refreshUnreadBadge(); }, 5000);
+        // Poll for new admin messages every 2 minutes
+        setInterval(function() { if (typeof refreshUnreadBadge === 'function') refreshUnreadBadge(); }, 120000);
         return;
     }
 
@@ -262,6 +265,8 @@ async function showApp(knownEmail) {
     setTimeout(function() { if (typeof initNotifications === 'function') initNotifications(); }, 2000);
     setTimeout(function() { if (typeof loadSWData === 'function') loadSWData(); }, 800);
     setTimeout(function() { if (typeof checkWeeklyFeedbackPrompt === 'function') checkWeeklyFeedbackPrompt(); }, 8000);
+    setTimeout(function() { if (typeof refreshUnreadBadge === 'function') refreshUnreadBadge(); }, 5000);
+    setInterval(function() { if (typeof refreshUnreadBadge === 'function') refreshUnreadBadge(); }, 120000);
 }
 
 function applyProfileToUI(profile) {

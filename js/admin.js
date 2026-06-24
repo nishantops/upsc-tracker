@@ -479,7 +479,8 @@ function showAdminToast(msg, type) {
 
 // Repository pattern: cached inbox data with TTL
 var _inboxCache = { msgs: null, feedback: null, ts: 0 };
-var INBOX_TTL = 60000; // 1 min cache
+var _inboxActiveUser = null; // currently open conversation
+var INBOX_TTL = 60000;
 
 async function loadInbox() {
     var el = document.getElementById('inbox-content');
@@ -489,105 +490,196 @@ async function loadInbox() {
 
     var now = Date.now();
     if (_inboxCache.ts && (now - _inboxCache.ts) < INBOX_TTL && _inboxCache.msgs) {
-        _renderInbox(_inboxCache.msgs, _inboxCache.feedback);
+        if (_inboxActiveUser) _renderConversation(_inboxActiveUser);
+        else _renderUserList(_inboxCache.msgs, _inboxCache.feedback);
         return;
     }
 
     try {
         var [msgsRes, fbRes] = await Promise.all([
-            adminClient.from('upsc_messages').select('*').order('created_at', { ascending: false }),
+            adminClient.from('upsc_messages').select('*').order('created_at', { ascending: true }),
             adminClient.from('upsc_feedback').select('*').order('created_at', { ascending: false })
         ]);
-        var msgs = msgsRes.data || [];
-        var feedback = fbRes.data || [];
-        _inboxCache = { msgs, feedback, ts: Date.now() };
-        _renderInbox(msgs, feedback);
+        _inboxCache = { msgs: msgsRes.data || [], feedback: fbRes.data || [], ts: Date.now() };
+        if (_inboxActiveUser) _renderConversation(_inboxActiveUser);
+        else _renderUserList(_inboxCache.msgs, _inboxCache.feedback);
     } catch(e) {
         if (el) el.innerHTML = '<div style="color:#f87171;font-family:var(--mono);font-size:0.72rem;padding:1rem;">Error: ' + (e.message||'Could not load') + '</div>';
     }
 }
 
-function _renderInbox(msgs, feedback) {
+/* ── User List View ── */
+function _renderUserList(msgs, feedback) {
     var el = document.getElementById('inbox-content');
-    if (!el) el = document.getElementById('sec-inbox');
     if (!el) return;
 
-    // Group messages by user
-    var byUser = {};
+    function fmtDate(d) { return d ? new Date(d).toLocaleString('en-IN', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' }) : ''; }
+
+    // Build user map from ROOT messages only
+    var userMap = {};
     msgs.forEach(function(m) {
-        if (!byUser[m.user_id]) byUser[m.user_id] = { name: m.display_name||'User', msgs: [] };
-        byUser[m.user_id].msgs.push(m);
+        if (m.thread_id) return; // skip replies
+        if (!userMap[m.user_id]) userMap[m.user_id] = { uid: m.user_id, name: m.display_name||'User', msgs:[], last:null };
+        userMap[m.user_id].msgs.push(m);
+        userMap[m.user_id].last = m.created_at;
+    });
+    // Count unread admin replies per user (admin msgs not yet read)
+    var unreadMap = {};
+    msgs.forEach(function(m) {
+        if (m.sender_type === 'admin' && !m.is_read) {
+            unreadMap[m.user_id] = (unreadMap[m.user_id]||0)+1;
+        }
     });
 
-    // Group feedback by month
-    var byMonth = {};
-    feedback.forEach(function(f) {
-        if (!byMonth[f.month_key]) byMonth[f.month_key] = [];
-        byMonth[f.month_key].push(f);
-    });
+    var users = Object.values(userMap).sort(function(a,b){ return new Date(b.last)-new Date(a.last); });
 
-    function fmtDate(d) { return d ? new Date(d).toLocaleString('en-IN', { dateStyle:'medium', timeStyle:'short' }) : ''; }
+    var refreshBtn = '<button onclick="_inboxCache.ts=0;_inboxActiveUser=null;loadInbox()" style="float:right;background:var(--surf);border:1px solid var(--bdr);color:var(--t2);border-radius:0.4rem;padding:0.2rem 0.65rem;font-size:0.6rem;font-family:var(--mono);cursor:pointer;">⟳ Refresh</button>';
 
-    // Messages section
-    var msgHtml = '<div style="margin-bottom:1.5rem;">';
-    msgHtml += '<h3 style="font-size:0.8rem;font-weight:800;color:var(--t1);margin-bottom:0.75rem;font-family:var(--mono);">💬 User Messages (' + msgs.length + ')</h3>';
+    var html = '<div style="padding:0.75rem 0;">' + refreshBtn + '<div style="clear:both;margin-bottom:0.75rem;"></div>';
 
-    if (!msgs.length) {
-        msgHtml += '<p style="color:var(--t3);font-size:0.7rem;font-family:var(--mono);">No messages yet.</p>';
+    // Section: Users with messages
+    html += '<h3 style="font-size:0.75rem;font-weight:800;color:var(--t1);margin-bottom:0.65rem;font-family:var(--mono);">💬 Conversations (' + users.length + ' users)</h3>';
+    if (!users.length) {
+        html += '<p style="color:var(--t3);font-size:0.7rem;font-family:var(--mono);padding:0.5rem 0;">No messages yet.</p>';
     } else {
-        // User-wise accordion
-        Object.keys(byUser).forEach(function(uid) {
-            var u = byUser[uid];
-            msgHtml += '<div style="border:1px solid var(--bdr);border-radius:0.7rem;margin-bottom:0.6rem;overflow:hidden;">';
-            msgHtml += '<div style="background:var(--surf);padding:0.5rem 0.85rem;display:flex;align-items:center;justify-content:space-between;">';
-            msgHtml += '<span style="font-size:0.72rem;font-weight:700;color:var(--t1);font-family:var(--mono);">👤 ' + _adminEsc(u.name) + '</span>';
-            msgHtml += '<span style="font-size:0.62rem;color:var(--t3);font-family:var(--mono);">' + u.msgs.length + ' message(s)</span></div>';
-            u.msgs.forEach(function(m) {
-                msgHtml += '<div style="padding:0.6rem 0.85rem;border-top:1px solid var(--bdr);">';
-                msgHtml += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.25rem;">';
-                msgHtml += '<span style="font-size:0.62rem;color:var(--t3);font-family:var(--mono);">' + fmtDate(m.created_at) + '</span>';
-                msgHtml += '<button onclick="adminOpenReply(\''+m.id+'\',\''+_adminEsc(u.name)+'\')" style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.3);color:#818cf8;border-radius:0.3rem;padding:0.15rem 0.5rem;font-size:0.6rem;cursor:pointer;font-family:monospace;">↩ Reply</button>';
-                msgHtml += '</div>';
-                msgHtml += '<div style="font-size:0.72rem;color:var(--t2);white-space:pre-wrap;line-height:1.5;">' + _adminEsc(m.content) + '</div>';
-                msgHtml += '</div>';
-            });
-            msgHtml += '</div>';
+        users.forEach(function(u) {
+            var lastMsg = u.msgs[u.msgs.length-1];
+            var unread = unreadMap[u.uid] || 0;
+            var initials = u.name.split(' ').map(function(w){return w[0]||'';}).join('').substr(0,2).toUpperCase();
+            html += '<div onclick="adminOpenConversation(\''+u.uid+'\')" style="display:flex;align-items:center;gap:0.75rem;padding:0.65rem 0.85rem;border:1px solid var(--bdr);border-radius:0.7rem;margin-bottom:0.5rem;cursor:pointer;background:var(--surf);transition:background 0.15s;" onmouseover="this.style.background=\'var(--card)\'" onmouseout="this.style.background=\'var(--surf)\'">';
+            html += '<div style="width:2.2rem;height:2.2rem;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:900;color:#fff;flex-shrink:0;">'+initials+'</div>';
+            html += '<div style="flex:1;min-width:0;">';
+            html += '<div style="font-size:0.72rem;font-weight:700;color:var(--t1);font-family:var(--mono);">'+_adminEsc(u.name)+'</div>';
+            html += '<div style="font-size:0.62rem;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+_adminEsc((lastMsg.content||'').substr(0,60))+'</div>';
+            html += '</div>';
+            html += '<div style="text-align:right;flex-shrink:0;">';
+            html += '<div style="font-size:0.58rem;color:var(--t4);font-family:var(--mono);">'+fmtDate(lastMsg.created_at)+'</div>';
+            html += '<div style="font-size:0.62rem;color:var(--t3);font-family:var(--mono);margin-top:0.15rem;">'+u.msgs.length+' msg(s)</div>';
+            html += '</div>';
+            html += '</div>';
         });
     }
-    msgHtml += '</div>';
 
-    // Feedback section — month-wise, then user-wise within
-    var fbHtml = '<div>';
-    fbHtml += '<h3 style="font-size:0.8rem;font-weight:800;color:var(--t1);margin-bottom:0.75rem;font-family:var(--mono);">📝 Monthly Feedback (' + feedback.length + ')</h3>';
-
+    // Section: Feedback
+    html += '<h3 style="font-size:0.75rem;font-weight:800;color:var(--t1);margin:1rem 0 0.65rem;font-family:var(--mono);">📝 Monthly Feedback (' + feedback.length + ')</h3>';
     if (!feedback.length) {
-        fbHtml += '<p style="color:var(--t3);font-size:0.7rem;font-family:var(--mono);">No feedback submitted yet.</p>';
+        html += '<p style="color:var(--t3);font-size:0.7rem;font-family:var(--mono);">No feedback submitted yet.</p>';
     } else {
-        var sortedMonths = Object.keys(byMonth).sort().reverse();
-        sortedMonths.forEach(function(mkey) {
-            var entries = byMonth[mkey];
-            fbHtml += '<div style="border:1px solid var(--bdr);border-radius:0.7rem;margin-bottom:0.6rem;overflow:hidden;">';
-            fbHtml += '<div style="background:var(--surf);padding:0.5rem 0.85rem;display:flex;align-items:center;justify-content:space-between;">';
-            fbHtml += '<span style="font-size:0.72rem;font-weight:700;color:var(--accent-l);font-family:var(--mono);">📅 ' + mkey + '</span>';
-            fbHtml += '<span style="font-size:0.62rem;color:var(--t3);font-family:var(--mono);">' + entries.length + ' submission(s)</span></div>';
-            entries.forEach(function(f) {
-                fbHtml += '<div style="padding:0.6rem 0.85rem;border-top:1px solid var(--bdr);">';
-                fbHtml += '<div style="display:flex;justify-content:space-between;margin-bottom:0.2rem;">';
-                fbHtml += '<span style="font-size:0.68rem;font-weight:700;color:var(--t1);font-family:var(--mono);">👤 ' + _adminEsc(f.display_name||'User') + '</span>';
-                fbHtml += '<span style="font-size:0.6rem;color:var(--t3);font-family:var(--mono);">' + fmtDate(f.created_at) + '</span></div>';
-                fbHtml += '<div style="font-size:0.72rem;color:var(--t2);white-space:pre-wrap;line-height:1.5;">' + _adminEsc(f.content) + '</div>';
-                fbHtml += '</div>';
+        var byMonth = {};
+        feedback.forEach(function(f){ if(!byMonth[f.month_key])byMonth[f.month_key]=[];byMonth[f.month_key].push(f); });
+        Object.keys(byMonth).sort().reverse().forEach(function(mk) {
+            html += '<div style="border:1px solid var(--bdr);border-radius:0.65rem;margin-bottom:0.5rem;overflow:hidden;">';
+            html += '<div style="background:var(--surf);padding:0.45rem 0.8rem;font-size:0.7rem;font-weight:700;color:var(--accent-l);font-family:var(--mono);">📅 '+mk+' ('+byMonth[mk].length+' submissions)</div>';
+            byMonth[mk].forEach(function(f){
+                var stars = f.rating ? '⭐'.repeat(f.rating) : '';
+                html += '<div style="padding:0.5rem 0.8rem;border-top:1px solid var(--bdr);">';
+                html += '<div style="display:flex;justify-content:space-between;margin-bottom:0.2rem;">';
+                html += '<span style="font-size:0.68rem;font-weight:700;color:var(--t1);font-family:var(--mono);">👤 '+_adminEsc(f.display_name||'User')+'</span>';
+                html += '<span style="font-size:0.65rem;">'+stars+'</span></div>';
+                html += '<div style="font-size:0.7rem;color:var(--t2);">'+_adminEsc(f.content)+'</div></div>';
             });
-            fbHtml += '</div>';
+            html += '</div>';
         });
     }
-    fbHtml += '</div>';
-
-    var refreshBtn = '<button onclick="_inboxCache.ts=0;loadInbox()" style="float:right;background:var(--surf);border:1px solid var(--bdr);color:var(--t2);border-radius:0.4rem;padding:0.25rem 0.75rem;font-size:0.62rem;font-family:var(--mono);cursor:pointer;margin-bottom:0.75rem;">⟳ Refresh</button>';
-
-    el.innerHTML = '<div style="padding:1rem 0;">' + refreshBtn + '<div style="clear:both;"></div>' + msgHtml + fbHtml + '</div>';
+    html += '</div>';
+    el.innerHTML = html;
 }
 
+/* ── Conversation View ── */
+function adminOpenConversation(uid) {
+    _inboxActiveUser = uid;
+    _renderConversation(uid);
+}
+
+function _renderConversation(uid) {
+    var el = document.getElementById('inbox-content');
+    if (!el) return;
+    var allMsgs = _inboxCache.msgs || [];
+
+    // Get all root messages for this user
+    var roots = allMsgs.filter(function(m){ return m.user_id===uid && !m.thread_id; });
+    // Get all replies
+    var replies = allMsgs.filter(function(m){ return m.user_id===uid && m.thread_id; });
+    // Build thread tree
+    var threads = {};
+    roots.forEach(function(m){ threads[m.id] = { root: m, replies: [] }; });
+    replies.forEach(function(r){ if(threads[r.thread_id]) threads[r.thread_id].replies.push(r); });
+
+    var userName = roots.length ? (roots[0].display_name||'User') : uid.substr(0,8)+'…';
+
+    function fmtDate(d) { return d ? new Date(d).toLocaleString('en-IN', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' }) : ''; }
+    function bubble(m, isReply) {
+        var isAdmin = m.sender_type==='admin';
+        var align = isAdmin ? 'flex-end' : 'flex-start';
+        var bg = isAdmin ? 'rgba(99,102,241,0.18)' : 'var(--surf)';
+        var bc = isAdmin ? 'rgba(99,102,241,0.4)' : 'var(--bdr)';
+        var label = isAdmin ? '🛡 Admin' : '👤 '+_adminEsc(m.display_name||'User');
+        return '<div style="display:flex;justify-content:'+align+';margin-bottom:0.45rem;'+(isReply?'padding-left:1rem;':'')+'"><div style="max-width:80%;background:'+bg+';border:1px solid '+bc+';border-radius:0.65rem;padding:0.45rem 0.7rem;">'
+            +'<div style="font-size:0.58rem;font-weight:700;color:'+(isAdmin?'#818cf8':'var(--t3)')+';font-family:var(--mono);margin-bottom:0.15rem;">'+label+' &nbsp;·&nbsp; '+fmtDate(m.created_at)+'</div>'
+            +'<div style="font-size:0.72rem;color:var(--t1);white-space:pre-wrap;line-height:1.5;">'+_adminEsc(m.content)+'</div>'
+            +'</div></div>';
+    }
+
+    var chatHtml = '';
+    Object.values(threads).sort(function(a,b){ return new Date(a.root.created_at)-new Date(b.root.created_at); }).forEach(function(t){
+        chatHtml += bubble(t.root, false);
+        t.replies.sort(function(a,b){ return new Date(a.created_at)-new Date(b.created_at); }).forEach(function(r){ chatHtml += bubble(r, true); });
+    });
+    if (!chatHtml) chatHtml = '<p style="color:var(--t3);font-size:0.65rem;text-align:center;padding:1rem;">No messages yet.</p>';
+
+    // Reply input
+    var replyHtml = '<div style="display:flex;gap:0.4rem;margin-top:0.5rem;">'
+        +'<textarea id="conv-reply-text" rows="2" placeholder="Type reply…" style="flex:1;background:var(--inp);border:1px solid var(--bdr);border-radius:0.45rem;padding:0.4rem 0.6rem;font-size:0.72rem;color:var(--t1);font-family:var(--mono);resize:none;box-sizing:border-box;"></textarea>'
+        +'<button onclick="adminSendConvReply(\''+uid+'\')" style="background:#6366f1;border:none;color:#fff;border-radius:0.45rem;padding:0.4rem 0.85rem;font-size:0.68rem;font-weight:700;cursor:pointer;flex-shrink:0;">Send ↑</button>'
+        +'</div>'
+        +'<div id="conv-reply-status" style="font-size:0.6rem;color:var(--t3);font-family:var(--mono);min-height:0.8rem;margin-top:0.2rem;"></div>';
+
+    el.innerHTML = '<div style="padding:0.75rem 0;">'
+        +'<div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem;">'
+        +'<button onclick="_inboxActiveUser=null;loadInbox()" style="background:var(--surf);border:1px solid var(--bdr);color:var(--t2);border-radius:0.4rem;padding:0.2rem 0.65rem;font-size:0.65rem;font-family:var(--mono);cursor:pointer;">← Back</button>'
+        +'<span style="font-size:0.78rem;font-weight:800;color:var(--t1);font-family:var(--mono);">💬 '+_adminEsc(userName)+'</span>'
+        +'</div>'
+        +'<div id="conv-bubbles" style="max-height:55vh;overflow-y:auto;border:1px solid var(--bdr);border-radius:0.65rem;padding:0.65rem;background:var(--bg);margin-bottom:0.5rem;scrollbar-width:thin;">'+chatHtml+'</div>'
+        + replyHtml
+        +'</div>';
+    var bd = document.getElementById('conv-bubbles');
+    if (bd) bd.scrollTop = bd.scrollHeight;
+}
+
+/* ── Reply from conversation view ── */
+async function adminSendConvReply(uid) {
+    var ta = document.getElementById('conv-reply-text');
+    var st = document.getElementById('conv-reply-status');
+    var txt = ta && ta.value.trim();
+    if (!txt) return;
+    if (st) { st.textContent='Sending…'; st.style.color='var(--t3)'; }
+
+    // Find the latest root message from this user to reply to
+    var allMsgs = _inboxCache.msgs || [];
+    var userRoots = allMsgs.filter(function(m){ return m.user_id===uid && !m.thread_id && m.sender_type==='user'; });
+    if (!userRoots.length) { if(st){st.textContent='No message to reply to.';st.style.color='#f87171';} return; }
+    var targetId = userRoots[userRoots.length-1].id; // reply to latest
+
+    try {
+        var res = await adminClient.from('upsc_messages').insert({
+            user_id:     uid,
+            display_name:'Admin',
+            content:     txt,
+            sender_type: 'admin',
+            thread_id:   targetId,
+            is_read:     false
+        });
+        if (res.error) throw res.error;
+        if (ta) ta.value = '';
+        if (st) { st.textContent='✓ Sent'; st.style.color='#10b981'; setTimeout(function(){if(st)st.textContent='';},2000); }
+        _inboxCache.ts = 0; // invalidate
+        await loadInbox();
+    } catch(e) {
+        if (st) { st.textContent = e.message||'Error'; st.style.color='#f87171'; }
+    }
+}
+
+function _adminEsc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function _adminEsc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 // ── Admin Chat Reply ──────────────────────────────────────────────────────

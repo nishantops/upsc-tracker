@@ -23,6 +23,8 @@ function switchAboutTab(tab) {
         if (btn)  btn.classList.toggle('active', t === tab);
         if (pane) pane.style.display = (t === tab) ? '' : 'none';
     });
+    if (tab === 'contact') { _loadChatHistory(); _markAdminRepliesRead(); }
+    if (tab === 'feedback') _loadFeedbackStatus();
 }
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') closeAboutModal();
@@ -239,3 +241,39 @@ async function submitPromptFeedback() {
 
 // Expose for app to call after login
 window.checkWeeklyFeedbackPrompt = checkWeeklyFeedbackPrompt;
+
+// ── Unread message badge on Settings button ───────────────────────────────
+async function refreshUnreadBadge() {
+    var badge = document.getElementById('msg-unread-badge');
+    if (!badge || !currentUserId || typeof dbClient === 'undefined') return;
+    try {
+        var r = await dbClient.from('upsc_messages')
+            .select('id', { count: 'exact', head: true })
+            .eq('user_id', currentUserId)
+            .eq('sender_type', 'admin')
+            .eq('is_read', false);
+        var count = r.count || 0;
+        if (count > 0) {
+            badge.textContent = count > 9 ? '9+' : String(count);
+            badge.style.display = 'inline-flex';
+        } else {
+            badge.style.display = 'none';
+        }
+    } catch(e) {}
+}
+
+async function _markAdminRepliesRead() {
+    if (!currentUserId || typeof dbClient === 'undefined') return;
+    try {
+        await dbClient.from('upsc_messages')
+            .update({ is_read: true })
+            .eq('user_id', currentUserId)
+            .eq('sender_type', 'admin')
+            .eq('is_read', false);
+    } catch(e) {}
+    refreshUnreadBadge();
+}
+
+// Call on contact tab open
+var _origSwitchAboutTab = (typeof switchAboutTab === 'function') ? null : null;
+window.refreshUnreadBadge = refreshUnreadBadge;
