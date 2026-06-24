@@ -1,6 +1,7 @@
 // =========================================================================
-// ABOUT MODAL & FEEDBACK/MESSAGING SYSTEM
+// ABOUT MODAL · CHAT SYSTEM · RATE LIMITING · MONTHLY FEEDBACK
 // =========================================================================
+'use strict';
 
 // ── About Modal ──────────────────────────────────────────────────────────
 function openAboutModal() {

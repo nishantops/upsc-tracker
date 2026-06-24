@@ -81,7 +81,7 @@ function showAdminDashboard(email) {
 }
 
 function adminNav(section) {
-    var sections = ['overview', 'users', 'focus', 'audit', 'inbox'];
+    var sections = ['overview', 'users', 'focus', 'audit', 'inbox', 'metrics'];
     sections.forEach(function(s) {
         var sec = document.getElementById('sec-' + s);
         var btn = document.getElementById('anav-' + s);
@@ -93,6 +93,7 @@ function adminNav(section) {
     if (section === 'focus')    loadFocusAnalytics();
     if (section === 'audit')    loadAuditLog();
     if (section === 'inbox')    loadInbox();
+    if (section === 'metrics')  loadMetrics();
 }
 
 // ── Overview ─────────────────────────────────────────────────────────────
@@ -214,7 +215,7 @@ function renderUsersTable(users, planCounts, hoursPerUser) {
             + '<td>' + plans + '</td>'
             + '<td class="a-muted" style="font-size:0.68rem;">' + escAdmin(optional !== 'none' ? optional : '—') + '</td>'
             + '<td>' + statusBadge + '</td>'
-            + '<td><button class="a-btn-sm" onclick="openUserModal(\'' + u.user_id + '\')">View</button></td>'
+            + '<td><button class="a-btn-sm" onclick="openUserModal(\'' + u.user_id + '\')">View</button> <button class="a-btn-sm" onclick="adminOpenUserSettings(\'' + u.user_id + '\',\'' + escAdmin(u.display_name||'User').replace(/'/g,"\\'") + '\')" style="margin-left:3px;">⚙</button></td>'
             + '</tr>';
     }).join('');
 }
@@ -532,7 +533,10 @@ function _renderInbox(msgs, feedback) {
             msgHtml += '<span style="font-size:0.62rem;color:var(--t3);font-family:var(--mono);">' + u.msgs.length + ' message(s)</span></div>';
             u.msgs.forEach(function(m) {
                 msgHtml += '<div style="padding:0.6rem 0.85rem;border-top:1px solid var(--bdr);">';
-                msgHtml += '<div style="font-size:0.62rem;color:var(--t3);font-family:var(--mono);margin-bottom:0.25rem;">' + fmtDate(m.created_at) + '</div>';
+                msgHtml += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.25rem;">';
+                msgHtml += '<span style="font-size:0.62rem;color:var(--t3);font-family:var(--mono);">' + fmtDate(m.created_at) + '</span>';
+                msgHtml += '<button onclick="adminOpenReply(\''+m.id+'\',\''+_adminEsc(u.name)+'\')" style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.3);color:#818cf8;border-radius:0.3rem;padding:0.15rem 0.5rem;font-size:0.6rem;cursor:pointer;font-family:monospace;">↩ Reply</button>';
+                msgHtml += '</div>';
                 msgHtml += '<div style="font-size:0.72rem;color:var(--t2);white-space:pre-wrap;line-height:1.5;">' + _adminEsc(m.content) + '</div>';
                 msgHtml += '</div>';
             });
@@ -574,3 +578,245 @@ function _renderInbox(msgs, feedback) {
 }
 
 function _adminEsc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ── Admin Chat Reply ──────────────────────────────────────────────────────
+var _adminReplyTarget = null;
+
+function adminOpenReply(msgId, userName) {
+    _adminReplyTarget = msgId;
+    var modal = document.getElementById('admin-reply-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'admin-reply-modal';
+        modal.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;padding:1rem;';
+        modal.innerHTML = '<div style="background:var(--bg2,#1e1b4b);border:1px solid var(--bdr,#4f46e5);border-radius:1rem;padding:1.25rem;width:min(480px,95vw);"><h3 style="font-size:0.85rem;font-weight:800;color:#f0eeff;margin-bottom:0.75rem;">Reply to <span id="reply-user-name"></span></h3><textarea id="admin-reply-text" rows="4" placeholder="Type your reply..." style="width:100%;background:#0f0c2e;border:1px solid #4f46e5;border-radius:0.5rem;padding:0.6rem;font-size:0.75rem;color:#f0eeff;font-family:monospace;resize:vertical;outline:none;box-sizing:border-box;"></textarea><div style="display:flex;gap:0.5rem;justify-content:flex-end;margin-top:0.65rem;"><button onclick="document.getElementById(\'admin-reply-modal\').remove();_adminReplyTarget=null;" style="background:none;border:1px solid #4f46e5;color:#a08ed8;border-radius:0.4rem;padding:0.35rem 0.75rem;font-size:0.65rem;cursor:pointer;">Cancel</button><button onclick="adminSendReply()" style="background:#6366f1;border:none;color:#fff;border-radius:0.4rem;padding:0.35rem 0.9rem;font-size:0.65rem;font-weight:700;cursor:pointer;">Send Reply</button></div></div>';
+        document.body.appendChild(modal);
+    }
+    modal.style.display = 'flex';
+    var nameEl = document.getElementById('reply-user-name');
+    if (nameEl) nameEl.textContent = userName;
+    var ta = document.getElementById('admin-reply-text');
+    if (ta) { ta.value = ''; ta.focus(); }
+}
+
+async function adminSendReply() {
+    var ta = document.getElementById('admin-reply-text');
+    var txt = ta && ta.value.trim();
+    if (!txt) return;
+    try {
+        // Get user_id of the target message
+        var msgR = await adminClient.from('upsc_messages').select('user_id,display_name').eq('id', _adminReplyTarget).single();
+        if (msgR.error) throw msgR.error;
+        var res = await adminClient.from('upsc_messages').insert({
+            user_id:     msgR.data.user_id,
+            display_name:'Admin',
+            content:     txt,
+            sender_type: 'admin',
+            thread_id:   _adminReplyTarget
+        });
+        if (res.error) throw res.error;
+        document.getElementById('admin-reply-modal').remove();
+        _adminReplyTarget = null;
+        _inboxCache.ts = 0;
+        loadInbox();
+        adminToast('Reply sent!');
+    } catch(e) { adminToast('Error: ' + (e.message||'failed'), 'error'); }
+}
+
+// ── User Settings (feature flags + daily limit) ───────────────────────────
+var _userSettingsCache = {};
+
+async function adminOpenUserSettings(userId, displayName) {
+    var settings = { daily_msg_limit: 3, features: { plans:true,tracker:true,pyq:true,ca:true,focus:true,ai:true }, notes: '' };
+    try {
+        var r = await adminClient.from('upsc_user_settings').select('*').eq('user_id', userId).maybeSingle();
+        if (r.data) settings = Object.assign(settings, r.data);
+    } catch(e) {}
+    _userSettingsCache[userId] = settings;
+
+    var feats = settings.features || {};
+    var featHtml = ['plans','tracker','pyq','ca','focus','ai'].map(function(f) {
+        var on = feats[f] !== false;
+        return '<label style="display:flex;align-items:center;gap:0.5rem;font-size:0.7rem;color:#d4c8f8;cursor:pointer;">'
+            + '<input type="checkbox" id="uf-'+f+'" '+(on?'checked':'')+'> '
+            + f.charAt(0).toUpperCase()+f.slice(1)+'</label>';
+    }).join('');
+
+    var modal = document.getElementById('user-settings-modal') || document.createElement('div');
+    modal.id = 'user-settings-modal';
+    modal.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:center;padding:1rem;';
+    modal.innerHTML = '<div style="background:var(--bg2,#1e1b4b);border:1px solid var(--bdr,#4f46e5);border-radius:1rem;padding:1.25rem;width:min(420px,95vw);">'
+        + '<h3 style="font-size:0.85rem;font-weight:800;color:#f0eeff;margin-bottom:0.75rem;">⚙ Settings: <span style="color:#818cf8">'+_adminEsc(displayName)+'</span></h3>'
+        + '<label style="font-size:0.65rem;color:#a08ed8;font-family:monospace;display:block;margin-bottom:0.3rem;">Daily Message Limit</label>'
+        + '<input id="us-msg-limit" type="number" min="0" max="100" value="'+settings.daily_msg_limit+'" style="width:100%;background:#0f0c2e;border:1px solid #4f46e5;border-radius:0.4rem;padding:0.4rem 0.6rem;font-size:0.78rem;color:#f0eeff;margin-bottom:0.75rem;box-sizing:border-box;">'
+        + '<div style="font-size:0.65rem;color:#a08ed8;font-family:monospace;margin-bottom:0.4rem;">Feature Flags</div>'
+        + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;margin-bottom:0.75rem;">'+featHtml+'</div>'
+        + '<label style="font-size:0.65rem;color:#a08ed8;font-family:monospace;display:block;margin-bottom:0.3rem;">Admin Notes (internal)</label>'
+        + '<textarea id="us-notes" rows="2" style="width:100%;background:#0f0c2e;border:1px solid #4f46e5;border-radius:0.4rem;padding:0.4rem 0.6rem;font-size:0.72rem;color:#f0eeff;resize:none;box-sizing:border-box;margin-bottom:0.75rem;">'+_adminEsc(settings.notes||'')+'</textarea>'
+        + '<div style="display:flex;gap:0.5rem;justify-content:flex-end;">'
+        + '<button onclick="document.getElementById(\'user-settings-modal\').remove()" style="background:none;border:1px solid #4f46e5;color:#a08ed8;border-radius:0.4rem;padding:0.35rem 0.75rem;font-size:0.65rem;cursor:pointer;">Cancel</button>'
+        + '<button onclick="adminSaveUserSettings(\''+userId+'\')" style="background:#6366f1;border:none;color:#fff;border-radius:0.4rem;padding:0.35rem 0.9rem;font-size:0.65rem;font-weight:700;cursor:pointer;">Save</button>'
+        + '</div></div>';
+    if (!document.getElementById('user-settings-modal')) document.body.appendChild(modal);
+    else modal.style.display = 'flex';
+}
+
+async function adminSaveUserSettings(userId) {
+    var limit = parseInt(document.getElementById('us-msg-limit').value) || 3;
+    var features = {};
+    ['plans','tracker','pyq','ca','focus','ai'].forEach(function(f) {
+        var el = document.getElementById('uf-' + f);
+        features[f] = el ? el.checked : true;
+    });
+    var notes = (document.getElementById('us-notes') || {}).value || '';
+    try {
+        var payload = { user_id: userId, daily_msg_limit: limit, features: features, notes: notes, updated_at: new Date().toISOString() };
+        var res = await adminClient.from('upsc_user_settings').upsert(payload, { onConflict: 'user_id' });
+        if (res.error) throw res.error;
+        document.getElementById('user-settings-modal').remove();
+        adminToast('Settings saved');
+    } catch(e) { adminToast('Error: '+(e.message||'failed'), 'error'); }
+}
+
+// ── App Metrics Dashboard ─────────────────────────────────────────────────
+var _metricsCache = null;
+var METRICS_TTL   = 120000; // 2 min
+
+async function loadMetrics() {
+    var el = document.getElementById('metrics-content');
+    if (!el) return;
+    el.innerHTML = '<div style="color:var(--t3);font-family:var(--mono);font-size:0.72rem;padding:1rem;">Loading metrics…</div>';
+
+    var now = Date.now();
+    if (_metricsCache && (now - _metricsCache.ts) < METRICS_TTL) {
+        _renderMetrics(_metricsCache.data);
+        return;
+    }
+
+    var since7d = new Date(now - 7 * 86400000).toISOString();
+    var since30d = new Date(now - 30 * 86400000).toISOString();
+    var today = new Date().toISOString().slice(0,10);
+
+    try {
+        var [recent, daily, byType, userCount, msgsToday] = await Promise.all([
+            adminClient.from('upsc_app_metrics').select('event_type,created_at,user_id').gte('created_at', since7d).order('created_at', { ascending: false }),
+            adminClient.from('upsc_app_metrics').select('created_at,user_id').gte('created_at', since30d),
+            adminClient.from('upsc_app_metrics').select('event_type').gte('created_at', since7d),
+            adminClient.from('upsc_user_profiles').select('user_id', { count: 'exact', head: true }),
+            adminClient.from('upsc_messages').select('id', { count: 'exact', head: true }).gte('created_at', today + 'T00:00:00Z').eq('sender_type','user')
+        ]);
+
+        var data = {
+            events:     recent.data  || [],
+            allRecent:  daily.data   || [],
+            byType:     byType.data  || [],
+            totalUsers: userCount.count || 0,
+            msgsToday:  msgsToday.count || 0
+        };
+        _metricsCache = { data: data, ts: Date.now() };
+        _renderMetrics(data);
+    } catch(e) {
+        el.innerHTML = '<div style="color:#f87171;font-family:var(--mono);font-size:0.72rem;padding:1rem;">Error: '+(e.message||'')+'</div>';
+    }
+}
+
+function _renderMetrics(data) {
+    var el = document.getElementById('metrics-content');
+    if (!el) return;
+
+    var today = new Date().toISOString().slice(0,10);
+    var todayEvents  = data.events.filter(function(e) { return e.created_at && e.created_at.startsWith(today); });
+    var dau7 = new Set(data.events.map(function(e){return e.user_id;})).size;
+    var totalEvents7d = data.events.length;
+
+    // Count by type
+    var typeCounts = {};
+    data.byType.forEach(function(e){typeCounts[e.event_type]=(typeCounts[e.event_type]||0)+1;});
+
+    // Daily breakdown for last 14 days
+    var dailyMap = {};
+    data.allRecent.forEach(function(e){
+        var d = e.created_at && e.created_at.slice(0,10);
+        if (d) { if (!dailyMap[d]) dailyMap[d] = new Set(); dailyMap[d].add(e.user_id); }
+    });
+    var last14 = [];
+    for (var i=13;i>=0;i--){
+        var d = new Date(Date.now()-i*86400000).toISOString().slice(0,10);
+        last14.push({ date: d, dau: dailyMap[d] ? dailyMap[d].size : 0 });
+    }
+
+    // Top cards
+    var cards = [
+        { label:'Total Users',   value: data.totalUsers, icon:'👥', color:'#818cf8' },
+        { label:'7-Day Active',  value: dau7,            icon:'📊', color:'#34d399' },
+        { label:'Events (7d)',   value: totalEvents7d,   icon:'⚡', color:'#f59e0b' },
+        { label:'Msgs Today',    value: data.msgsToday,  icon:'💬', color:'#f472b6' }
+    ];
+    var cardsHtml = '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;margin-bottom:1.25rem;">'
+        + cards.map(function(c){
+            return '<div style="background:var(--surf);border:1px solid var(--bdr);border-radius:0.75rem;padding:0.85rem 1rem;">'
+                +'<div style="font-size:0.6rem;font-weight:700;color:var(--t3);font-family:var(--mono);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.3rem;">'+c.icon+' '+c.label+'</div>'
+                +'<div style="font-size:1.6rem;font-weight:900;color:'+c.color+';font-family:var(--mono);">'+c.value+'</div>'
+                +'</div>';
+        }).join('') + '</div>';
+
+    // DAU line chart (SVG)
+    var maxDau = Math.max.apply(null, last14.map(function(d){return d.dau;})) || 1;
+    var svgW = 420, svgH = 100, pad = 20;
+    var pts = last14.map(function(d, i) {
+        var x = pad + i * (svgW - 2*pad) / 13;
+        var y = svgH - pad - d.dau / maxDau * (svgH - 2*pad);
+        return x + ',' + y;
+    }).join(' ');
+    var dauSvg = '<svg width="100%" height="'+svgH+'" viewBox="0 0 '+svgW+' '+svgH+'" preserveAspectRatio="none" style="display:block;">'
+        + '<polyline fill="none" stroke="#818cf8" stroke-width="2" points="'+pts+'"/>'
+        + last14.map(function(d,i){
+            var x=pad+i*(svgW-2*pad)/13, y=svgH-pad-d.dau/maxDau*(svgH-2*pad);
+            return '<circle cx="'+x+'" cy="'+y+'" r="3" fill="#818cf8"/>'
+                +'<text x="'+x+'" y="'+(svgH-2)+'" text-anchor="middle" font-size="7" fill="var(--t4)">'+d.date.slice(5)+'</text>';
+        }).join('')
+        + '</svg>';
+
+    // Event type bar chart
+    var typeEntries = Object.entries(typeCounts).sort(function(a,b){return b[1]-a[1];}).slice(0,8);
+    var maxType = typeEntries.length ? typeEntries[0][1] : 1;
+    var evtColors = ['#818cf8','#34d399','#f59e0b','#f472b6','#60a5fa','#a78bfa','#fb7185','#fbbf24'];
+    var barSvgW=360, barSvgH=100, barPad=8, barW=Math.floor((barSvgW-2*barPad)/Math.max(typeEntries.length,1))-4;
+    var barSvg = '<svg width="100%" height="'+barSvgH+'" viewBox="0 0 '+barSvgW+' '+barSvgH+'" style="display:block;">'
+        + typeEntries.map(function(e,i){
+            var h=Math.max(4,Math.round(e[1]/maxType*(barSvgH-30)));
+            var x=barPad+i*(barW+4);
+            var y=barSvgH-20-h;
+            var lbl=e[0].replace('_',' ').substr(0,6);
+            return '<rect x="'+x+'" y="'+y+'" width="'+barW+'" height="'+h+'" rx="2" fill="'+evtColors[i%8]+'"/>'
+                +'<text x="'+(x+barW/2)+'" y="'+(barSvgH-8)+'" text-anchor="middle" font-size="6.5" fill="var(--t3)">'+lbl+'</text>'
+                +'<text x="'+(x+barW/2)+'" y="'+(y-3)+'" text-anchor="middle" font-size="7" fill="var(--t2)">'+e[1]+'</text>';
+        }).join('')
+        + '</svg>';
+
+    var refreshBtn = '<button onclick="_metricsCache=null;loadMetrics()" style="float:right;background:var(--surf);border:1px solid var(--bdr);color:var(--t2);border-radius:0.4rem;padding:0.25rem 0.75rem;font-size:0.62rem;font-family:var(--mono);cursor:pointer;margin-bottom:0.5rem;">⟳ Refresh</button>';
+
+    el.innerHTML = '<div style="padding:1rem 0;">' + refreshBtn + '<div style="clear:both;"></div>'
+        + cardsHtml
+        + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">'
+        +   '<div style="background:var(--surf);border:1px solid var(--bdr);border-radius:0.75rem;padding:0.85rem;">'
+        +     '<div style="font-size:0.65rem;font-weight:800;color:var(--t1);font-family:var(--mono);margin-bottom:0.5rem;text-transform:uppercase;">Daily Active Users (30d)</div>'
+        +     dauSvg
+        +   '</div>'
+        +   '<div style="background:var(--surf);border:1px solid var(--bdr);border-radius:0.75rem;padding:0.85rem;">'
+        +     '<div style="font-size:0.65rem;font-weight:800;color:var(--t1);font-family:var(--mono);margin-bottom:0.5rem;text-transform:uppercase;">Top Events (7d)</div>'
+        +     barSvg
+        +   '</div>'
+        + '</div>'
+        + '<div style="margin-top:1rem;background:var(--surf);border:1px solid var(--bdr);border-radius:0.75rem;padding:0.85rem;">'
+        +   '<div style="font-size:0.65rem;font-weight:800;color:var(--t1);font-family:var(--mono);margin-bottom:0.5rem;text-transform:uppercase;">Recent Events</div>'
+        +   '<table style="width:100%;border-collapse:collapse;font-size:0.65rem;font-family:var(--mono);">'
+        +   '<thead><tr><th style="text-align:left;color:var(--t3);padding:0.25rem 0.4rem;border-bottom:1px solid var(--bdr);">Event</th><th style="text-align:left;color:var(--t3);padding:0.25rem 0.4rem;border-bottom:1px solid var(--bdr);">Time</th><th style="text-align:left;color:var(--t3);padding:0.25rem 0.4rem;border-bottom:1px solid var(--bdr);">User</th></tr></thead>'
+        +   '<tbody>' + data.events.slice(0,15).map(function(e){
+                var t=new Date(e.created_at).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+                return '<tr><td style="padding:0.2rem 0.4rem;color:var(--accent-l);">'+_adminEsc(e.event_type)+'</td>'
+                    +'<td style="padding:0.2rem 0.4rem;color:var(--t3);">'+t+'</td>'
+                    +'<td style="padding:0.2rem 0.4rem;color:var(--t2);">'+(e.user_id||'').substr(0,8)+'…</td></tr>';
+            }).join('') + '</tbody></table>'
+        + '</div></div>';
+}

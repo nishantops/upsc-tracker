@@ -52,6 +52,7 @@
       <button class="asb-link" onclick="adminNav('focus')" id="anav-focus">⏱ Focus Analytics</button>
       <button class="asb-link" onclick="adminNav('audit')" id="anav-audit">📋 Audit Log</button>
       <button class="asb-link" onclick="adminNav('inbox')" id="anav-inbox">💬 Inbox</button>
+      <button class="asb-link" onclick="adminNav('metrics')" id="anav-metrics">📈 Metrics</button>
     </div>
     <button class="asb-logout" onclick="adminLogout()">⏻ Sign Out</button>
   </nav>
@@ -137,6 +138,15 @@
         <button class="a-btn-sm" onclick="_inboxCache.ts=0;loadInbox()">↺ Refresh</button>
       </div>
       <div id="inbox-content" style="padding:0;">Loading…</div>
+    </section>
+
+    <!-- ── METRICS ─────────────────────────────────────────────────────── -->
+    <section id="sec-metrics" class="admin-section hidden">
+      <div class="asec-header">
+        <h1 class="asec-title">📈 Application Metrics</h1>
+        <button class="a-btn-sm" onclick="_metricsCache=null;loadMetrics()">↺ Refresh</button>
+      </div>
+      <div id="metrics-content">Loading…</div>
     </section>
 
   </main>
