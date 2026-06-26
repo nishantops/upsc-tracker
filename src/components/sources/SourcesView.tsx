@@ -1,6 +1,5 @@
 import { useState, useRef, useCallback, type FormEvent } from 'react';
-import { GridLayout } from 'react-grid-layout';
-import type { ResizeHandleAxis } from 'react-grid-layout';
+import { GridLayout, verticalCompactor } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import {
@@ -16,7 +15,7 @@ import { PlanTable } from '../plans/PlanTable';
 import { ENV } from '../../lib/env';
 
 // All resize handles — north, south, east, west + all corners
-const ALL_HANDLES: ResizeHandleAxis[] = ['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw'];
+const ALL_HANDLES = ['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw'] as const;
 
 const SRC_PINNED_KEY = 'source-card-pinned';
 const SRC_LOCKED_KEY = 'source-card-locked';
@@ -112,16 +111,11 @@ export function SourcesView() {
         <div ref={attachRef} style={{ width: '100%' }}>
           <GridLayout
             layout={layout}
-            cols={ENV.SOURCE_GRID_COLS}
-            rowHeight={ENV.SOURCE_ROW_HEIGHT}
-            margin={[ENV.SOURCE_GRID_MARGIN, ENV.SOURCE_GRID_MARGIN]}
+            gridConfig={{ cols: ENV.SOURCE_GRID_COLS, rowHeight: ENV.SOURCE_ROW_HEIGHT, margin: [ENV.SOURCE_GRID_MARGIN, ENV.SOURCE_GRID_MARGIN], containerPadding: [0, 0] }}
+            dragConfig={{ enabled: !locked }}
+            resizeConfig={{ enabled: !locked, handles: ALL_HANDLES }}
+            compactor={verticalCompactor}
             width={containerWidth}
-            isDraggable={!locked}
-            isResizable={!locked}
-            resizeHandles={ALL_HANDLES}
-            draggableHandle=".src-card-handle"
-            compactType={null}
-            preventCollision={false}
             onLayoutChange={(rgl) => { if (!locked) saveLayout(rgl); }}
           >
             {sortedSources.map((s) => {
