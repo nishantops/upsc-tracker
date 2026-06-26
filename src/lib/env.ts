@@ -65,10 +65,10 @@ export const ENV = {
   AI_TEMPERATURE:       num('VITE_AI_TEMPERATURE',       0.7),
 
   // ── Plan Grid (react-grid-layout) ─────────────────────────────────────────
-  PLAN_GRID_COLS:           num('VITE_PLAN_GRID_COLS',           12),
-  PLAN_CARD_DEFAULT_W:      num('VITE_PLAN_CARD_DEFAULT_W',      2),   // cols — 2/12 = 6 per row default
-  PLAN_CARD_DEFAULT_H:      num('VITE_PLAN_CARD_DEFAULT_H',      2),   // row units — 2×68 = 136px compact
-  PLAN_CARD_MIN_W:          num('VITE_PLAN_CARD_MIN_W',          1),
+  PLAN_GRID_COLS:           num('VITE_PLAN_GRID_COLS',           24),
+  PLAN_CARD_DEFAULT_W:      num('VITE_PLAN_CARD_DEFAULT_W',      8),   // 8/24 = same visual as old 4/12
+  PLAN_CARD_DEFAULT_H:      num('VITE_PLAN_CARD_DEFAULT_H',      2),
+  PLAN_CARD_MIN_W:          num('VITE_PLAN_CARD_MIN_W',          2),
   PLAN_CARD_MIN_H:          num('VITE_PLAN_CARD_MIN_H',          2),
   PLAN_ROW_HEIGHT:          num('VITE_PLAN_ROW_HEIGHT',          68),  // px per row unit
   PLAN_GRID_MARGIN:         num('VITE_PLAN_GRID_MARGIN',         12),  // px gap between cards
