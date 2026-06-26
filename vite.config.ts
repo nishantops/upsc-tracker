@@ -14,12 +14,13 @@ export default defineConfig({
     rollupOptions: {
       input: 'app.html',
       output: {
-        // Fine-grained vendor splitting so each vendor gets its own cached chunk
+        // Group all react-* packages together — avoids circular chunk deps
+        // (react-grid-layout/react-draggable depend on react & react-dom;
+        //  splitting them caused "Cannot set properties of undefined" in prod)
         manualChunks(id) {
           if (id.includes('node_modules')) {
             if (id.includes('@supabase')) return 'vendor-supabase';
-            if (id.includes('react-dom')) return 'vendor-react-dom';
-            if (id.includes('react')) return 'vendor-react';
+            if (id.includes('react'))     return 'vendor-react'; // react, react-dom, react-grid-layout, react-draggable, react-resizable
             return 'vendor-misc';
           }
           // Keep PYQ data in its own chunk (already lazy-loaded)
