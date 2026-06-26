@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, type FormEvent } from 'react';
-import { GridLayout, verticalCompactor } from 'react-grid-layout';
+import { GridLayout, noCompactor } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import {
@@ -114,6 +114,7 @@ export function SourcesView() {
             gridConfig={{ cols: ENV.SOURCE_GRID_COLS, rowHeight: ENV.SOURCE_ROW_HEIGHT, margin: [ENV.SOURCE_GRID_MARGIN, ENV.SOURCE_GRID_MARGIN], containerPadding: [0, 0] }}
             dragConfig={{ enabled: !locked }}
             resizeConfig={{ enabled: !locked, handles: ALL_HANDLES }}
+            compactor={noCompactor}
             width={containerWidth}
             onLayoutChange={(rgl) => { if (!locked) saveLayout(rgl); }}
           >

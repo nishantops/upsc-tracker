@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
-import { GridLayout } from 'react-grid-layout';
+import { GridLayout, noCompactor } from 'react-grid-layout';
 import type { Layout } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -160,6 +160,7 @@ export function PlansGrid() {
             gridConfig={{ cols: COLS, rowHeight: ROW_HEIGHT, margin: [12, 12], containerPadding: [0, 0] }}
             dragConfig={{ enabled: !locked }}
             resizeConfig={{ enabled: !locked, handles: ['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw'] }}
+            compactor={noCompactor}
             width={containerWidth}
             onLayoutChange={(rgl) => {
               if (!locked) saveLayout([...rgl].map(({ i, x, y, w, h, minW, minH }) => ({ i, x, y, w, h, minW, minH })));
