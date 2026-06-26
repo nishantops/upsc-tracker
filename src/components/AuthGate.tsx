@@ -175,28 +175,6 @@ export function AuthGate() {
             >
               {loading ? 'Signing In\u2026' : 'Sign In'}
             </button>
-            <button
-              type="button"
-              onClick={(e) => handleSubmit(e as unknown as FormEvent, 'signup')}
-              disabled={loading}
-              style={{
-                flex: 1,
-                padding: '0.8rem',
-                background: 'linear-gradient(135deg,#059669,#10b981,#34d399)',
-                color: 'white',
-                border: 'none',
-                borderRadius: '0.75rem',
-                fontSize: '0.75rem',
-                fontWeight: 800,
-                cursor: 'pointer',
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-                boxShadow: '0 4px 15px -3px rgba(16,185,129,0.4)',
-                transition: 'all 0.2s',
-              }}
-            >
-              {loading ? 'Creating\u2026' : 'Sign Up'}
-            </button>
           </div>
           <p
             style={{
