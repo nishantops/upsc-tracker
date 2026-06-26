@@ -206,7 +206,7 @@ export function AuthGate() {
               marginTop: '0.75rem',
             }}
           >
-            Sign Up creates a new account. Sign In for existing users.
+            Sign In for existing users. New accounts via Google only.
           </p>
         </form>
 
