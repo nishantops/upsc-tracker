@@ -581,6 +581,8 @@ header {
 #focus-panel {
   position: fixed; top: 64px; right: 1rem; z-index: 500;
   width: 310px;
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
   background: var(--card); backdrop-filter: blur(32px) saturate(180%);
   border: 1px solid var(--bdr-h);
   border-radius: 1.25rem;
@@ -616,7 +618,7 @@ header {
 }
 .fp-start-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px var(--gv); }
 .fp-start-btn:active { transform: scale(0.97); }
-.fp-start-btn.fp-stop-btn { background: linear-gradient(135deg,#065f46,#047857); }
+.fp-start-btn.fp-stop-btn { background: linear-gradient(135deg,#065f46,#047857); box-shadow: 0 4px 16px rgba(4,120,87,0.3); }
 .fp-stat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.45rem; margin-bottom: 0.85rem; }
 .fp-stat {
   background: var(--surf); border: 1px solid var(--bdr);

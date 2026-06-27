@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useFocus, formatDuration, formatDurationShort } from '../../hooks/useFocus';
+import { useScrollLock } from '../../hooks/useScrollLock';
 import { useToast } from '../common/Toast';
 
 export function FocusWidget() {
   const { active, elapsed, history, todayTotal, weekTotal, start, stop } = useFocus();
   const { showToast } = useToast();
   const [panelOpen, setPanelOpen] = useState(false);
+  useScrollLock(panelOpen);
 
   const handleToggle = async () => {
     if (active) {
@@ -58,7 +60,12 @@ export function FocusWidget() {
 
       {/* Focus Panel — rendered via portal to escape header backdrop-filter stacking context */}
       {panelOpen && createPortal(
-        <div id="focus-panel" style={{ display: 'block' }} onClick={(e) => e.stopPropagation()}>
+        <>
+          <div
+            style={{ position: 'fixed', inset: 0, zIndex: 499 }}
+            onClick={() => setPanelOpen(false)}
+          />
+          <div id="focus-panel" style={{ display: 'block' }} onClick={(e) => e.stopPropagation()}>
           {/* Header row */}
           <div className="fp-status-row" style={{ marginBottom: '0.8rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -81,7 +88,7 @@ export function FocusWidget() {
 
           {/* Start/Stop button */}
           <button
-            className={active ? 'fp-stop-btn' : 'fp-start-btn'}
+            className={`fp-start-btn${active ? ' fp-stop-btn' : ''}`}
             onClick={handleToggle}
           >
             {active ? 'STOP SESSION' : 'START SESSION'}
@@ -130,6 +137,7 @@ export function FocusWidget() {
             )}
           </div>
         </div>
+        </>
       , document.body)}
     </>
   );
