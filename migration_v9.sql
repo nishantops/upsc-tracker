@@ -14,19 +14,23 @@ CREATE TABLE IF NOT EXISTS upsc_focus_daily (
 -- Enable RLS
 ALTER TABLE upsc_focus_daily ENABLE ROW LEVEL SECURITY;
 
--- RLS policies
+-- RLS policies (drop first to be idempotent)
+DROP POLICY IF EXISTS "Users can read own daily focus" ON upsc_focus_daily;
 CREATE POLICY "Users can read own daily focus"
   ON upsc_focus_daily FOR SELECT
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert own daily focus" ON upsc_focus_daily;
 CREATE POLICY "Users can insert own daily focus"
   ON upsc_focus_daily FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update own daily focus" ON upsc_focus_daily;
 CREATE POLICY "Users can update own daily focus"
   ON upsc_focus_daily FOR UPDATE
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can delete own daily focus" ON upsc_focus_daily;
 CREATE POLICY "Users can delete own daily focus"
   ON upsc_focus_daily FOR DELETE
   USING (auth.uid() = user_id);

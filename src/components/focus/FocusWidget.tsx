@@ -76,7 +76,12 @@ export function FocusWidget() {
 
       {/* FULL-SCREEN FOCUS LOCK OVERLAY — when focus is active */}
       {active && createPortal(
-        <div className="focus-lock-overlay">
+        <div
+          className="focus-lock-overlay"
+          onWheel={(e) => e.preventDefault()}
+          onTouchMove={(e) => e.preventDefault()}
+          onScroll={(e) => e.preventDefault()}
+        >
           <div className="focus-lock-content">
             <div className="focus-lock-badge">{paused ? 'PAUSED' : 'STUDYING'}</div>
             <div className={`focus-lock-timer${paused ? ' focus-lock-paused' : ''}`}>
