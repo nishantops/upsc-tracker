@@ -444,16 +444,25 @@ BEGIN
   DELETE FROM upsc_user_sessions     WHERE user_id = target_user_id; deleted_tables := deleted_tables || 'user_sessions';
   DELETE FROM upsc_user_profiles     WHERE user_id = target_user_id; deleted_tables := deleted_tables || 'user_profiles';
 
-  -- Delete from auth.users using admin role
+  -- Delete auth user and their identities
+  DELETE FROM auth.identities WHERE user_id = target_user_id;
+  DELETE FROM auth.sessions WHERE user_id = target_user_id;
+  DELETE FROM auth.refresh_tokens WHERE user_id::text = target_user_id::text;
+  DELETE FROM auth.mfa_factors WHERE user_id = target_user_id;
   DELETE FROM auth.users WHERE id = target_user_id;
+  deleted_tables := deleted_tables || 'auth_user';
 
   RETURN jsonb_build_object('success', true, 'deleted_from', to_jsonb(deleted_tables));
 END;
 $$;
 
--- Grant function owner (postgres) delete on auth.users
+-- Grant function owner (postgres) delete on auth tables
+GRANT USAGE ON SCHEMA auth TO postgres;
 GRANT DELETE ON auth.users TO postgres;
 GRANT DELETE ON auth.identities TO postgres;
+GRANT DELETE ON auth.sessions TO postgres;
+GRANT DELETE ON auth.refresh_tokens TO postgres;
+GRANT DELETE ON auth.mfa_factors TO postgres;
 
 -- ============================================================================
 -- STEP 8c: Admin — bulk delete users

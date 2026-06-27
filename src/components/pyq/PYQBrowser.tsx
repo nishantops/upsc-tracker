@@ -294,7 +294,6 @@ export function PYQBrowser() {
     setExpandedSubtopics((prev) => ({ ...prev, [key]: !prev[key] }));
   }, []);
 
-  const topics = isCustomOptSection ? [] : DATA_MAP[section];
   const isAnthroUser = useMemo(() => {
     const opt = profile?.optional_subject ?? '';
     return !opt || opt === 'none' || opt.toLowerCase().includes('anthro');
@@ -302,6 +301,7 @@ export function PYQBrowser() {
   const mainsSections = useMemo(() => isAnthroUser ? [...MAINS_BASE, ...ANTHRO_SECTIONS] : [...MAINS_BASE, 'opt_p1' as PYQSection, 'opt_p2' as PYQSection], [isAnthroUser]);
   const subSections = pyqStage === 'prelims' ? PRELIMS_SECTIONS : mainsSections;
   const isCustomOptSection = section === 'opt_p1' || section === 'opt_p2';
+  const topics = isCustomOptSection ? [] : DATA_MAP[section];
 
   const years = useMemo(() => {
     const ys = new Set<string>();
