@@ -8,15 +8,17 @@ export function FocusWidget() {
   const { active, elapsed, history, todayTotal, weekTotal, start, stop } = useFocus();
   const { showToast } = useToast();
   const [panelOpen, setPanelOpen] = useState(false);
-  useScrollLock(panelOpen);
+  useScrollLock(active || panelOpen);
 
   const handleToggle = async () => {
     if (active) {
       const dur = await stop();
       if (dur) showToast(`Session saved: ${formatDuration(dur)}`, 'success');
+      setPanelOpen(false);
     } else {
       await start();
       showToast('Focus mode started!', 'info');
+      setPanelOpen(false);
     }
   };
 
@@ -25,7 +27,7 @@ export function FocusWidget() {
 
   return (
     <>
-      {/* Compact widget in header — matches old HTML exactly */}
+      {/* Compact widget in header */}
       <div
         id="focus-mode-widget"
         className={`flex items-center gap-2 rounded-xl px-3 py-1.5 cursor-pointer${active ? ' focus-widget-active' : ''}`}
@@ -58,8 +60,27 @@ export function FocusWidget() {
         )}
       </div>
 
-      {/* Focus Panel — rendered via portal to escape header backdrop-filter stacking context */}
-      {panelOpen && createPortal(
+      {/* FULL-SCREEN FOCUS LOCK OVERLAY — when focus is active */}
+      {active && createPortal(
+        <div className="focus-lock-overlay">
+          <div className="focus-lock-content">
+            <div className="focus-lock-badge">STUDYING</div>
+            <div className="focus-lock-timer">{formatDuration(elapsed)}</div>
+            <div className="focus-lock-stats">
+              <span>Today: {todayTotal > 0 ? formatDurationShort(todayTotal + elapsed) : formatDuration(elapsed)}</span>
+              <span>•</span>
+              <span>Week: {formatDurationShort(weekTotal + elapsed)}</span>
+            </div>
+            <button className="focus-lock-stop" onClick={handleToggle}>
+              ■ STOP SESSION
+            </button>
+            <p className="focus-lock-hint">Stay focused. Close distractions. You got this.</p>
+          </div>
+        </div>
+      , document.body)}
+
+      {/* Focus Panel dropdown — only when NOT in active focus (for starting/viewing history) */}
+      {panelOpen && !active && createPortal(
         <>
           <div
             style={{ position: 'fixed', inset: 0, zIndex: 499 }}
@@ -78,20 +99,15 @@ export function FocusWidget() {
 
           {/* Status badge */}
           <div style={{ marginBottom: '0.6rem' }}>
-            <span className={`fp-status-badge${active ? ' fp-status-active' : ''}`}>
-              {active ? 'STUDYING' : 'IDLE'}
-            </span>
+            <span className="fp-status-badge">IDLE</span>
           </div>
 
           {/* Big timer */}
-          <div className="fp-big-timer">{formatDuration(active ? elapsed : 0)}</div>
+          <div className="fp-big-timer">00:00:00</div>
 
-          {/* Start/Stop button */}
-          <button
-            className={`fp-start-btn${active ? ' fp-stop-btn' : ''}`}
-            onClick={handleToggle}
-          >
-            {active ? 'STOP SESSION' : 'START SESSION'}
+          {/* Start button */}
+          <button className="fp-start-btn" onClick={handleToggle}>
+            START SESSION
           </button>
 
           {/* Stats grid */}

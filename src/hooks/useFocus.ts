@@ -23,35 +23,62 @@ export function useFocus() {
   useEffect(() => {
     if (!user) return;
     const load = async () => {
-      // Close orphaned sessions (browser closed mid-session)
+      // Check for an active session to RESUME (this device or another)
       try {
-        const { data: orphans } = await supabase
+        const { data: openSessions } = await supabase
           .from('upsc_focus_sessions')
           .select('id, started_at')
           .eq('user_id', user.id)
-          .is('ended_at', null);
-        if (orphans && orphans.length > 0) {
+          .is('ended_at', null)
+          .order('started_at', { ascending: false });
+
+        if (openSessions && openSessions.length > 0) {
           const now = Date.now();
-          const toUpdate = orphans.filter((s) => {
+          // Find the most recent valid session (< 24h old, > 5s old)
+          const resumable = openSessions.find((s) => {
             const dur = Math.floor((now - new Date(s.started_at).getTime()) / 1000);
-            return dur > 5 && dur < 86_400;
+            return dur > 0 && dur < 86_400;
           });
-          const toDelete = orphans
-            .filter((s) => !toUpdate.includes(s))
-            .map((s) => s.id);
 
-          const updates = toUpdate.map((s) => {
-            const dur = Math.floor((now - new Date(s.started_at).getTime()) / 1000);
-            return supabase
-              .from('upsc_focus_sessions')
-              .update({ ended_at: new Date(now).toISOString(), duration_seconds: dur })
-              .eq('id', s.id);
-          });
-          const deletions = toDelete.length > 0
-            ? [supabase.from('upsc_focus_sessions').delete().in('id', toDelete)]
-            : [];
+          if (resumable) {
+            // Resume this session
+            const startTs = new Date(resumable.started_at).getTime();
+            sessionRef.current = { id: resumable.id, start: startTs };
+            setActive(true);
+            setElapsed(Math.floor((now - startTs) / 1000));
+            try { localStorage.setItem('upsc_focus_active', '1'); } catch { /* ignore */ }
+            intervalRef.current = setInterval(() => {
+              if (sessionRef.current) {
+                setElapsed(Math.floor((Date.now() - sessionRef.current.start) / 1000));
+              }
+            }, 1000);
 
-          await Promise.all([...updates, ...deletions]);
+            // Close any OTHER orphaned sessions (not the one we're resuming)
+            const others = openSessions.filter((s) => s.id !== resumable.id);
+            if (others.length > 0) {
+              const closures = others.map((s) => {
+                const dur = Math.floor((now - new Date(s.started_at).getTime()) / 1000);
+                return supabase
+                  .from('upsc_focus_sessions')
+                  .update({ ended_at: new Date(now).toISOString(), duration_seconds: Math.max(1, dur) })
+                  .eq('id', s.id);
+              });
+              await Promise.all(closures);
+            }
+          } else {
+            // All open sessions are stale (> 24h) — close them
+            const closures = openSessions.map((s) => {
+              const dur = Math.floor((now - new Date(s.started_at).getTime()) / 1000);
+              if (dur > 5) {
+                return supabase
+                  .from('upsc_focus_sessions')
+                  .update({ ended_at: new Date(now).toISOString(), duration_seconds: dur })
+                  .eq('id', s.id);
+              }
+              return supabase.from('upsc_focus_sessions').delete().eq('id', s.id);
+            });
+            await Promise.all(closures);
+          }
         }
       } catch { /* non-critical */ }
 
