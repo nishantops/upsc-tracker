@@ -696,6 +696,13 @@ header {
 }
 .focus-lock-stop:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(220,38,38,0.5); }
 .focus-lock-stop:active { transform: scale(0.97); }
+.focus-lock-distraction {
+  font-size: 0.72rem; font-weight: 700; color: #fbbf24;
+  background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.3);
+  border-radius: 0.6rem; padding: 0.4rem 1rem; margin-bottom: 1.5rem;
+  animation: distractionPulse 2s ease-in-out infinite;
+}
+@keyframes distractionPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.6; } }
 .focus-lock-actions {
   display: flex; gap: 1rem; justify-content: center; align-items: center;
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useFocus, formatDuration, formatDurationShort } from '../../hooks/useFocus';
 import { useScrollLock } from '../../hooks/useScrollLock';
@@ -11,7 +11,64 @@ export function FocusWidget() {
   } = useFocus();
   const { showToast } = useToast();
   const [panelOpen, setPanelOpen] = useState(false);
+  const [distractionCount, setDistractionCount] = useState(0);
+  const wakeLockRef = useRef<WakeLockSentinel | null>(null);
   useScrollLock(active || panelOpen);
+
+  // ── Fullscreen + Wake Lock + Visibility tracking ─────────────────────
+  useEffect(() => {
+    if (!active) {
+      // Cleanup on stop
+      if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+      if (wakeLockRef.current) { wakeLockRef.current.release(); wakeLockRef.current = null; }
+      setDistractionCount(0);
+      return;
+    }
+
+    // Request fullscreen
+    const requestFullscreen = async () => {
+      try {
+        if (!document.fullscreenElement) {
+          await document.documentElement.requestFullscreen();
+        }
+      } catch { /* user denied or not supported */ }
+    };
+    requestFullscreen();
+
+    // Request wake lock (prevent screen sleep)
+    const requestWakeLock = async () => {
+      try {
+        if ('wakeLock' in navigator) {
+          wakeLockRef.current = await (navigator as any).wakeLock.request('screen');
+        }
+      } catch { /* not supported or denied */ }
+    };
+    requestWakeLock();
+
+    // Visibility change — detect tab/app switches
+    const onVisibility = () => {
+      if (document.visibilityState === 'hidden') {
+        setDistractionCount((c) => c + 1);
+      } else if (document.visibilityState === 'visible') {
+        // Re-acquire wake lock (released on visibility hidden)
+        requestWakeLock();
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+
+    // Warn before closing tab
+    const onBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = '';
+    };
+    window.addEventListener('beforeunload', onBeforeUnload);
+
+    return () => {
+      document.removeEventListener('visibilitychange', onVisibility);
+      window.removeEventListener('beforeunload', onBeforeUnload);
+      if (wakeLockRef.current) { wakeLockRef.current.release(); wakeLockRef.current = null; }
+    };
+  }, [active]);
 
   const handleStart = async () => {
     await start();
@@ -20,6 +77,8 @@ export function FocusWidget() {
   };
 
   const handleStop = async () => {
+    // Exit fullscreen before stopping
+    if (document.fullscreenElement) await document.exitFullscreen().catch(() => {});
     const dur = await stop();
     if (dur) showToast(`Session saved: ${formatDuration(dur)}`, 'success');
   };
@@ -92,6 +151,11 @@ export function FocusWidget() {
               <span>•</span>
               <span>Week: {formatDurationShort(weekTotal + elapsed)}</span>
             </div>
+            {distractionCount > 0 && (
+              <div className="focus-lock-distraction">
+                ⚠️ {distractionCount} distraction{distractionCount > 1 ? 's' : ''} detected
+              </div>
+            )}
             <div className="focus-lock-actions">
               {paused ? (
                 <button className="focus-lock-resume" onClick={handleResume}>
@@ -107,7 +171,9 @@ export function FocusWidget() {
               </button>
             </div>
             <p className="focus-lock-hint">
-              {paused ? 'Take a break. Resume when ready.' : 'Stay focused. Close distractions. You got this.'}
+              {paused
+                ? 'Take a break. Resume when ready.'
+                : 'Fullscreen locked. Stay focused. You got this.'}
             </p>
           </div>
         </div>
