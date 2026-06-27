@@ -667,6 +667,19 @@ header {
   box-shadow: 0 0 80px rgba(16,185,129,0.15), 0 0 200px rgba(16,185,129,0.05);
   max-width: 420px; width: 90vw;
 }
+.focus-lock-clock {
+  display: flex; flex-direction: column; align-items: center;
+  margin-bottom: 1.5rem; gap: 0.2rem;
+}
+.focus-lock-time {
+  font-family: var(--mono); font-size: 1.6rem; font-weight: 700;
+  color: #ef4444; letter-spacing: 0.05em;
+  text-shadow: 0 0 20px rgba(239,68,68,0.4);
+}
+.focus-lock-date {
+  font-family: var(--mono); font-size: 0.7rem; font-weight: 600;
+  color: #fca5a5; letter-spacing: 0.08em; text-transform: uppercase;
+}
 .focus-lock-badge {
   display: inline-block;
   font-size: 0.7rem; font-weight: 900; letter-spacing: 0.15em;

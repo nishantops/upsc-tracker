@@ -12,8 +12,16 @@ export function FocusWidget() {
   const { showToast } = useToast();
   const [panelOpen, setPanelOpen] = useState(false);
   const [distractionCount, setDistractionCount] = useState(0);
+  const [clock, setClock] = useState(() => new Date());
   const wakeLockRef = useRef<WakeLockSentinel | null>(null);
   useScrollLock(active || panelOpen);
+
+  // Live clock for focus overlay
+  useEffect(() => {
+    if (!active) return;
+    const id = setInterval(() => setClock(new Date()), 1000);
+    return () => clearInterval(id);
+  }, [active]);
 
   // ── Fullscreen + Wake Lock + Visibility tracking ─────────────────────
   useEffect(() => {
@@ -142,6 +150,14 @@ export function FocusWidget() {
           onScroll={(e) => e.preventDefault()}
         >
           <div className="focus-lock-content">
+            <div className="focus-lock-clock">
+              <span className="focus-lock-time">
+                {clock.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}
+              </span>
+              <span className="focus-lock-date">
+                {clock.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
+              </span>
+            </div>
             <div className="focus-lock-badge">{paused ? 'PAUSED' : 'STUDYING'}</div>
             <div className={`focus-lock-timer${paused ? ' focus-lock-paused' : ''}`}>
               {formatDuration(elapsed)}
