@@ -685,7 +685,7 @@ header {
   font-family: var(--mono); margin-bottom: 2rem;
 }
 .focus-lock-stop {
-  padding: 0.9rem 2.5rem; border: none; border-radius: 1rem;
+  padding: 0.9rem 2rem; border: none; border-radius: 1rem;
   font-size: 0.85rem; font-weight: 800; cursor: pointer;
   letter-spacing: 0.08em; transition: all 0.2s;
   background: linear-gradient(135deg, #991b1b, #dc2626);
@@ -693,6 +693,35 @@ header {
 }
 .focus-lock-stop:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(220,38,38,0.5); }
 .focus-lock-stop:active { transform: scale(0.97); }
+.focus-lock-actions {
+  display: flex; gap: 1rem; justify-content: center; align-items: center;
+}
+.focus-lock-pause {
+  padding: 0.9rem 2rem; border: none; border-radius: 1rem;
+  font-size: 0.85rem; font-weight: 800; cursor: pointer;
+  letter-spacing: 0.08em; transition: all 0.2s;
+  background: linear-gradient(135deg, #92400e, #d97706);
+  color: white; box-shadow: 0 4px 20px rgba(217,119,6,0.3);
+}
+.focus-lock-pause:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(217,119,6,0.5); }
+.focus-lock-pause:active { transform: scale(0.97); }
+.focus-lock-resume {
+  padding: 0.9rem 2rem; border: none; border-radius: 1rem;
+  font-size: 0.85rem; font-weight: 800; cursor: pointer;
+  letter-spacing: 0.08em; transition: all 0.2s;
+  background: linear-gradient(135deg, #065f46, #10b981);
+  color: white; box-shadow: 0 4px 20px rgba(16,185,129,0.3);
+}
+.focus-lock-resume:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(16,185,129,0.5); }
+.focus-lock-resume:active { transform: scale(0.97); }
+.focus-lock-paused { opacity: 0.5; animation: focusPauseBlink 1.5s ease-in-out infinite; }
+@keyframes focusPauseBlink { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
+.fp-clear-btn {
+  font-size: 0.55rem; font-weight: 700; color: #f87171; background: rgba(248,113,113,0.1);
+  border: 1px solid rgba(248,113,113,0.3); border-radius: 0.4rem;
+  padding: 0.15rem 0.45rem; cursor: pointer; transition: all 0.2s;
+}
+.fp-clear-btn:hover { background: rgba(248,113,113,0.2); }
 .focus-lock-hint {
   margin-top: 1.5rem; font-size: 0.72rem; color: rgba(255,255,255,0.35);
   font-style: italic;

@@ -5,25 +5,39 @@ import { useScrollLock } from '../../hooks/useScrollLock';
 import { useToast } from '../common/Toast';
 
 export function FocusWidget() {
-  const { active, elapsed, history, todayTotal, weekTotal, start, stop } = useFocus();
+  const {
+    active, paused, elapsed, dailyHistory, todayTotal, weekTotal,
+    start, stop, pause, resume, clearHistory,
+  } = useFocus();
   const { showToast } = useToast();
   const [panelOpen, setPanelOpen] = useState(false);
   useScrollLock(active || panelOpen);
 
-  const handleToggle = async () => {
-    if (active) {
-      const dur = await stop();
-      if (dur) showToast(`Session saved: ${formatDuration(dur)}`, 'success');
-      setPanelOpen(false);
-    } else {
-      await start();
-      showToast('Focus mode started!', 'info');
-      setPanelOpen(false);
-    }
+  const handleStart = async () => {
+    await start();
+    showToast('Focus mode started!', 'info');
+    setPanelOpen(false);
   };
 
-  const lastSession = history[0];
-  const lastDur = lastSession ? formatDurationShort(lastSession.duration_seconds ?? 0) : '—';
+  const handleStop = async () => {
+    const dur = await stop();
+    if (dur) showToast(`Session saved: ${formatDuration(dur)}`, 'success');
+  };
+
+  const handlePause = async () => {
+    await pause();
+    showToast('Session paused', 'info');
+  };
+
+  const handleResume = async () => {
+    await resume();
+    showToast('Session resumed', 'info');
+  };
+
+  const handleClear = async () => {
+    await clearHistory();
+    showToast('History cleared', 'success');
+  };
 
   return (
     <>
@@ -43,7 +57,7 @@ export function FocusWidget() {
         >
           <span className="focus-dot" />
           <span id="focus-status-label" className="text-[10px] font-black uppercase tracking-widest">
-            {active ? 'STUDYING' : 'FOCUS'}
+            {active ? (paused ? 'PAUSED' : 'STUDYING') : 'FOCUS'}
           </span>
         </button>
         <span
@@ -64,22 +78,37 @@ export function FocusWidget() {
       {active && createPortal(
         <div className="focus-lock-overlay">
           <div className="focus-lock-content">
-            <div className="focus-lock-badge">STUDYING</div>
-            <div className="focus-lock-timer">{formatDuration(elapsed)}</div>
+            <div className="focus-lock-badge">{paused ? 'PAUSED' : 'STUDYING'}</div>
+            <div className={`focus-lock-timer${paused ? ' focus-lock-paused' : ''}`}>
+              {formatDuration(elapsed)}
+            </div>
             <div className="focus-lock-stats">
-              <span>Today: {todayTotal > 0 ? formatDurationShort(todayTotal + elapsed) : formatDuration(elapsed)}</span>
+              <span>Today: {formatDurationShort(todayTotal + elapsed)}</span>
               <span>•</span>
               <span>Week: {formatDurationShort(weekTotal + elapsed)}</span>
             </div>
-            <button className="focus-lock-stop" onClick={handleToggle}>
-              ■ STOP SESSION
-            </button>
-            <p className="focus-lock-hint">Stay focused. Close distractions. You got this.</p>
+            <div className="focus-lock-actions">
+              {paused ? (
+                <button className="focus-lock-resume" onClick={handleResume}>
+                  ▶ RESUME
+                </button>
+              ) : (
+                <button className="focus-lock-pause" onClick={handlePause}>
+                  ❚❚ PAUSE
+                </button>
+              )}
+              <button className="focus-lock-stop" onClick={handleStop}>
+                ■ STOP
+              </button>
+            </div>
+            <p className="focus-lock-hint">
+              {paused ? 'Take a break. Resume when ready.' : 'Stay focused. Close distractions. You got this.'}
+            </p>
           </div>
         </div>
       , document.body)}
 
-      {/* Focus Panel dropdown — only when NOT in active focus (for starting/viewing history) */}
+      {/* Focus Panel dropdown — only when NOT in active focus */}
       {panelOpen && !active && createPortal(
         <>
           <div
@@ -87,72 +116,81 @@ export function FocusWidget() {
             onClick={() => setPanelOpen(false)}
           />
           <div id="focus-panel" style={{ display: 'block' }} onClick={(e) => e.stopPropagation()}>
-          {/* Header row */}
-          <div className="fp-status-row" style={{ marginBottom: '0.8rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ fontSize: '1rem' }}>🎯</span>
-              <span style={{ fontWeight: 800, fontSize: '0.8rem', color: 'var(--t1)' }}>Focus Mode</span>
-              <span className="fp-db-badge">Live</span>
+            {/* Header row */}
+            <div className="fp-status-row" style={{ marginBottom: '0.8rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span style={{ fontSize: '1rem' }}>🎯</span>
+                <span style={{ fontWeight: 800, fontSize: '0.8rem', color: 'var(--t1)' }}>Focus Mode</span>
+                <span className="fp-db-badge">Live</span>
+              </div>
+              <button className="fp-close-btn" onClick={() => setPanelOpen(false)}>✕</button>
             </div>
-            <button className="fp-close-btn" onClick={() => setPanelOpen(false)}>✕</button>
-          </div>
 
-          {/* Status badge */}
-          <div style={{ marginBottom: '0.6rem' }}>
-            <span className="fp-status-badge">IDLE</span>
-          </div>
-
-          {/* Big timer */}
-          <div className="fp-big-timer">00:00:00</div>
-
-          {/* Start button */}
-          <button className="fp-start-btn" onClick={handleToggle}>
-            START SESSION
-          </button>
-
-          {/* Stats grid */}
-          <div className="fp-stat-grid">
-            <div className="fp-stat">
-              <div className="fp-stat-label">Today</div>
-              <div className="fp-stat-value">{todayTotal > 0 ? formatDurationShort(todayTotal) : '—'}</div>
+            {/* Status badge */}
+            <div style={{ marginBottom: '0.6rem' }}>
+              <span className="fp-status-badge">IDLE</span>
             </div>
-            <div className="fp-stat">
-              <div className="fp-stat-label">Last session</div>
-              <div className="fp-stat-value">{lastDur}</div>
+
+            {/* Big timer */}
+            <div className="fp-big-timer">00:00:00</div>
+
+            {/* Start button */}
+            <button className="fp-start-btn" onClick={handleStart}>
+              START SESSION
+            </button>
+
+            {/* Stats grid */}
+            <div className="fp-stat-grid">
+              <div className="fp-stat">
+                <div className="fp-stat-label">Today</div>
+                <div className="fp-stat-value">{todayTotal > 0 ? formatDurationShort(todayTotal) : '—'}</div>
+              </div>
+              <div className="fp-stat">
+                <div className="fp-stat-label">7-day total</div>
+                <div className="fp-stat-value">{weekTotal > 0 ? formatDurationShort(weekTotal) : '—'}</div>
+              </div>
+              <div className="fp-stat">
+                <div className="fp-stat-label">Days tracked</div>
+                <div className="fp-stat-value">{dailyHistory.length}</div>
+              </div>
             </div>
-            <div className="fp-stat">
-              <div className="fp-stat-label">7-day total</div>
-              <div className="fp-stat-value">{weekTotal > 0 ? formatDurationShort(weekTotal) : '—'}</div>
+
+            <div className="fp-divider" />
+
+            {/* Daily History */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.45rem' }}>
+              <span className="fp-section-title" style={{ margin: 0 }}>Daily History</span>
+              {dailyHistory.length > 0 && (
+                <button
+                  className="fp-clear-btn"
+                  onClick={handleClear}
+                  title="Clear all history"
+                >
+                  Clear All
+                </button>
+              )}
+            </div>
+            <div>
+              {dailyHistory.length === 0 ? (
+                <div className="fp-empty">No sessions yet</div>
+              ) : (
+                dailyHistory.slice(0, 14).map((d) => {
+                  const date = new Date(d.focus_date + 'T00:00:00');
+                  const isToday = d.focus_date === new Date().toISOString().slice(0, 10);
+                  return (
+                    <div key={d.focus_date} className="fp-hist-item">
+                      <span className="fp-hist-date">
+                        {isToday ? 'Today' : date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', weekday: 'short' })}
+                      </span>
+                      <span className="fp-hist-dur">
+                        {formatDurationShort(d.total_seconds)}
+                      </span>
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
-
-          <div className="fp-divider" />
-
-          {/* Recent Sessions */}
-          <div className="fp-section-title">Recent Sessions</div>
-          <div>
-            {history.length === 0 ? (
-              <div className="fp-empty">No sessions yet</div>
-            ) : (
-              history.slice(0, 10).map((s) => {
-                const d = new Date(s.started_at);
-                const ago = Math.floor((Date.now() - d.getTime()) / 3600000);
-                const agoStr = ago < 1 ? 'just now' : ago < 24 ? `${ago}h ago` : `${Math.floor(ago / 24)}d ago`;
-                return (
-                  <div key={s.id} className="fp-hist-item">
-                    <span className="fp-hist-date">
-                      {d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
-                    </span>
-                    <span className="fp-hist-dur">
-                      {formatDurationShort(s.duration_seconds ?? 0)}
-                    </span>
-                    <span className="fp-hist-ago">{agoStr}</span>
-                  </div>
-                );
-              })
-            )}
-          </div>
-        </div>
         </>
       , document.body)}
     </>
